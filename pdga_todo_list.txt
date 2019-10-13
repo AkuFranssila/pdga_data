@@ -1,0 +1,23 @@
+0. Create a page where all logins and keys are stored. Upload project to github and make so that the password file is not uploaded.
+1. Fix any missing fields in player crawling and fields that need to be added to db
+2. Save files to hard drive instead of directly uploading to DB (just to be sure if something fails)
+3. Add merge page where logic happens for player and tournament parsing, change some fields from crawling to merge (address, name parsing)
+4. Crawl players and add to database
+5. Check any mistakes/errors after all players crawled and rerun files if fixable in merge
+6. Add crawling for tournaments
+7. Add parsing for tournaments
+8. Check any mistakes/errors after all tournaments crawled and rerun files if fixable in merge
+9. Create cronjobs and automate the process
+10. Create API for the data (mongoDB + python + Flask)
+11. Create webpage where to show pdga data
+12. Learn react and make the data searchable through filters and/or remade statistics.
+13. Share work on fb/linkedin
+
+
+# Add tests?
+# What kind of tests should there be?
+# Did the crawl work?
+# Did correct data come out of the crawling?
+# Was the file saved correctly?
+# Was the data parsed at merge correctly?
+# Was the data sent to the database?
