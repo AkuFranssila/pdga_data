@@ -60,9 +60,6 @@ def ParseFullLocation(location):
 
     return location_city, location_state, location_country
 
-
-
-
 def ParseDate(date):
     if date:
         month_dict = {
