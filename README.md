@@ -16,8 +16,8 @@ This project is to collect all player and tournament data available on PDGA. PDG
 ## TODO
 - [x] Add PDGA project finally to GitHub
 - [ ] Fix any missing fields in player crawling and fields that need to be added to db
-- [ ] Save files instead of directly uploading to DB
-- [ ] Add merge page where logic happens for player and tournament parsing, change some fields from crawling to merge (address, name parsing)
+- [x] Save files instead of directly uploading to DB
+- [ ] Add merge file where logic happens for player and tournament parsing, change some fields from crawling to merge (address, name parsing)
 - [ ] Crawl players and add to database
 - [ ] Check any mistakes/errors after all players crawled and rerun files if fixable in merge
 - [ ] Add crawling for tournaments
