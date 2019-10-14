@@ -22,4 +22,4 @@ def FindNewestMemberId():
     return int(latest_member)
 
 
-print (FindNewestMemberId())
+#print (FindNewestMemberId())
