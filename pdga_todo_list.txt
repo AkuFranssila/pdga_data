@@ -21,3 +21,15 @@
 # Was the file saved correctly?
 # Was the data parsed at merge correctly?
 # Was the data sent to the database?
+
+
+# MongoDb next steps
+# Parsing process for player data
+# Crawl couple for db
+# Create index for PDGA number
+# Create process to update player data
+# Crawl all players and add to mongodb
+
+# A file where the file is opened and looped. Select if player or tournament
+# A file where the actual parsing happens. One for player and 1 for tournament
+# Send data also in the in the file where data file is opened. 
