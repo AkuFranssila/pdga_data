@@ -57,4 +57,4 @@ class FindFiles:
                 return (file)
 
 
-#print (FindFiles('crawled_players').find_one_file("player_data_2019-09-13.json"))
+print (FindFiles('crawled_players').find_one_file("player_data_2019-09-13.json"))
