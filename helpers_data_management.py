@@ -4,16 +4,6 @@ import logging
 import sys
 from datetime import date
 
-#Class
-#Contains function to open files
-    #if **kwargs are list then loop through all lists
-
-
-#Open & loop file(s) - DONE
-#Send data to mongo
-#Save file
-#Find file - find_file.py
-
 def OpenFileReturnData(file):
     if isinstance(file, str):
         with open(file, 'r') as opened_file:
@@ -40,13 +30,6 @@ def OpenFileReturnData(file):
     else:
         sys.exit('File format was not string or list')
 
-
-#Save file function
-#Choose if player or tournament
-#Choose if parse or crawl, and file to save
-#Check that file is list of dicts
-#with open('crawled_players/player_data_' + str(date.today()) + '.json', 'w') as file:
-#    json.dump(player_data, file)
 def SaveFile(type, target, data):
     if not isinstance(data, list) and isintance(data[0], dict):
         sys.exit('Data in wrong format')
