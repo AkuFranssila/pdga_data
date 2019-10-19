@@ -139,23 +139,9 @@ def CrawlPlayers(first_id, last_id, crawl_all):
             logging.error('Unable to find individual tournament years in https://www.pdga.com/player/%s', str(i))
             player_individual_tournament_years = ""
 
-
-
-        #Parse data
-        player_membership_expiration_date = ParseDate(player_membership_expiration_date)
-        player_certified_status_expiration = ParseDate(player_certified_status_expiration)
-        player_rating_updated = ParseDate(player_rating_updated)
-        player_city,player_state,player_country = ParseFullLocation(player_location_raw)
-        player_firstname, player_lastname = ParseFullName(player_name)
-
         player_data['player_name'] = player_name
-        player_data['player_firstname'] = player_firstname
-        player_data['player_lastname'] = player_lastname
-        player_data['player_id_active'] = player_id_active
+        player_data['player_id'] = player_id_active
         player_data['player_location_raw'] = player_location_raw
-        player_data['player_location_city'] = player_city
-        player_data['player_location_state'] = player_state
-        player_data['player_location_country'] = player_country
         player_data['player_classification'] = player_classification
         player_data['player_member_since'] = player_member_since
         player_data['player_membership_status'] = player_membership_status
@@ -169,13 +155,7 @@ def CrawlPlayers(first_id, last_id, crawl_all):
         player_data['player_certified_status_expiration'] = player_certified_status_expiration
         player_data['player_career_earnings'] = player_career_earnings
         player_data['player_individual_tournament_years'] = player_individual_tournament_years
-        player_data['player_pdga_page_link'] = player_pdga_page_link
-        player_data['played_event_ids'] = []
-        player_data['first_crawl_date'] = ""
-        player_data['data_updated_date'] = ""
         data.append(player_data)
-
-
 
     return data
 

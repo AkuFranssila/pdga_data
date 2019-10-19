@@ -4,7 +4,7 @@ import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
-name = "Aku Franssila"
+#name = "Aku Franssila"
 
 
 def ParseFullName(name):
@@ -65,7 +65,5 @@ def ParseDate(date):
             "Nov":"11",
             "Dec":"12"
             }
-
     date = day + '-' + month_dict[month] + '-' + year
-
     return date
