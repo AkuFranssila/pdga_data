@@ -22,27 +22,27 @@ def ParseFullName(name):
 def ParseFullLocation(location):
     location = location.split(',')
     if len(location) >= 3 and location[-1] == "United States":
-        location_city = location[0]
-        location_state = location[1]
-        location_country = "United States"
+        city = location[0]
+        state = location[1]
+        country = "United States"
         logging.info('If statement 1')
     elif len(location) >= 3:
         logging.info('If statement 2')
-        location_city = location[0]
-        location_state = location[1]
-        location_country = location[-1]
+        city = location[0]
+        state = location[1]
+        country = location[-1]
     elif len(location) == 2 and "United States" not in location:
-        location_city = location[0]
-        location_state = None
-        location_country = location[-1]
+        city = location[0]
+        state = None
+        country = location[-1]
     elif len(location) == 2 and "United States" in location:
-        location_city = None
-        location_state = location[0]
-        location_country = location[-1]
+        city = None
+        state = location[0]
+        country = location[-1]
     else:
-        location_city = None
-        location_state = None
-        location_country = location[-1]
+        city = None
+        state = None
+        country = location[-1]
 
     return city, state, country
 

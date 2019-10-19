@@ -32,4 +32,84 @@
 
 # A file where the file is opened and looped. Select if player or tournament
 # A file where the actual parsing happens. One for player and 1 for tournament
-# Send data also in the in the file where data file is opened. 
+# Send data also in the in the file where data file is opened.
+
+
+
+    #run_player_crawl.sh
+    #run_player_parse.sh
+    #run_tournament_crawl.sh
+    #run_tournament_parse.sh
+    #crawl_player.py
+    #crawl_tournament.py
+    #parse_player.py
+    #parse_tournament.py
+    #tournament.py
+    #player.py
+    #helpers_data_management.py
+    #helpers_data_parsing.py
+    #pdga_find_latest_id.py
+    #schemas.py
+    #connect_mongodb.py
+    #find_file.py
+
+
+#Management command executes parse file
+#Parse file calls player.py
+#Function is given a single json dict
+#parses or updates mongo db
+
+
+#Fields which are always available even if player inactive
+  #Name
+  #pdga number
+  #location
+  #classification
+  #member since
+  #membership status
+  #membership status expiration date
+  #career events
+  #career wins
+  #career earnings 
+
+#Fields from crawler
+    #full_name
+    #pdga_number
+    #location_full
+    #classification
+    #member since
+    #current rating
+    #rating_difference
+    #total_events
+    #total_wins
+    #career earnings
+    #individual_tournament_years
+    #first_crawl_date
+#Fields that need to created at parsing
+    #Created from player_name
+        #first_name
+        #last_name
+    #Created from player_location_raw
+        #city
+        #state
+        #country
+    #Created from player_membership_status
+        #membership_status (True/False, add field info depending on what is received from player_membership_status)
+        #membership (add if normal/eagle club/ace club/birdie club and so on)
+    #Created from player_current_rating
+        #highest_rating (crawl from pdga and add logic that would do this from current rating)
+        #lowest_rating (crawl from pdga and add logic that would do this from current rating)
+    #Created from player_rating_updated
+        #latest_rating_update (need to parse date)
+    #Created from player_certified_status
+        #certified_status (parse from crawler data)
+    #Created from player_certified_status_expiration
+        #certified_status_expiration_date (need to parse date)
+    #Created from player_id
+        #pdga_page_link (create from ID)
+    #Created from Tournaments
+        #played_event_ids (add data to this field once tournaments parsed)
+        #played_countries (add data to this field once tournaments parsed)
+    #Created during parse, no original data source
+        #latest_update (add during parse)
+        #fields_updated (add if field exists already, logic how to compare data)

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import logging
-from pdga_data_parser import ParseDate, ParseFullName, ParseFullLocation
+from datetime import date
 from pdga_find_latest_id import FindNewestMemberId
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
@@ -112,13 +112,10 @@ def CrawlPlayers(first_id, last_id, crawl_all):
             player_career_earnings = float(0)
 
         try:
-            if soup.find(class_="official").find('a').text.strip() == "Certified":
-                player_certified_status = True
-            else:
-                player_certified_status = False
+            player_certified_status = soup.find(class_="official").find('a').text.strip()
         except:
             logging.error('Unable to certified official status in https://www.pdga.com/player/%s', str(i))
-            player_certified_status = False
+            player_certified_status = None
 
         try:
             player_certified_status_expiration = soup.find(class_="official").find(class_="official-expiration-date").text.replace('(until ', '').replace(')', '').replace('(as of ', '')
@@ -131,15 +128,14 @@ def CrawlPlayers(first_id, last_id, crawl_all):
             years = []
             for year in tournament_years:
                 year = year.find('a').text.strip()
-                years.append(str(year))
+                years.append(year)
             player_individual_tournament_years = years
-            #Turn list into a string as sqlite does not accept lists
-            #player_individual_tournament_years = ", ".join(player_individual_tournament_years)
         except:
             logging.error('Unable to find individual tournament years in https://www.pdga.com/player/%s', str(i))
-            player_individual_tournament_years = ""
+            player_individual_tournament_years = []
 
         player_data['player_name'] = player_name
+        player_data['player_pdga_number'] = player_pdga_number
         player_data['player_id'] = player_id_active
         player_data['player_location_raw'] = player_location_raw
         player_data['player_classification'] = player_classification
@@ -155,6 +151,7 @@ def CrawlPlayers(first_id, last_id, crawl_all):
         player_data['player_certified_status_expiration'] = player_certified_status_expiration
         player_data['player_career_earnings'] = player_career_earnings
         player_data['player_individual_tournament_years'] = player_individual_tournament_years
+        player_data['player_crawl_date'] = str(date.today())
         data.append(player_data)
 
     return data
