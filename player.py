@@ -17,7 +17,7 @@ data = {
 "player_member_since": 1976,
 "player_membership_status": "Eagle Club",
 "player_membership_expiration_date": "31-Dec-2200",
-"player_current_rating": 736,
+"player_current_rating": 888,
 "player_rating_difference": None,
 "player_rating_updated": "15-Sep-2004",
 "player_events_played": 41,
@@ -33,10 +33,12 @@ def ParsePlayer(single_dict):
     ConnectMongo()
     player = Player()
     try:
-        player_from_db = Player.objects.get(pdga_number=pdga_number)
+        player_from_db = Player.objects.get(pdga_number=data['player_pdga_number'])
         player_exists = True
     except: #schemas.DoesNotExist
         player_exists = False
+
+    print (player_exists)
 
     #Fields that are always shown or need to be always updated
     player.membership = data['player_membership_status'].lower()
@@ -81,9 +83,9 @@ def ParsePlayer(single_dict):
         player.current_rating = data['player_current_rating']
     if player_exists and player.membership_status:
         player.current_rating = data['player_current_rating']
-        if current_rating > player_from_db.highest_rating:
+        if player.current_rating > player_from_db.highest_rating:
             player.highest_rating = data['player_current_rating']
-        if player_from_db.lowest > current_rating:
+        if player_from_db.lowest_rating > player.current_rating:
             player.lowest_rating = data['player_current_rating']
     if player.membership_status:
         player.current_rating = data['player_current_rating']
@@ -113,6 +115,7 @@ def ParsePlayer(single_dict):
     # x = dict(a=1, b=2)
     # y = dict(a=2, b=2)
     # added, removed, modified, same = dict_compare(x, y)
+
 
     player.save()
 
