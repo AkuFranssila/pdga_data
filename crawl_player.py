@@ -8,7 +8,7 @@ from pdga_find_latest_id import FindNewestMemberId
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
-def CrawlPlayers(first_id, last_id, crawl_all):
+def CrawlPlayer(first_id, last_id, crawl_all):
     first_id = first_id
     last_id = last_id
     if crawl_all:
@@ -128,7 +128,7 @@ def CrawlPlayers(first_id, last_id, crawl_all):
             years = []
             for year in tournament_years:
                 year = year.find('a').text.strip()
-                years.append(year)
+                years.append(int(year))
             player_individual_tournament_years = years
         except:
             logging.error('Unable to find individual tournament years in https://www.pdga.com/player/%s', str(i))

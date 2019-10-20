@@ -1,6 +1,7 @@
 # coding=utf-8
 import json
 import logging
+from datetime import date
 from schemas import Player
 from mongoengine import *
 from connect_mongodb import ConnectMongo
@@ -24,66 +25,95 @@ data = {
 "player_certified_status": None,
 "player_certified_status_expiration": None,
 "player_career_earnings": 602.0,
+"player_crawl_date": "2019-10-20",
 "player_individual_tournament_years": ["2001", "2000", "1999", "1998", "1997", "1996", "1995", "1994", "1993", "1992", "1991", "1990", "1989", "1988", "1987", "1986", "1985", "1984", "1983", "1981"]
 }
 
-ConnectMongo()
-try:
-    player_from_db = Player.objects.get(pdga_number=pdga_number)
-    player_exists = True
-except: #schemas.DoesNotExist
-    player_exists = False
+def ParsePlayer(single_dict):
+    ConnectMongo()
+    player = Player()
+    try:
+        player_from_db = Player.objects.get(pdga_number=pdga_number)
+        player_exists = True
+    except: #schemas.DoesNotExist
+        player_exists = False
 
-membership = data['player_membership_status'].lower()
-if membership == "ace club":
-    membership_status = True
-elif membership == "eagle club":
-    membership_status = True
-elif membership == "birdie club":
-    membership_status = True
-elif membership == "active":
-    membership_status = True
-elif membership == "expired":
-    membership_status = False
-else:
-    membership_status = False
-player = Player()
-full_name = data['player_name']
-first_name, last_name = ParseFullName(data['player_name'])
-pdga_number = data['player_pdga_number']
-pdga_number_status = data['player_id']
-location_full = data['player_location_raw']
-city, state, country = ParseFullLocation(data['player_location_raw'])
-classification = data['player_classification']
-member_since = data['player_member_since']
-membership_status_expiration_date = ParseDate( data['player_membership_expiration_date'])
+    #Fields that are always shown or need to be always updated
+    player.membership = data['player_membership_status'].lower()
+    if player.membership == "ace club":
+        player.membership_status = True
+    elif player.membership == "eagle club":
+        player.membership_status = True
+    elif player.membership == "birdie club":
+        player.membership_status = True
+    elif player.membership == "active":
+        player.membership_status = True
+    elif player.membership == "expired":
+        player.membership_status = False
+    else:
+        player.membership_status = False
+    player.full_name = data['player_name']
+    player.first_name, last_name = ParseFullName(data['player_name'])
+    player.pdga_number = data['player_pdga_number']
+    player.pdga_id_status = data['player_id']
+    player.location_full = data['player_location_raw']
+    player.city, player.state, player.country = ParseFullLocation(data['player_location_raw'])
+    player.classification = data['player_classification']
+    player.member_since = data['player_member_since']
+    player.membership_status_expiration_date = ParseDate( data['player_membership_expiration_date'])
+    player.career_earnings = data['player_career_earnings']
+    player.total_events = data['player_events_played']
+    player.total_wins = data['player_career_wins']
+    player.pdga_page_link = "https://www.pdga.com/player/" + str(player.pdga_number)
+    player.latest_update = str(date.today())
+    #^ Always available fields end
 
-if membership_status:
-    current_rating = data['player_current_rating']
-if player_exists and current_rating > player_from_db.highest_rating and membership_status:
-    highest_rating = data['player_current_rating']
-elif player_exists and player_from_db.lowest > current_rating and membership_status:
-    lowest_rating = data['player_current_rating']
-elif player_exists == False:
-    highest_rating = data['player_current_rating']
-    lowest_rating = data['player_current_rating']
+    #Fields that require that the player already exists
+    #Fields that require that the player is active
+    #Fields that require that the player exists and is active
+    #Fields that only need to be updated if player does not exists
+    #Fields that only need to be updated if player active and doesn not exists
+    if player_exists == False:
+        player.first_crawl_date = data['player_crawl_date']
+    if player_exists == False and player.membership_status:
+        player.highest_rating = data['player_current_rating']
+        player.lowest_rating = data['player_current_rating']
+        player.current_rating = data['player_current_rating']
+    if player_exists and player.membership_status:
+        player.current_rating = data['player_current_rating']
+        if current_rating > player_from_db.highest_rating:
+            player.highest_rating = data['player_current_rating']
+        if player_from_db.lowest > current_rating:
+            player.lowest_rating = data['player_current_rating']
+    if player.membership_status:
+        player.current_rating = data['player_current_rating']
+        player.latest_rating_update = ParseDate(data['player_rating_updated'])
+        player.certified_status = data['player_certified_status']
+        player.certified_status_expiration_date = ParseDate(data['player_certified_status_expiration'])
+        player.individual_tournament_years = data['player_individual_tournament_years']
+        if data['player_rating_difference'] is not None:
+            player.rating_difference = data['player_rating_difference']
+    #if player_exists:
+        #Need to create parsing logic when tournaments have been crawled.
+        #player.played_event_ids = data[''] only if player exists
+        #player.played_countries = data[''] only if player exists
 
-if data['player_rating_difference'] is not None and membership_status:
-    rating_difference = data['player_rating_difference']
+    #Crawl players first, then create logic to compare new vs previous
+    #player.fields_updated = data[''] only if player exists
+    # def dict_compare(d1, d2):
+    #     d1_keys = set(d1.keys())
+    #     d2_keys = set(d2.keys())
+    #     intersect_keys = d1_keys.intersection(d2_keys)
+    #     added = d1_keys - d2_keys
+    #     removed = d2_keys - d1_keys
+    #     modified = {o : (d1[o], d2[o]) for o in intersect_keys if d1[o] != d2[o]}
+    #     same = set(o for o in intersect_keys if d1[o] == d2[o])
+    #     return added, removed, modified, same
+    #
+    # x = dict(a=1, b=2)
+    # y = dict(a=2, b=2)
+    # added, removed, modified, same = dict_compare(x, y)
 
-if membership_status:
-    latest_rating_update = ParseDate(data['player_rating_updated'])
-total_events = data['player_events_played']
-total_wins = data['player_career_wins']
-if membership_status:
-    
-# certified_status = data['']
-# certified_status_expiration_date = data['']
-# career_earnings = data['']
-# individual_tournament_years = data['']
-# pdga_page_link = data['']
-# played_event_ids = data['']
-# played_countries = data['']
-# first_crawl_date = data['']
-# latest_update = data['']
-# fields_updated = data['']
+    player.save()
+
+ParsePlayer(data)

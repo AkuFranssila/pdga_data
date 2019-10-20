@@ -36,16 +36,25 @@
 
 
 
-    #run_player_crawl.sh
-    #run_player_parse.sh
-    #run_tournament_crawl.sh
-    #run_tournament_parse.sh
-    #crawl_player.py
-    #crawl_tournament.py
-    #parse_player.py
+    #run_player_crawl.sh management command for cronjob
+    #run_player_parse.sh management command for cronjob
+    #run_tournament_crawl.sh management command for cronjob
+    #run_tournament_parse.sh management command for cronjob
+
+    #run_player_crawl.py file that calls player crawler
+    #run_tournament_crawl.py file that calls tournament crawler
+    #run_tournament_parse.py file that calls tournament parser
+    #run_player_parse.py file that calls player parser
+
+    #crawl_player.py player info crawler
+    #crawl_tournament.py tournament info crawler
+
+    #parse_player.py pl
     #parse_tournament.py
+
     #tournament.py
     #player.py
+
     #helpers_data_management.py
     #helpers_data_parsing.py
     #pdga_find_latest_id.py
@@ -70,7 +79,7 @@
   #membership status expiration date
   #career events
   #career wins
-  #career earnings 
+  #career earnings
 
 #Fields from crawler
     #full_name
@@ -113,3 +122,21 @@
     #Created during parse, no original data source
         #latest_update (add during parse)
         #fields_updated (add if field exists already, logic how to compare data)
+
+# How to work around data that should not be updated?
+  # Solution 1
+  # Parse everything normally
+  # Check requirements which field should be deleted and which not
+  # del <Variable>
+
+  # Solution 2
+  # Different parsing logic for each variable.
+
+  Traceback (most recent call last):
+    File "player.py", line 119, in <module>
+      ParsePlayer(data)
+    File "player.py", line 117, in ParsePlayer
+      player.save()
+    File "D:\pdga_ratings\env\lib\site-packages\mongoengine\document.py", line 411, in save
+      raise NotUniqueError(message % six.text_type(err))
+  mongoengine.errors.NotUniqueError: Tried to save duplicate unique keys (E11000 duplicate key error index: pdga.player.$pdga_number_1 dup key: { : 1 })

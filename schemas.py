@@ -82,6 +82,11 @@ class Player(Document):
     first_crawl_date = DateTimeField(default=datetime.datetime.now, help_text="Data should be given when crawling, but if it isn't then defaults to datetime now")
     latest_update = DateTimeField(default=datetime.datetime.now, help_text="Should be given when parsed, but if not given gives datetime now")
     fields_updated = ListField(DynamicField(), help_text="If player exists and is recrawled, what data was changed. Dict that contains dynamic data about the fields that were changed and also datetime when it was updated")
+    meta = {
+	   'indexes': [
+            {'fields': ['pdga_number'], 'unique': True},
+       ]
+    }
 
 class Tournament(Document):
     tournament_name = StringField(help_text="Tournament name displayed on PDGA page")
@@ -117,3 +122,8 @@ class Tournament(Document):
     pdga_latest_update = DateTimeField(help_text="Get the date (and time) when the tournament info was last updated or sent to PDGA. Original format in 13-Oct-2019 22:29:25 UTC")
     hole_by_hole_scoring = BooleanField(help_text="Check if hole-by-hole scoring is available on the page by PDGA or Udisc")
     event_results_status = StringField(default="Event report received. Official ratings approved.", help_text="If result report status is availabe crawl it. Unless give the status as ratings are official. Need logic so that upcoming events don't get ratings approved data.")
+    meta = {
+	   'indexes': [
+            {'fields': ['tournament_id'], 'unique': True},
+       ]
+    }
