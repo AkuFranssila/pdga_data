@@ -49,9 +49,6 @@
     #crawl_player.py player info crawler
     #crawl_tournament.py tournament info crawler
 
-    #parse_player.py pl
-    #parse_tournament.py
-
     #tournament.py
     #player.py
 

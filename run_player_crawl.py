@@ -3,7 +3,7 @@ import json
 import logging
 import sys
 from datetime import date
-from pdga_player_crawler import CrawlPlayer
+from crawl_player import CrawlPlayer
 from helpers_data_management import SaveFile
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
