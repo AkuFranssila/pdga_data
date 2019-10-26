@@ -5,7 +5,7 @@ This project is to collect all player and tournament data available on PDGA. PDG
 ## Technologies used
 
 - Python
-  - Pymongo
+  - MongoEngine
   - Requests
   - Logging
   - BeautifulSoup
@@ -15,12 +15,13 @@ This project is to collect all player and tournament data available on PDGA. PDG
 
 ## TODO
 - [x] Add PDGA project finally to GitHub
-- [ ] Fix any missing fields in player crawling and fields that need to be added to db
-- [ ] Switch to MongoEngine
-- [ ] Create schemas for MongoDB documents
+- [x] Fix any missing fields in player crawling and fields that need to be added to db
+- [x] Switch to MongoEngine
+- [x] Create schemas for MongoDB documents
 - [x] Save files instead of directly uploading to DB
-- [ ] Add merge file where logic happens for player and tournament parsing, change some fields from crawling to merge (address, name parsing)
-- [ ] Crawl players and add to database
+- [x] Add merge file where logic happens for player and tournament parsing, change some fields from crawling to merge (address, name parsing)
+- [x] Crawl players and add to database
+- [ ] Change parsing logic to be simpler so that the data type checks are done inside functions instead of creating more and more rules to parser
 - [ ] Check any mistakes/errors after all players crawled and rerun files if fixable in merge
 - [ ] Add crawling for tournaments
 - [ ] Add parsing for tournaments

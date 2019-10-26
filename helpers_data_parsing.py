@@ -32,9 +32,14 @@ def ParseFullLocation(location):
         state = location[1]
         country = location[-1]
     elif len(location) == 2 and "United States" not in location:
-        city = location[0]
-        state = None
-        country = location[-1]
+        if len(location[1].strip()) == 2:
+            country = "United States"
+            state = location[1]
+            city = location[0]
+        else:
+            city = location[0]
+            state = None
+            country = location[-1]
     elif len(location) == 2 and "United States" in location:
         city = None
         state = location[0]
