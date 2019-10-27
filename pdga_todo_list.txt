@@ -129,11 +129,13 @@
   # Solution 2
   # Different parsing logic for each variable.
 
-  Traceback (most recent call last):
-    File "player.py", line 119, in <module>
-      ParsePlayer(data)
-    File "player.py", line 117, in ParsePlayer
-      player.save()
-    File "D:\pdga_ratings\env\lib\site-packages\mongoengine\document.py", line 411, in save
-      raise NotUniqueError(message % six.text_type(err))
-  mongoengine.errors.NotUniqueError: Tried to save duplicate unique keys (E11000 duplicate key error index: pdga.player.$pdga_number_1 dup key: { : 1 })
+
+
+################################################################
+
+Create individual functions for each field that parse the data.
+Add US state parsing to location as a lot of players have the state in 2 letter code
+Create logic how to parse names with multiple middle names/honorifics examples, 671, 817, 859, 957, 44138, 44139
+Add a field for middle name
+Add field to Player for gender and crawl it from https://www.pdga.com/players/stats
+Add field to Player for age (estimate) that is parsed from tournament divisions

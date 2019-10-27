@@ -5,67 +5,39 @@ from datetime import date
 from schemas import Player
 from mongoengine import *
 from connect_mongodb import ConnectMongo
-from helpers_data_parsing import ParseFullName, ParseFullLocation, ParseDate
+from helpers_data_parsing import *
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
 def ParsePlayer(data):
     ConnectMongo()
-    player = Player()
-    logging.info('Parsing player ' + str(data['player_pdga_number']))
-    try:
-        player = Player.objects.get(pdga_number=data['player_pdga_number'])
-        player_exists = True
-    except: #schemas.DoesNotExist
-        player_exists = False
+    player, player.player_exists = PlayerExists(data['player_pdga_number'])
     player.pdga_id_status = data['player_id']
+    player.membership, player.membership_status = CheckMembershipStatus(data['player_membership_status'])
+    player.membership_status_expiration_date = ParseDate( data['player_membership_expiration_date'])
+    player.full_name = data['player_name']
+    player.first_name, player.last_name = ParseFullName(data['player_name'])
+    player.location_full = data['player_location_raw']
+    player.city, player.state, player.country = ParseFullLocation(data['player_location_raw'])
+    player.classification = ParseClassification(data['player_classification'])
+    player.member_since = ParseMemberSince(data['player_member_since'])
+    player.career_earnings = CheckIfValueNone(data['player_career_earnings'])
+    player.total_events = CheckIfValueNone(data['player_events_played'])
+    player.total_wins= CheckIfValueNone(data['player_career_wins'])
+    player.pdga_page_link = "https://www.pdga.com/player/" + str(data['player_pdga_number'])
+    player.latest_update = str(date.today())
+    player.first_crawl_date = CheckIfNewPlayer(data['player_crawl_date'], player.first_crawl_date)
+    player.pdga_number = CheckIfNewPlayer(data['player_pdga_number'], player.pdga_number)
 
     if player.pdga_id_status and data['player_membership_status'] is not None:
-        #Fields that are always shown or need to be always updated
-        player.membership = data['player_membership_status'].lower()
-        if player.membership == "ace club":
-            player.membership_status = True
-        elif player.membership == "eagle club":
-            player.membership_status = True
-        elif player.membership == "birdie club":
-            player.membership_status = True
-        elif player.membership == "active":
-            player.membership_status = True
-        elif player.membership == "current":
-            player.membership_status = True
-        elif player.membership == "expired":
-            player.membership_status = False
-        else:
-            player.membership_status = False
-        player.full_name = data['player_name']
-        player.first_name, player.last_name = ParseFullName(data['player_name'])
-        player.location_full = data['player_location_raw']
-        player.classification = data['player_classification']
-        player.membership_status_expiration_date = ParseDate( data['player_membership_expiration_date'])
-        player.career_earnings = data['player_career_earnings']
-        player.total_events = data['player_events_played']
-        player.total_wins = data['player_career_wins']
-        player.pdga_page_link = "https://www.pdga.com/player/" + str(data['player_pdga_number'])
-        player.latest_update = str(date.today())
         #^ Always available fields end
         #Special cases (well because of course those exists)
-        if data['player_member_since'] != "Unknown":
-            player.member_since = data['player_member_since']
-        else:
-            player.member_since = 0000
-
-        if data['player_location_raw'] is not None:
-            player.city, player.state, player.country = ParseFullLocation(data['player_location_raw'])
-
         #Fields that require that the player already exists
         #Fields that require that the player is active
         #Fields that require that the player exists and is active
         #Fields that only need to be updated if player does not exists
         #Fields that only need to be updated if player active and doesn not exists
-        if not player_exists:
-            player.first_crawl_date = data['player_crawl_date']
-            player.pdga_number = data['player_pdga_number']
         if not player_exists and player.membership_status:
             player.highest_rating = data['player_current_rating']
             player.lowest_rating = data['player_current_rating']

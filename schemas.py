@@ -53,7 +53,11 @@ class TournamentPlayer(EmbeddedDocument):
 class Player(Document):
     full_name = StringField(max_lenght=50, help_text="Full non parsed name")
     first_name = StringField(max_lenght=25, help_text="Parsed first name")
+    middle_name = StringField(max_lenght=25, help_text="Parsed middle name")
     last_name = StringField(max_lenght=25, help_text="Parsed last name")
+    gender = StringField(help_text="Gender info provided by PDGA")
+    date_of_birth = StringField(help_text="If we are able to get the exact age somewhere")
+    age_estimate = IntField(help_text="Estimate what is the player age depending on the divisions played in")
     pdga_number = IntField(required=True, help_text="PDGA ID, used to check if player exists in DB")
     pdga_id_status = BooleanField(help_text="Field that tells if the PDGA number is in use or not. There are PDGA numbers between the players that not in use.")
     location_full = StringField(max_lenght=100, help_text="Full non parsed location")
