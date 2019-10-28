@@ -29,6 +29,15 @@ def ParsePlayer(data):
     player.latest_update = str(date.today())
     player.first_crawl_date = CheckIfNewPlayer(data['player_crawl_date'], player.first_crawl_date)
     player.pdga_number = CheckIfNewPlayer(data['player_pdga_number'], player.pdga_number)
+    player.lowest_rating, player.current_rating, player.highest_rating, player.rating_difference, player.latest_rating_update = ParseRatings(
+                                                                                                                                            data['player_current_rating'],
+                                                                                                                                            player.current_rating,
+                                                                                                                                            player.lowest_rating,
+                                                                                                                                            player.highest_rating,
+                                                                                                                                            data['player_rating_difference'],
+                                                                                                                                            ParseDate(data['player_rating_updated']),
+                                                                                                                                            data['player_membership_status']
+                                                                                                                                            )
 
     if player.pdga_id_status and data['player_membership_status'] is not None:
         #^ Always available fields end
@@ -38,23 +47,8 @@ def ParsePlayer(data):
         #Fields that require that the player exists and is active
         #Fields that only need to be updated if player does not exists
         #Fields that only need to be updated if player active and doesn not exists
-        if not player_exists and player.membership_status:
-            player.highest_rating = data['player_current_rating']
-            player.lowest_rating = data['player_current_rating']
-            player.current_rating = data['player_current_rating']
-        if player_exists and player.membership_status:
-            if type(player.current_rating).__name__ == 'int' and type(player.highest_rating).__name__ == 'int' and type(player.lowest_rating).__name__ == 'int':
-                player.current_rating = data['player_current_rating']
-                if player.current_rating > player.highest_rating:
-                    player.highest_rating = data['player_current_rating']
-                if player.lowest_rating > player.current_rating:
-                    player.lowest_rating = data['player_current_rating']
         if player.membership_status:
-            player.current_rating = data['player_current_rating']
-            player.latest_rating_update = ParseDate(data['player_rating_updated'])
             player.individual_tournament_years = data['player_individual_tournament_years']
-            if data['player_rating_difference'] is not None:
-                player.rating_difference = data['player_rating_difference']
 
             if data['player_certified_status'] == "Certified":
                 player.certified_status = True

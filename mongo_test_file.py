@@ -26,7 +26,9 @@ test_data = {
 # print (CheckMembershipStatus('expired'))
 # print (CheckMembershipStatus('birdie'))
 # print (ParseFullLocation(None))
-player, player.player_exists = PlayerExists(4470855)
+#player, player.player_exists = PlayerExists(4470855)
 #print (CheckIfNewPlayer(str(date.today()), 44708, 'latest_update'))
 
-player.latest_update = CheckIfNewPlayer(str(date.today()), player.latest_update)
+#player.latest_update = CheckIfNewPlayer(str(date.today()), player.latest_update)
+
+print (ParseRatings(999, None, 997, 1000, 1, str(date.today()), 'current'))
