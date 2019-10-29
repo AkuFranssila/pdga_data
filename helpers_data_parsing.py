@@ -7,6 +7,8 @@ from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def ParseFullName(name):
+    if name == "Page not found":
+        return None, None
     if name is not None:
         name = name.split(' ')
         if len(name) > 2:
@@ -158,6 +160,7 @@ def ParseDate(date):
     return date
 
 def PlayerExists(pdga_number):
+    logging.info(f'Checking if player exists {str(pdga_number)}')
     try:
         player = Player.objects.get(pdga_number=pdga_number)
         player_exists = True
@@ -167,8 +170,15 @@ def PlayerExists(pdga_number):
 
     return player, player_exists
 
+def ParseIdStatus(full_name, id_status):
+    if full_name == "Page not found":
+        return False
+    else:
+        return id_status
+
 def CheckMembershipStatus(membership_status):
-    membership_status = membership_status.lower().strip()
+    if membership_status is not None:
+        membership_status = membership_status.lower().strip()
     accepted_statuses = ['ace club', 'eagle club', 'birdie club', 'active', 'current']
     if membership_status in accepted_statuses:
         return membership_status, True
@@ -243,3 +253,56 @@ def ParseRatings(
                 )
     else:
         return (old_lowest, rating,old_highest, rating_difference, latest_update)
+
+def ParseIndividualTournamentYears(list_of_years, membership_status, old_data):
+    if CheckMembershipStatus(membership_status)[1]:
+        return list_of_years
+    elif old_data is None:
+        return list_of_years
+
+def ParseCertifiedStatus(certified_status, expiration_date):
+    if certified_status == "Certified":
+        return True, ParseDate(expiration_date)
+    else:
+        return False, None
+
+def FindPlayedEventIds(pdga_number):
+    played_events = Tournament.objects.filter(player__pdga_id=pdga_number).only("tournament_id")
+    return played_events
+
+def CompareDicts(old_data, new_data):
+    if new_data is not None:
+        new_data = new_data.to_json()
+        old_data = json.loads(old_data)
+        new_data = json.loads(new_data)
+        old_data_keys = set(old_data.keys())
+        new_data_keys = set(new_data.keys())
+        intersect_keys = old_data_keys.intersection(new_data_keys)
+        added = old_data_keys - new_data_keys
+        removed = new_data_keys - old_data_keys
+        modified = {o : (old_data[o], new_data[o]) for o in intersect_keys if old_data[o] != new_data[o]}
+        same = set(o for o in intersect_keys if old_data[o] == new_data[o])
+        return added, removed, modified, same
+
+def CreateFieldsUpdated(added_data, removed_data, modified_data, date):
+    parsed_added = {}
+    parsed_removed = {}
+    parsed_modified = {}
+
+    for k, v in added_data.items():
+        parsed_added[k] = {'old_value': v[0], 'new_value': v[1]}
+
+    for k, v in removed_data.items():
+        parsed_removed[k] = {'old_value': v[0], 'new_value': v[1]}
+
+    for k, v in modified_data.items():
+        parsed_modified[k] = {'old_value': v[0], 'new_value': v[1]}
+
+    updated_data = {
+        "new_data": parsed_added,
+        "modified_data": parsed_modified,
+        "removed_data": parsed_removed,
+        "updated_date": date
+    }
+
+    return updated_data

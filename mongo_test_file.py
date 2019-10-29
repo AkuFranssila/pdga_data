@@ -31,4 +31,13 @@ test_data = {
 
 #player.latest_update = CheckIfNewPlayer(str(date.today()), player.latest_update)
 
-print (ParseRatings(999, None, 997, 1000, 1, str(date.today()), 'current'))
+#print (ParseRatings(999, None, 997, 1000, 1, str(date.today()), 'current'))
+
+#print (ParseIndividualTournamentYears(['1', '2', '3'], "current", None))
+
+test_file1 = {'country': (' United States', 'United States'), 'latest_update': ({'$date': 1571875200000}, {'$date': 1572307200000}), 'state': (' New York', 'New York')}
+test_file2 = {'country': (' United States', 'United States'), 'latest_update': ({'$date': 1571875200000}, {'$date': 1572307200000}), 'state': (' New York', 'New York')}
+test_file3 = {'country': (' United States', 'United States'), 'latest_update': ({'$date': 1571875200000}, {'$date': 1572307200000}), 'state': (' New York', 'New York')}
+date = "88-88-88"
+
+print (CreateFieldsUpdated(test_file1, test_file2, test_file3, date))
