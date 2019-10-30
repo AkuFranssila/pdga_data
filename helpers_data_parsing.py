@@ -271,7 +271,13 @@ def FindPlayedEventIds(pdga_number):
     return played_events
 
 def CompareDicts(old_data, new_data):
-    if new_data is not None:
+    if old_data == 418:
+        import pdb; pdb.set_trace()
+    try:
+        old_data = Player.objects(pdga_number=old_data).first().to_json()
+    except:
+        old_data = None
+    if new_data is not None and old_data is not None:
         new_data = new_data.to_json()
         old_data = json.loads(old_data)
         new_data = json.loads(new_data)
@@ -282,27 +288,49 @@ def CompareDicts(old_data, new_data):
         removed = new_data_keys - old_data_keys
         modified = {o : (old_data[o], new_data[o]) for o in intersect_keys if old_data[o] != new_data[o]}
         same = set(o for o in intersect_keys if old_data[o] == new_data[o])
-        return added, removed, modified, same
+        return added, removed, modified, same, None
+    else:
+        all_new = new_data
+        None, None, None, None, all_new
 
-def CreateFieldsUpdated(added_data, removed_data, modified_data, date):
+def CreateFieldsUpdated(added_data, removed_data, modified_data, date, all_new):
     parsed_added = {}
     parsed_removed = {}
     parsed_modified = {}
 
-    for k, v in added_data.items():
-        parsed_added[k] = {'old_value': v[0], 'new_value': v[1]}
+    if added_data and removed_data and modified_data is not None:
+        if len(added_data) != 0:
+            parsed_added = list(added_data)
 
-    for k, v in removed_data.items():
-        parsed_removed[k] = {'old_value': v[0], 'new_value': v[1]}
 
-    for k, v in modified_data.items():
-        parsed_modified[k] = {'old_value': v[0], 'new_value': v[1]}
+        if len(removed_data) != 0:
+            parsed_removed = list(removed_data)
+            import pdb; pdb.set_trace()
+            for k, v in removed_data.items():
+                try:
+                    v[0]['date'] = v[0].pop('$date')
+                    v[1]['date'] = v[1].pop('$date')
+                except:
+                    None
+                parsed_removed[k] = {'old_value': v[0], 'new_value': v[1]}
 
-    updated_data = {
-        "new_data": parsed_added,
-        "modified_data": parsed_modified,
-        "removed_data": parsed_removed,
-        "updated_date": date
-    }
 
-    return updated_data
+        if len(modified_data) != 0:
+            for k, v in modified_data.items():
+                try:
+                    v[0]['date'] = v[0].pop('$date')
+                    v[1]['date'] = v[1].pop('$date')
+                except:
+                    None
+                parsed_modified[k] = {'old_value': v[0], 'new_value': v[1]}
+
+        updated_data = {
+            "new_data": parsed_added,
+            "modified_data": parsed_modified,
+            "removed_data": parsed_removed,
+            "updated_date": date
+        }
+
+        return updated_data
+
+    return all_new

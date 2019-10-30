@@ -32,11 +32,9 @@ def ParsePlayer(data):
     player.lowest_rating, player.current_rating, player.highest_rating, player.rating_difference, player.latest_rating_update = ParseRatings(data['player_current_rating'], player.current_rating, player.lowest_rating, player.highest_rating, data['player_rating_difference'], ParseDate(data['player_rating_updated']), data['player_membership_status'])
     player.individual_tournament_years = ParseIndividualTournamentYears(data['player_individual_tournament_years'], data['player_membership_status'], player.individual_tournament_years)
     player.certified_status, player.certified_status_expiration_date = ParseCertifiedStatus(data['player_certified_status'], data['player_certified_status_expiration'])
-    added_data, removed_data, modified_data, same_data = CompareDicts(data['player_pdga_number'], player)
-    if data['player_pdga_number'] == 480:
-        import pdb; pdb.set_trace()
-        player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today())))
-        print (player.fields_updated)
+    added_data, removed_data, modified_data, same_data, all_new = CompareDicts(data['player_pdga_number'], player)
+    player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today()), all_new))
+    print (player.fields_updated)
 
     player.save()
 
