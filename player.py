@@ -36,6 +36,8 @@ def ParsePlayer(data):
     player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today()), all_new))
     print (player.fields_updated)
 
+    import pdb; pdb.set_trace()
+
     player.save()
 
 #ParsePlayer(data)

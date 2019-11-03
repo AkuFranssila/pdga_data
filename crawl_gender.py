@@ -4,20 +4,22 @@ import requests
 import json
 import logging
 from datetime import date
-from helpers_crawler import FindNewestMemberId
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
-def CrawlPlayer(first_id, last_id, crawl_all):
-    first_id = first_id
-    last_id = last_id
-    if crawl_all:
-        first_id = 1
-        last_id = FindNewestMemberId()
-
+def CrawlGender(crawl_all, number_of_pages):
     data = []
-    for i in range(first_id, last_id):
-        response = requests.get('https://www.pdga.com/player/' + str(i))
+
+    if crawl_all:
+        response = requests.get("https://www.pdga.com/players/stats?Year=All&player_Class=All&Gender=All&Bracket=All&continent=All&Country=All&StateProv=All&page=0")
+        soup = BeautifulSoup(response.content, "html.parser")
+        last_page = soup.find(class_="pager-last last").find('a')['href'].split('page=')[1]
+        last_page = int(last_page)
+    else:
+        last_page = number_of_pages
+
+    for i in range(0, last_page):
+        response = requests.get('https://www.pdga.com/players/stats?Year=All&player_Class=All&Gender=All&Bracket=All&continent=All&Country=All&StateProv=All&page=' + str(i))
         soup = BeautifulSoup(response.content, "html.parser")
         logging.info('----------------------------------------')
         logging.info('Crawling page https://www.pdga.com/player/%s', str(i))

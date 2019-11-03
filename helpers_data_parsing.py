@@ -196,8 +196,6 @@ def ParseMemberSince(year):
         return 0
     elif year is not None:
         return year
-    else:
-        return None
 
 def CheckIfValueNone(value):
     if value is not None:
@@ -271,12 +269,9 @@ def FindPlayedEventIds(pdga_number):
     return played_events
 
 def CompareDicts(old_data, new_data):
-    if old_data == 418:
-        import pdb; pdb.set_trace()
-    try:
-        old_data = Player.objects(pdga_number=old_data).first().to_json()
-    except:
-        old_data = None
+    old_data = Player.objects(pdga_number=old_data).first()
+    if old_data is not None:
+        old_data = old_data.to_json()
     if new_data is not None and old_data is not None:
         new_data = new_data.to_json()
         old_data = json.loads(old_data)
@@ -290,12 +285,13 @@ def CompareDicts(old_data, new_data):
         same = set(o for o in intersect_keys if old_data[o] == new_data[o])
         return added, removed, modified, same, None
     else:
-        all_new = new_data
-        None, None, None, None, all_new
+        all_new = new_data.to_json()
+        all_new = json.loads(all_new)
+        return None, None, None, None, all_new
 
 def CreateFieldsUpdated(added_data, removed_data, modified_data, date, all_new):
-    parsed_added = {}
-    parsed_removed = {}
+    parsed_added = []
+    parsed_removed = []
     parsed_modified = {}
 
     if added_data and removed_data and modified_data is not None:
@@ -305,15 +301,6 @@ def CreateFieldsUpdated(added_data, removed_data, modified_data, date, all_new):
 
         if len(removed_data) != 0:
             parsed_removed = list(removed_data)
-            import pdb; pdb.set_trace()
-            for k, v in removed_data.items():
-                try:
-                    v[0]['date'] = v[0].pop('$date')
-                    v[1]['date'] = v[1].pop('$date')
-                except:
-                    None
-                parsed_removed[k] = {'old_value': v[0], 'new_value': v[1]}
-
 
         if len(modified_data) != 0:
             for k, v in modified_data.items():
@@ -332,5 +319,24 @@ def CreateFieldsUpdated(added_data, removed_data, modified_data, date, all_new):
         }
 
         return updated_data
+    elif all_new is not None:
+        for k, v in all_new.items():
+            parsed_added.append(k.replace('$', ''))
 
-    return all_new
+        updated_data = {
+            "new_data": parsed_added,
+            "modified_data": parsed_modified,
+            "removed_data": parsed_removed,
+            "updated_date": date
+        }
+
+        return updated_data
+    else:
+        updated_data = {
+            "new_data": parsed_added,
+            "modified_data": parsed_modified,
+            "removed_data": parsed_removed,
+            "updated_date": date
+        }
+
+        return updated_data

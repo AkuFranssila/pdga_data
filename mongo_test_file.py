@@ -40,4 +40,5 @@ test_file2 = {'country': (' United States', 'United States'), 'latest_update': (
 test_file3 = {'country': (' United States', 'United States'), 'latest_update': ({'$date': 1571875200000}, {'$date': 1572307200000}), 'state': (' New York', 'New York')}
 date = "88-88-88"
 
-print (CreateFieldsUpdated(test_file1, test_file2, test_file3, date))
+import pdb; pdb.set_trace()
+#print (CreateFieldsUpdated(test_file1, test_file2, test_file3, date))
