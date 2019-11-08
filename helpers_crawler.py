@@ -35,8 +35,8 @@ def TournamentDate(crawl_option):
         url = "https://www.pdga.com/tour/search?date_filter[min][date]=" + start_date + "&date_filter[max][date]=" + end_date
         return url
     elif crawl_option == 'test':
-        start_date = '2019-11-1'
-        end_date = '2019-11-5'
+        start_date = '2019-11-01'
+        end_date = '2019-11-05'
         url = "https://www.pdga.com/tour/search?date_filter[min][date]=" + start_date + "&date_filter[max][date]=" + end_date
         return url
     else:
