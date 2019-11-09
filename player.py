@@ -34,9 +34,6 @@ def ParsePlayer(data):
     player.certified_status, player.certified_status_expiration_date = ParseCertifiedStatus(data['player_certified_status'], data['player_certified_status_expiration'])
     added_data, removed_data, modified_data, same_data, all_new = CompareDicts(data['player_pdga_number'], player)
     player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today()), all_new))
-    print (player.fields_updated)
-
-    import pdb; pdb.set_trace()
 
     player.save()
 

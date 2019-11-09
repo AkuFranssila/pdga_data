@@ -22,8 +22,9 @@ def CrawlTournament(tournament_dates):
         all_links = soup.find_all('a')
         for link in all_links:
             try:
-                if '/tour/event/' in link['href']:
-                    tournament_links.append("https://www.pdga.com" + link['href'])
+                link = "https://www.pdga.com" + link['href']
+                if 'https://www.pdga.com/tour/event/' in link and link not in tournament_links:
+                    tournament_links.append(link)
                     #print ("https://www.pdga.com" + link['href'])
             except:
                 None
@@ -80,26 +81,36 @@ def CrawlTournament(tournament_dates):
         event['event_classification'] = soup.find_all(class_="classification")[1].text
         event['event_total_players'] = soup.find_all(class_="players")[1].text
         try:
+            event['event_status'] = soup.find_all(class_="status")[1].text
+        except:
+            event['event_status'] = None
+
+        try:
+            event['event_status_last_updated'] = soup.find_all(class_="date")[1].text
+        except:
+            event['event_status_last_updated'] = None
+
+        try:
             event['event_pro_purse'] = soup.find_all(class_="purse")[1].text
         except:
-            None
+            event['event_pro_purse'] = None
 
         #Player parsing
         event['event_type'] = []
         try:
-            all_divisions = soup.find(class_="leaderboard singles").find_all('details')
+            all_divisions_singles = soup.find(class_="leaderboard singles").find_all('details')
             event['event_type'].append("singles")
         except:
             None
 
         try:
-            all_divisions = soup.find(class_="leaderboard doubles").find_all('details')
+            all_divisions_doubles = soup.find(class_="leaderboard doubles").find_all('details')
             event['event_type'].append("doubles")
         except:
             None
 
         try:
-            all_divisions = soup.find(class_="leaderboard team").find_all('details')
+            all_divisions_team = soup.find(class_="leaderboard team").find_all('details')
             event['event_type'].append("team")
         except:
             None
@@ -107,13 +118,29 @@ def CrawlTournament(tournament_dates):
         logging.info(f"Tournament type {str(event['event_type'])}")
         event['event_divisions'] = []
         if "singles" in event['event_type']:
-            for division in all_divisions:
+            for division in all_divisions_singles:
                 div = {}
                 logging.info('Division name ' + division.find(class_="division").text)
                 div['division_name'] = division.find(class_="division").text
                 div['division_short_name'] = division.find(class_="division")['id']
                 div['division_total_players'] = division.find(class_="players").text
+                div['division_course_details'] = []
                 div['division_players_singles'] = []
+
+                round_course_infos = division.find_all("div", class_="tooltip-templates")
+                for count, course_info in enumerate(round_course_infos):
+                    course_details = {}
+                    try:
+                        course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
+                    except:
+                        try:
+                            course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                        except:
+                            course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+
+                    div['division_course_details'].append(course_details)
+
+
                 all_players = division.find('tbody').find_all('tr')
                 for player in all_players:
                     player_data = {}
@@ -185,13 +212,26 @@ def CrawlTournament(tournament_dates):
                 event['event_divisions'].append(div)
 
         if "doubles" in event['event_type']:
-            for division in all_divisions:
+            for division in all_divisions_doubles:
                 div = {}
                 logging.info('Division name ' + division.find(class_="division").text)
                 div['division_name'] = division.find(class_="division").text
                 div['division_short_name'] = division.find(class_="division")['id']
                 div['division_total_players'] = division.find(class_="players").text
                 div['division_players_doubles'] = []
+                div['division_course_details'] = []
+                for count, course_info in enumerate(round_course_infos):
+                    course_details = {}
+                    try:
+                        course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
+                    except:
+                        try:
+                            course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                        except:
+                            course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+
+                    div['division_course_details'].append(course_details)
+
                 all_players_odd = division.find('tbody').find_all('tr', class_="odd")
                 all_players_even = division.find('tbody').find_all('tr', class_="even")
                 counter = 0
@@ -303,13 +343,26 @@ def CrawlTournament(tournament_dates):
 
             #print (json.dumps(event, indent=4)
         if "team" in event['event_type']:
-            for division in all_divisions:
+            for division in all_divisions_team:
                 div = {}
                 logging.info('Division name ' + division.find(class_="division").text)
                 div['division_name'] = division.find(class_="division").text
                 div['division_short_name'] = division.find(class_="division")['id']
                 div['division_total_players'] = division.find(class_="players").text
                 div['division_players_team'] = []
+                div['division_course_details'] = []
+                for count, course_info in enumerate(round_course_infos):
+                    course_details = {}
+                    try:
+                        course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
+                    except:
+                        try:
+                            course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                        except:
+                            course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+
+                    div['division_course_details'].append(course_details)
+
                 all_teams = division.find('tbody').find_all('tr')
                 counter = 0
                 for team in all_teams:

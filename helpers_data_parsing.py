@@ -2,7 +2,7 @@
 import json
 import logging
 from connect_mongodb import ConnectMongo
-from schemas import Player
+from schemas import Player, Tournament
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
@@ -85,7 +85,7 @@ def ParseFullLocation(location):
     if location is None:
         return None, None, None
 
-    location = location.split(',')
+    location = location.replace('Location:', '').split(',')
     cleaned_location = []
     for loc in location:
         cleaned_location.append(loc.strip())
@@ -138,7 +138,6 @@ def ParseFullLocation(location):
     return city, state, country
 
 def ParseDate(date):
-    #import pdb; pdb.set_trace()
     if date is None:
         return None
     day,month,year = date.split('-')
@@ -340,3 +339,58 @@ def CreateFieldsUpdated(added_data, removed_data, modified_data, date, all_new):
         }
 
         return updated_data
+
+def ParseTournamentName(name):
+    if name is not None:
+        return name
+    else:
+        return "Unnamed tournament"
+
+def TournamentExists(pdga_link):
+    logging.info(f'Checking if tournament exists {str(pdga_link)}')
+    tournament_id = int(pdga_link.replace('https://www.pdga.com/tour/event/', ''))
+    try:
+        tournament = Tournament.objects.get(tournament_id=tournament_id)
+        exists = True
+    except: #schemas.DoesNotExist
+        tournament = Tournament()
+        exists = False
+
+    return tournament, exists, tournament_id, pdga_link
+
+def ParseTournamentDates(event_dates):
+    #Date: 03-Nov-2019
+    #Date: 02-Nov to 03-Nov-2019
+    #Date: 17-May to 19-May-2019
+    month_dict = {
+            "Jan":"01",
+            "Feb":"02",
+            "Mar":"03",
+            "Apr":"04",
+            "May":"05",
+            "Jun":"06",
+            "Jul":"07",
+            "Aug":"08",
+            "Sep":"09",
+            "Oct":"10",
+            "Nov":"11",
+            "Dec":"12"
+            }
+
+    event_dates = event_dates.replace('Date: ', '')
+    if " to " in event_dates:
+        start = event_dates.split(' to ')[0]
+        end = event_dates.split(' to ')[1]
+        end = ParseDate(end)
+        start= end.split('-')[0] + '-' + month_dict[start.split('-')[1]] + '-' + start.split('-')[0]
+    else:
+        date = ParseDate(event_dates)
+        start = date
+        end = date
+
+    if start == end:
+        length = 1
+    else:
+        length = "Do something to me"
+
+    return start, end, length
