@@ -37,6 +37,7 @@ def CrawlTournament(tournament_dates):
         logging.info(f'Checking tournament {link}')
         event = {}
         #Basic info
+        event['event_crawl_date'] = str(date.today())
         event['event_link'] = link
         event['event_title'] = soup.find(id="page-title").text
         event['event_date'] = soup.find(class_="tournament-date").text
@@ -44,37 +45,37 @@ def CrawlTournament(tournament_dates):
         try:
             event['event_tournament_director_name'] = soup.find(class_="tournament-director").text
         except:
-            None
+            event['event_tournament_director_name'] = None
 
         try:
             event['event_tournament_director_id'] = soup.find(class_="tournament-director").find('a')['href']
         except:
-            None
+            event['event_tournament_director_id'] = None
 
         try:
             event['event_assistant_dt_name'] = soup.find_all(class_="tournament-director")[1].text
         except:
-            None
+            event['event_assistant_dt_name'] = None
 
         try:
             event['event_assistant_dt_id'] = soup.find_all(class_="tournament-director")[1].find('a')['href']
         except:
-            None
+            event['event_assistant_dt_id'] = None
 
         try:
             event['event_website'] = soup.find(class_="tournament-website").text
         except:
-            None
+            event['event_website'] = None
 
         try:
             event['event_email'] = soup.find(class_="tournament-email").find('a')['href']
         except:
-            None
+            event['event_email'] = None
 
         try:
             event['event_phone'] = soup.find(class_="tournament-phone").text
         except:
-            None
+            event['event_phone'] = None
 
         #Tournament categorization
         event['event_tier'] = soup.find_all(class_="tier")[1].text
@@ -152,7 +153,8 @@ def CrawlTournament(tournament_dates):
                         player_data['player_pdga_number'] = player.find(class_="pdga-number").text
                         player_data['player_pdga_link'] = "https://www.pdga.com" + player.find(class_="player").find('a')['href']
                     except:
-                        None
+                        player_data['player_pdga_number'] = None
+                        player_data['player_pdga_link'] = None
 
                     try:
                         player_data['player_propagator'] = player.find(class_="player-rating propagator").text #if found then true, otherwise false
@@ -180,7 +182,7 @@ def CrawlTournament(tournament_dates):
                     try:
                         player_data['player_total_throws'] = player.find(class_="total").text
                     except:
-                        None
+                        player_data['player_total_throws'] = None
 
                     try:
                         player_data['player_total_par'] = player.find(class_="par under").text
@@ -204,7 +206,7 @@ def CrawlTournament(tournament_dates):
                         try:
                             round_data['round_rating'] = player.find_all(class_="round-rating")[round_number].text
                         except:
-                            None
+                            round_data['round_rating'] = None
 
                         player_data['player_rounds'].append(round_data)
                     div['division_players_singles'].append(player_data)
@@ -261,13 +263,15 @@ def CrawlTournament(tournament_dates):
                         player_data['player_1_pdga_number'] = player_1.find(class_= even_or_odd + " pdga-number").text
                         player_data['player_1_pdga_link'] = "https://www.pdga.com" + player_1.find(class_= even_or_odd + " player").find('a')['href']
                     except:
-                        None
+                        player_data['player_1_pdga_number'] = None
+                        player_data['player_1_pdga_link'] = None
 
                     try:
                         player_data['player_2_pdga_number'] = player_2.find(class_= even_or_odd + " pdga-number").text
                         player_data['player_2_pdga_link'] = "https://www.pdga.com" + player_2.find(class_= even_or_odd + " player").find('a')['href']
                     except:
-                        None
+                        player_data['player_2_pdga_number'] = None
+                        player_data['player_2_pdga_link'] = None
 
                     try:
                         player_data['player_1_propagator'] = player_1.find(class_= even_or_odd + " player-rating propagator").text #if found then true, otherwise false
@@ -310,7 +314,7 @@ def CrawlTournament(tournament_dates):
                     try:
                         player_data['player_total_throws'] = player_1.find(class_= even_or_odd + " total").text
                     except:
-                        None
+                        player_data['player_total_throws'] = None
 
                     try:
                         player_data['player_total_par'] = player_1.find(class_= even_or_odd + " par under").text
@@ -334,7 +338,7 @@ def CrawlTournament(tournament_dates):
                         try:
                             round_data['round_rating'] = player_1.find_all(class_= even_or_odd + " round-rating")[round_number].text
                         except:
-                            None
+                            round_data['round_rating'] = None
 
                         player_data['player_rounds'].append(round_data)
                     div['division_players_doubles'].append(player_data)
@@ -392,7 +396,8 @@ def CrawlTournament(tournament_dates):
                         player_data['team_pdga_number'] = team.find(class_= even_or_odd + " pdga-number").text
                         player_data['team_pdga_link'] = "https://www.pdga.com" + team.find(class_= even_or_odd + " player").find('a')['href']
                     except:
-                        None
+                        player_data['team_pdga_number'] = None
+                        player_data['team_pdga_link'] = None
 
                     try:
                         player_data['team_propagator'] = team.find(class_= even_or_odd + " player-rating propagator").text #if found then true, otherwise false
@@ -421,7 +426,7 @@ def CrawlTournament(tournament_dates):
                     try:
                         player_data['player_total_throws'] = team.find(class_= even_or_odd + " total").text
                     except:
-                        None
+                        player_data['player_total_throws'] = None
 
                     try:
                         player_data['player_total_par'] = team.find(class_= even_or_odd + " par under").text
@@ -445,7 +450,7 @@ def CrawlTournament(tournament_dates):
                         try:
                             round_data['round_rating'] = team.find_all(class_= even_or_odd + " round-rating")[round_number].text
                         except:
-                            None
+                            round_data['round_rating'] = None
 
                         player_data['player_rounds'].append(round_data)
                     div['division_players_team'].append(player_data)

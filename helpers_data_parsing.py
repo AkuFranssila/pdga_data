@@ -1,6 +1,7 @@
 # coding=utf-8
 import json
 import logging
+import datetime
 from connect_mongodb import ConnectMongo
 from schemas import Player, Tournament
 from mongoengine import *
@@ -140,7 +141,7 @@ def ParseFullLocation(location):
 def ParseDate(date):
     if date is None:
         return None
-    day,month,year = date.split('-')
+    day,month,year = date.split(' ')[0].strip().split('-')
     month_dict = {
             "Jan":"01",
             "Feb":"02",
@@ -391,6 +392,31 @@ def ParseTournamentDates(event_dates):
     if start == end:
         length = 1
     else:
-        length = "Do something to me"
+        d1 = datetime.date(int(start.split('-')[0]), int(start.split('-')[1]), int(start.split('-')[2]))
+        d2 = datetime.date(int(end.split('-')[0]), int(end.split('-')[1]), int(end.split('-')[2]))
+        length = d2 - d1
+        length = length.days + 1
+
 
     return start, end, length
+
+def ParseTournamentDirector(td_name, td_id):
+    if td_name is not None:
+        td_name = td_name.replace('Tournament Director:', '').replace('Asst. Tournament Director:', '').replace('Asst. ', '').strip()
+    if td_id is not None:
+        td_id = td_id.replace('/general-contact?pdganum=', '').split('&token')[0].strip()
+        td_id = int(td_id)
+    return td_name, td_id
+
+def ParseTournamentWebsite(website):
+    if website is not None:
+        website = website.replace('Website: ', '').strip()
+
+    return website
+
+def ParseTournamentProPurse(pro_purse):
+    if pro_purse is not None:
+        pro_purse = pro_purse.replace('$', '').strip()
+        pro_purse = float(pro_purse)
+
+    return pro_purse
