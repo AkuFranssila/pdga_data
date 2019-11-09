@@ -85,7 +85,8 @@ def ParseTournament(data):
             #avg_throws_per_round
             #avg_par_per_round
             #avg_round_rating
-            #avg throw length
+            #avg throw length meters
+            #avg throw length feet
             #avg throws per hole
             #event_points
             #dns
@@ -95,6 +96,7 @@ def ParseTournament(data):
                 #round_throws
                 #round_rating
                 #round_placement
+                #tournament_placement
                 #avg throw length
                 #avg throws per hole
                 #dns
