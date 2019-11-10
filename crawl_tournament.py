@@ -77,6 +77,17 @@ def CrawlTournament(tournament_dates):
         except:
             event['event_phone'] = None
 
+        event['event_livescoring'] = []
+        try:
+            all_a = soup.find(class_="live-scoring").find_all('a')
+            for a in all_a:
+                try:
+                    event['event_livescoring'].append(a['href]'])
+                except:
+                    None
+        except:
+            None
+
         #Tournament categorization
         event['event_tier'] = soup.find_all(class_="tier")[1].text
         event['event_classification'] = soup.find_all(class_="classification")[1].text

@@ -416,7 +416,70 @@ def ParseTournamentWebsite(website):
 
 def ParseTournamentProPurse(pro_purse):
     if pro_purse is not None:
-        pro_purse = pro_purse.replace('$', '').strip()
+        pro_purse = pro_purse.replace('$', '').strip().replace(',', '')
         pro_purse = float(pro_purse)
 
     return pro_purse
+
+def ParseDivisionFullName(name):
+    if name is not None:
+        name = name.split('  ')[0]
+    return name
+
+def ParseDivisionTotalPlayers(division_players):
+    if division_players is not None:
+        division_players = division_players.strip().replace('(', '').replace(')', '')
+        division_players = int(division_players)
+    return division_players
+
+def ParseCourseDetails(course, pdga_page):
+    #"course_details": "\n\nJoe Wheeler State Park - Default Layout; 18 holes; Par 55\n\n"
+    #"course_pdga_link": "/node/223286"
+    #"course_details": "\n\nDacey Field Disc Golf - Blues - Longs; 18 holes; Par 62; 6,185 ft.\n\n"
+    #"course_details": "\n\nMatt Keatts Memorial at Forest Hills 2019; 20 holes; Par 66; 7,390 ft.\n\
+
+    if pdga_page is not None:
+        pdga_page = "https://www.pdga.com/" + pdga_page
+
+    if course is not None:
+        course = course.replace('\n', '')
+
+        if len(course.split(' - ')) => 3:
+            name = course.split(' - ', 1)[0]
+            course = course.split(' - ', 1)[1].split(';')
+            if len(course) == 4:
+                layout, holes, par, length = course
+            elif len(course) == 3:
+                layout, holes, par = course
+                length = None
+        elif len(course.split(';')) == 4:
+            name, holes, par, length = course.split(';')
+        elif len(course.split(';')) == 3:
+            name, holes, par = course.split(';')
+            length = None
+        else:
+            name, holes, par, length = None, None, None, None
+
+    if name is not None:
+        name = name.strip()
+    if holes is not None:
+        holes = holes.strip().replace(' holes', '')
+        holes = int(holes)
+    if par is not None:
+        par = par.strip().replace('Par ', '')
+        par = int(par)
+    if length is not None:
+        if "ft." in length:
+            length = length.strip().replace(' ft.', '').replace(',', '').replace(' ', '')
+            length = int(length)
+            length_feet = length
+            length_meters = length * 0.3048
+        elif " m" in length:
+            length = length.strip().replace(' m', '').replace(',', '').replace(' ', '')
+            length = int(length)
+            length_meters = length * 3.2808399
+        else:
+            length_meters, length_feet = None, None
+
+
+    return name, layout, holes, par, pdga_page, length_meters, length_feet

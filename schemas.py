@@ -144,13 +144,13 @@ class Tournament(Document):
     avg_total_round_rating = IntField(help_text="Check the avg round rating of all players if available and divide it by the number of rounds and number of players")
     avg_money_all_players = FloatField(help_text="Calculate the avg prize money per player by getting the total pro prize pool and dividing it by the number of players in the whole tournament")
     avg_money_mpo_players = FloatField(help_text="Calculate the avg prize money per player by getting the total pro prize pool and dividing it by the number of players in the pro division")
-    divisions = ListField(EmbeddedDocumentField(Division), help_text="More indepth data about individual divisions and rounds played in the tournament.")
     first_crawl_date = DateTimeField(default=datetime.datetime.now, help_text="Data should be given when crawling, but if it isn't then defaults to datetime now")
     latest_update = DateTimeField(default=datetime.datetime.now, help_text="Should be given when parsed, but if not given gives datetime now")
     fields_updated = ListField(DynamicField(), help_text="If player exists and is recrawled, what data was changed. Dict that contains dynamic data about the fields that were changed and also datetime when it was updated")
     pdga_latest_update = DateTimeField(help_text="Get the date (and time) when the tournament info was last updated or sent to PDGA. Original format in 13-Oct-2019 22:29:25 UTC")
-    hole_by_hole_scoring = BooleanField(help_text="Check if hole-by-hole scoring is available on the page by PDGA or Udisc")
+    hole_by_hole_scoring = ListField(help_text="Links to hole by hole scoring pages linked on the tournament page")
     event_results_status = StringField(default="Event report received. Official ratings approved.", help_text="If result report status is availabe crawl it. Unless give the status as ratings are official. Need logic so that upcoming events don't get ratings approved data.")
+    divisions = ListField(EmbeddedDocumentField(Division), help_text="More indepth data about individual divisions and rounds played in the tournament.")
     meta = {
 	   'indexes': [
             {'fields': ['tournament_id'], 'unique': True},

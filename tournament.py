@@ -33,7 +33,8 @@ def ParseTournament(data):
     tournament.tournament_type = data["event_type"]
     tournament.first_crawl_date = data["event_crawl_date"]
     tournament.latest_update = str(date.today())
-    #hole_by_hole_scoring
+    hole_by_hole_scoring = data['event_livescoring']
+    #tournament.divisions = ParseDivisions(data)
     #players (just collects player ids )
     #divisions
 
@@ -109,4 +110,4 @@ def ParseTournament(data):
     #avg_total_round_rating
     #avg_money_all_players
     #avg_money_mpo_players
-    print (tournament.to_json())
+    #print (tournament.to_json())
