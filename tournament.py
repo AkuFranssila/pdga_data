@@ -6,13 +6,14 @@ from schemas import Tournament
 from mongoengine import *
 from connect_mongodb import ConnectMongo
 from helpers_data_parsing import *
+from division import ParseDivisions
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
 def ParseTournament(data):
     #ConnectMongo()
-    print (json.dumps(data, indent=4))
+    #print (json.dumps(data, indent=4))
     #Fields from crawler
     tournament, exists, tournament.tournament_id, tournament.pdga_page_link = TournamentExists(data['event_link'])
     tournament.tournament_name = ParseTournamentName(data['event_title'])
@@ -34,7 +35,7 @@ def ParseTournament(data):
     tournament.first_crawl_date = data["event_crawl_date"]
     tournament.latest_update = str(date.today())
     hole_by_hole_scoring = data['event_livescoring']
-    #tournament.divisions = ParseDivisions(data)
+    tournament.divisions = ParseDivisions(data)
     #players (just collects player ids )
     #divisions
 

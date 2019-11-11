@@ -444,7 +444,7 @@ def ParseCourseDetails(course, pdga_page):
     if course is not None:
         course = course.replace('\n', '')
 
-        if len(course.split(' - ')) => 3:
+        if len(course.split(' - ')) >= 3:
             name = course.split(' - ', 1)[0]
             course = course.split(' - ', 1)[1].split(';')
             if len(course) == 4:
@@ -454,9 +454,11 @@ def ParseCourseDetails(course, pdga_page):
                 length = None
         elif len(course.split(';')) == 4:
             name, holes, par, length = course.split(';')
+            layout = None
         elif len(course.split(';')) == 3:
             name, holes, par = course.split(';')
             length = None
+            layout = None
         else:
             name, holes, par, length = None, None, None, None
 
@@ -483,3 +485,46 @@ def ParseCourseDetails(course, pdga_page):
 
 
     return name, layout, holes, par, pdga_page, length_meters, length_feet
+
+def ParsePDGAnumber(n):
+    pdga1 = None
+    pdga2 = None
+    if type == "singles":
+        if data['player_pdga_number'] is not None:
+            pdga1 = int(data['player_pdga_number'].strip())
+    elif type == "doubles":
+        if data['player_1_pdga_number'] is not None:
+            pdga1 = data['player_1_full_name']
+        if data['player_2_pdga_number'] is not None:
+            pdga2 = data['player_2_full_name']
+    else:
+        if data['player_pdga_number'] is not None:
+            pdga1 = int(data['player_pdga_number'].strip())
+
+    return pdga1, pdga2
+
+def ParseTournamentName(type, data):
+    if type == "singles":
+        name1 = data['player_full_name']
+        name2 = None
+    elif type == "doubles":
+        name1 = data['player_1_full_name']
+        name2 = data['player_2_full_name']
+    else:
+        name1 = data['player_full_name']
+        name2 = None
+
+    return name1, name2
+
+def ParseTournamentPDGApage(type, data):
+    if type == "singles":
+        page1 = data['player_full_name']
+        page2 = None
+    elif type == "doubles":
+        page1 = data['player_1_full_name']
+        page2 = data['player_2_full_name']
+    else:
+        page1 = data['player_full_name']
+        page2 = None
+
+    return page1, page2
