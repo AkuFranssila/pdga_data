@@ -479,14 +479,16 @@ def ParseCourseDetails(course, pdga_page):
         elif " m" in length:
             length = length.strip().replace(' m', '').replace(',', '').replace(' ', '')
             length = int(length)
-            length_meters = length * 3.2808399
+            length_meters = length
+            length_feet = length * 3.2808399
         else:
             length_meters, length_feet = None, None
-
+    else:
+        length_meters, length_feet = None, None
 
     return name, layout, holes, par, pdga_page, length_meters, length_feet
 
-def ParsePDGAnumber(n):
+def ParsePDGAnumber(type, data):
     pdga1 = None
     pdga2 = None
     if type == "singles":
@@ -498,12 +500,12 @@ def ParsePDGAnumber(n):
         if data['player_2_pdga_number'] is not None:
             pdga2 = data['player_2_full_name']
     else:
-        if data['player_pdga_number'] is not None:
-            pdga1 = int(data['player_pdga_number'].strip())
+        if data['team_pdga_number'] is not None:
+            pdga1 = int(data['team_pdga_number'].strip())
 
     return pdga1, pdga2
 
-def ParseTournamentName(type, data):
+def ParseTournamentPlayerName(type, data):
     if type == "singles":
         name1 = data['player_full_name']
         name2 = None
@@ -511,20 +513,117 @@ def ParseTournamentName(type, data):
         name1 = data['player_1_full_name']
         name2 = data['player_2_full_name']
     else:
-        name1 = data['player_full_name']
-        name2 = None
+        name1 = data['team_full_name'].strip()
+        name2 = data['team_player_name'].strip()
 
     return name1, name2
 
 def ParseTournamentPDGApage(type, data):
     if type == "singles":
-        page1 = data['player_full_name']
+        page1 = data["player_pdga_link"]
         page2 = None
     elif type == "doubles":
-        page1 = data['player_1_full_name']
-        page2 = data['player_2_full_name']
+        page1 = data["player_1_pdga_link"]
+        page2 = data["player_2_pdga_link"]
     else:
-        page1 = data['player_full_name']
+        page1 = data["team_pdga_link"]
         page2 = None
 
     return page1, page2
+
+def ParsePropagator(type, data):
+    if type == "singles":
+        var1 = data["player_propagator"]
+        var2 = False
+    elif type == "doubles":
+        var1 = data["player_1_propagator"]
+        var2 = data["player_2_propagator"]
+    else:
+        var1 = data["team_propagator"]
+        var2 = False
+
+    return var1, var2
+
+def ParseRatingTournament(type, data):
+    if type == "singles":
+        var1 = data["player_rating_during_tournament"]
+        var2 = False
+    elif type == "doubles":
+        var1 = data["player_1_rating_during_tournament"]
+        var2 = data["player_2_rating_during_tournament"]
+    else:
+        var1 = data["team_rating_during_tournament"]
+        var2 = False
+
+    return var1, var2
+
+def ParseTournamentPlacement(var):
+    if var is not None:
+        var = int(var)
+
+    return var
+
+def ParseTournamentWinnings(var):
+    if var is not None and len(var.strip()) > 0:
+        var = var.replace(',', '').replace(' ', '').replace('$', '').strip()
+        try:
+            var = float(var)
+        except ValueError:
+            import pdb; pdb.set_trace()
+    else:
+        var = float(0)
+
+    return var
+
+def ParseTournamentTotalThrows(var):
+    dnf = False
+    dns = False
+    if var is not None and len(var.strip()) > 0:
+        var = var.replace(',', '').replace(' ', '').replace('$', '').strip()
+        if var.lower() == "dnf":
+            dnf = True
+            var = None
+        elif var.lower() == "dns":
+            dns = True
+            var = None
+        else:
+            var = int(var)
+    else:
+        var = int(0)
+
+    return var, dnf, dns
+
+def ParseTournamentPar(var, dnf, dns):
+    if var is not None:
+        var = var.replace(',', '').strip()
+        if var == "E":
+            var = 0
+        elif var == "DNF/DNS":
+            dnf = True
+            var = None
+        else:
+            var = int(var)
+
+    return var, dnf, dns
+
+def ParsePlayerRoundThrows(var):
+    dnf = False
+    if var is not None and len(var) > 1:
+        if var == "999":
+            dnf = True
+            var = None
+        else:
+            try:
+                var = int(var)
+            except:
+                var = None
+    else:
+        var = None
+
+    return var, dnf
+
+def ParsePlayerRoundRating(var):
+    if var is not None and len(var) > 1:
+        var = int(var)
+    else:
+        var = None

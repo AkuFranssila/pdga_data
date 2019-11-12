@@ -12,15 +12,16 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def ParseDivisions(data):
     #ConnectMongo()
-    division = Division()
+    all_divisions = []
+
     for div in data['event_divisions']:
-        print (div)
+        #print (div)
+        division = Division()
         division.name = ParseDivisionFullName(div['division_name'])
         division.short_name = div['division_short_name']
         division.type = data["event_type"][0]
         division.total_players = ParseDivisionTotalPlayers(div["division_total_players"])
-        #division.rounds =
-        #divisionround = DivisionRound()
+        division.rounds = []
         try:
             all_players = div['division_players_singles']
         except:
@@ -32,39 +33,61 @@ def ParseDivisions(data):
         parsed_players = []
         for player in all_players:
             divisionplayer = DivisionPlayer()
-            divisionplayer.full_name_1, divisionplayer.full_name_2 = ParseTournamentName(data["event_type"][0], player)
+            divisionplayer.full_name_1, divisionplayer.full_name_2 = ParseTournamentPlayerName(data["event_type"][0], player)
             divisionplayer.pdga_number_1, divisionplayer.pdga_number_2 = ParsePDGAnumber(data["event_type"][0], player)
-            divisionplayer.pdga_page_1, divisionplayer.pdga_page_2 = player["player_pdga_link"]
-            divisionplayer.propagator_1, divisionplayer.propagator_2 = player["player_propagator"]
-            divisionplayer.rating_during_tournament_1, divisionplayer.rating_during_tournament_2 = player["player_rating_during_tournament"]
-            divisionplayer.final_placement = "" #funk
-            divisionplayer.money_won = "" #funk
-            divisionplayer.total_throws = "" #funk
-            divisionplayer.total_par = "" #funk
+            divisionplayer.pdga_page_1, divisionplayer.pdga_page_2 = ParseTournamentPDGApage(data["event_type"][0], player)
+            divisionplayer.propagator_1, divisionplayer.propagator_2 = ParsePropagator(data["event_type"][0], player)
+            divisionplayer.rating_during_tournament_1, divisionplayer.rating_during_tournament_2 = ParseRatingTournament(data["event_type"][0], player)
+            divisionplayer.final_placement = ParseTournamentPlacement(player['player_final_placement'])
+            divisionplayer.money_won = ParseTournamentWinnings(player['player_money_won'])
+            divisionplayer.total_throws, dnf_found, dns_found = ParseTournamentTotalThrows(player['player_total_throws'])
+            divisionplayer.total_par, dnf_found, dns_found = ParseTournamentPar(player["player_total_par"], dnf_found, dns_found) #funk player_total_par
             divisionplayer.event_points = float(player["player_event_points"])
-            print(player["player_final_placement"])
-            #divisionplayers.dns = ""
-            #divisionplayers.dnf = ""
-            #divisionplayers.avg_throws_per_round
-            #divisionplayers.avg_par_per_round
-            #divisionplayers.avg_round_rating
-            #divisionplayers.avg_throw_length_meters
-            #divisionplayers.avg_throw_length_feet
-            #divisionplayers.avg_throws_per_hole
+            divisionplayer.dns = dns_found
+            divisionplayer.dnf = dnf_found
+            #divisionplayer.avg_throws_per_round
+            #divisionplayer.avg_par_per_round
+            #divisionplayer.avg_round_rating
+            #divisionplayer.avg_throw_length_meters
+            #divisionplayer.avg_throw_length_feet
+            #divisionplayer.avg_throws_per_hole
+            divisionplayer.rounds = []
+            for round in player['player_rounds']:
+                r = PlayerRound()
+                r.round_number = round['round_number']
+                #print (data['event_link'])
+                print (round['round_throws'])
+                r.round_throws, r.dnf = ParsePlayerRoundThrows(round['round_throws'])
+                r.round_rating = ParsePlayerRoundRating(round['round_rating'])
+                #r.round_placement
+                #r.tournament_placement
+                #r.avg_throw_length_meters
+                #r.avg_throw_length_feet
+                r.dns = False
+                divisionplayer.rounds.append(r)
             parsed_players.append(divisionplayer)
+
+        division.players = parsed_players
 
         for count, round in enumerate(div['division_course_details']):
             divisionround = DivisionRound()
             divisionround.round_number = count + 1
-            divisionround.round_total_players = ""
+            #divisionround.round_total_players = ""
             divisionround.course_name, divisionround.course_layout, divisionround.course_holes, divisionround.course_par, divisionround.course_pdga_page, divisionround.course_length_meters, divisionround.course_length_feet = ParseCourseDetails(round['round_' + str(count + 1)]['course_details'], round['round_' + str(count + 1)]['course_pdga_link'])
-            divisionround.round_total_throws = ""
-            divisionround.avg_throws = ""
-            divisionround.avg_par = ""
-            divisionround.avg_throw_length_meters = ""
-            divisionround.avg_throw_length_meters = ""
-            divisionround.dns_count = ""
-            divisionround.dnf_count = ""
+            #divisionround.round_total_throws = ""
+            #divisionround.avg_throws = ""
+            #divisionround.avg_par = ""
+            #divisionround.avg_throw_length_meters = ""
+            #divisionround.avg_throw_length_meters = ""
+            #divisionround.dns_count = ""
+            #divisionround.dnf_count = ""
+            division.rounds.append(divisionround)
+
+        all_divisions.append(division)
+
+    return all_divisions
+
+
 
     #Divisions (Open, FPO, MP40)
         #division name

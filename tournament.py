@@ -39,6 +39,8 @@ def ParseTournament(data):
     #players (just collects player ids )
     #divisions
 
+    print (tournament.to_json())
+
     #Divisions (Open, FPO, MP40)
         #division name
         #division short name
