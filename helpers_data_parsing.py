@@ -606,8 +606,9 @@ def ParseTournamentPar(var, dnf, dns):
 
     return var, dnf, dns
 
-def ParsePlayerRoundThrows(var):
-    dnf = False
+def ParsePlayerRoundThrows(var, dnf):
+    if dnf is None:
+        dnf = False
     if var is not None and len(var) > 1:
         if var == "999":
             dnf = True
@@ -623,7 +624,43 @@ def ParsePlayerRoundThrows(var):
     return var, dnf
 
 def ParsePlayerRoundRating(var):
-    if var is not None and len(var) > 1:
+    if var is not None and len(var) > 0:
         var = int(var)
     else:
         var = None
+
+    return var
+
+def CalculateAvgFromRounds(throws, rounds):
+    if throws is not None:
+        if throws == 0:
+            return 0
+        else:
+            ttl = throws / len(rounds)
+    else:
+        return None
+
+def CalculateAvgRoundRating(rounds):
+    r_numbers = len(rounds)
+    total_rating = 0
+    for r in rounds:
+        r = json.loads(r.to_json())
+        print (r)
+        try:
+            if r['round_rating'] is not None and r['round_throws'] < 980:
+                total_rating += r['round_rating']
+            else:
+                r_numbers -= 1
+        except:
+            r_numbers -= 1
+    try:
+        avgrating = total_rating / r_numbers
+    except:
+        avgrating = None
+    print ('-------')
+    print (r_numbers)
+    print (total_rating)
+    print (avgrating)
+    print ('-------')
+
+    return avgrating

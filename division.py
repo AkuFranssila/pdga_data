@@ -30,6 +30,20 @@ def ParseDivisions(data):
             except:
                 all_players = div['division_players_team']
 
+        for count, round in enumerate(div['division_course_details']):
+            divisionround = DivisionRound()
+            divisionround.round_number = count + 1
+            #divisionround.round_total_players = ""
+            divisionround.course_name, divisionround.course_layout, divisionround.course_holes, divisionround.course_par, divisionround.course_pdga_page, divisionround.course_length_meters, divisionround.course_length_feet = ParseCourseDetails(round['round_' + str(count + 1)]['course_details'], round['round_' + str(count + 1)]['course_pdga_link'])
+            #divisionround.round_total_throws = ""
+            #divisionround.avg_throws = ""
+            #divisionround.avg_par = ""
+            #divisionround.avg_throw_length_meters = ""
+            #divisionround.avg_throw_length_meters = ""
+            #divisionround.dns_count = ""
+            #divisionround.dnf_count = ""
+            division.rounds.append(divisionround)
+
         parsed_players = []
         for player in all_players:
             divisionplayer = DivisionPlayer()
@@ -45,19 +59,11 @@ def ParseDivisions(data):
             divisionplayer.event_points = float(player["player_event_points"])
             divisionplayer.dns = dns_found
             divisionplayer.dnf = dnf_found
-            #divisionplayer.avg_throws_per_round
-            #divisionplayer.avg_par_per_round
-            #divisionplayer.avg_round_rating
-            #divisionplayer.avg_throw_length_meters
-            #divisionplayer.avg_throw_length_feet
-            #divisionplayer.avg_throws_per_hole
             divisionplayer.rounds = []
             for round in player['player_rounds']:
                 r = PlayerRound()
                 r.round_number = round['round_number']
-                #print (data['event_link'])
-                print (round['round_throws'])
-                r.round_throws, r.dnf = ParsePlayerRoundThrows(round['round_throws'])
+                r.round_throws, r.dnf = ParsePlayerRoundThrows(round['round_throws'], r.dnf)
                 r.round_rating = ParsePlayerRoundRating(round['round_rating'])
                 #r.round_placement
                 #r.tournament_placement
@@ -65,23 +71,21 @@ def ParseDivisions(data):
                 #r.avg_throw_length_feet
                 r.dns = False
                 divisionplayer.rounds.append(r)
+
+            divisionplayer.avg_throws_per_round = CalculateAvgFromRounds(divisionplayer.total_throws, divisionplayer.rounds)
+            divisionplayer.avg_par_per_round = CalculateAvgFromRounds(divisionplayer.total_par, divisionplayer.rounds)
+            divisionplayer.avg_round_rating = CalculateAvgRoundRating(divisionplayer.rounds)
+            #divisionplayer.avg_throw_length_meters
+            #divisionplayer.avg_throw_length_feet
+            #divisionplayer.avg_throws_per_hole
             parsed_players.append(divisionplayer)
 
         division.players = parsed_players
 
-        for count, round in enumerate(div['division_course_details']):
-            divisionround = DivisionRound()
-            divisionround.round_number = count + 1
-            #divisionround.round_total_players = ""
-            divisionround.course_name, divisionround.course_layout, divisionround.course_holes, divisionround.course_par, divisionround.course_pdga_page, divisionround.course_length_meters, divisionround.course_length_feet = ParseCourseDetails(round['round_' + str(count + 1)]['course_details'], round['round_' + str(count + 1)]['course_pdga_link'])
-            #divisionround.round_total_throws = ""
-            #divisionround.avg_throws = ""
-            #divisionround.avg_par = ""
-            #divisionround.avg_throw_length_meters = ""
-            #divisionround.avg_throw_length_meters = ""
-            #divisionround.dns_count = ""
-            #divisionround.dnf_count = ""
-            division.rounds.append(divisionround)
+        #for r in division.rounds:
+
+
+        #Calculate fields that can not be calculated at the same time while parsing basic data
 
         all_divisions.append(division)
 
