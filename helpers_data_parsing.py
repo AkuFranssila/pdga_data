@@ -409,15 +409,27 @@ def ParseTournamentDirector(td_name, td_id):
     return td_name, td_id
 
 def ParseTournamentWebsite(website):
+    if website is not None and website != "n/a":
+        #why .split('\m')[0] in the code? There is a random case that was most easy to solve adding the split
+        website = website.replace('Website: ', '').replace('[email protected]', '').strip().replace(',', '.').replace('\\', '/')
+        if "https://" or "http://" not in website:
+            website = "https://" + website
+            website = website.replace('https:///', 'https://').replace('ttp://', '').replace(' ', '')
+    else:
+        website = None
     if website is not None:
-        website = website.replace('Website: ', '').strip()
+        if website == "https://n/a" or website == "https://[email protected]" or "." not in website:
+            website = None
 
     return website
 
 def ParseTournamentProPurse(pro_purse):
     if pro_purse is not None:
         pro_purse = pro_purse.replace('$', '').strip().replace(',', '')
-        pro_purse = float(pro_purse)
+        try:
+            pro_purse = float(pro_purse)
+        except ValueError:
+            pro_purse = None
 
     return pro_purse
 
@@ -437,36 +449,54 @@ def ParseCourseDetails(course, pdga_page):
     #"course_pdga_link": "/node/223286"
     #"course_details": "\n\nDacey Field Disc Golf - Blues - Longs; 18 holes; Par 62; 6,185 ft.\n\n"
     #"course_details": "\n\nMatt Keatts Memorial at Forest Hills 2019; 20 holes; Par 66; 7,390 ft.\n\
+    # - B&amp;C; 18 holes; Par 58; 5,252 ft.
+
+    logging.info(repr(course))
 
     if pdga_page is not None:
-        pdga_page = "https://www.pdga.com/" + pdga_page
+        pdga_page = "https://www.pdga.com" + pdga_page
 
     if course is not None:
-        course = course.replace('\n', '')
-
-        if len(course.split(' - ')) >= 3:
+        course = course.replace('\n', '').replace(u'&amp;', u'&')
+        if len(course.split(' - ')) >= 2:
             name = course.split(' - ', 1)[0]
             course = course.split(' - ', 1)[1].split(';')
             if len(course) == 4:
                 layout, holes, par, length = course
             elif len(course) == 3:
                 layout, holes, par = course
-                length = None
+                if "par" in holes.lower():
+                    holes, par, length = course
+                    holes = holes.split(' ')[1]
+                    layout = None
+                else:
+                    length = None
+            else:
+                layout, holes, par, length = None, None, None, None
         elif len(course.split(';')) == 4:
             name, holes, par, length = course.split(';')
-            layout = None
+            try:
+                int(holes.strip().replace(' holes', ''))
+                layout = None
+            except:
+                layout1, layout2, holes, par = course.split(';')
+                name = "Unnamed course"
+                layout = layout1 + layout2
         elif len(course.split(';')) == 3:
             name, holes, par = course.split(';')
             length = None
             layout = None
         else:
-            name, holes, par, length = None, None, None, None
+            name, holes, par, length, layout = None, None, None, None, None
 
     if name is not None:
         name = name.strip()
     if holes is not None:
         holes = holes.strip().replace(' holes', '')
-        holes = int(holes)
+        try:
+            holes = int(holes)
+        except:
+            holes = None
     if par is not None:
         par = par.strip().replace('Par ', '')
         par = int(par)
@@ -496,9 +526,9 @@ def ParsePDGAnumber(type, data):
             pdga1 = int(data['player_pdga_number'].strip())
     elif type == "doubles":
         if data['player_1_pdga_number'] is not None:
-            pdga1 = data['player_1_full_name']
+            pdga1 = data['player_1_pdga_number']
         if data['player_2_pdga_number'] is not None:
-            pdga2 = data['player_2_full_name']
+            pdga2 = data['player_2_pdga_number']
     else:
         if data['team_pdga_number'] is not None:
             pdga1 = int(data['team_pdga_number'].strip())
@@ -513,8 +543,14 @@ def ParseTournamentPlayerName(type, data):
         name1 = data['player_1_full_name']
         name2 = data['player_2_full_name']
     else:
-        name1 = data['team_full_name'].strip()
-        name2 = data['team_player_name'].strip()
+        if data['team_full_name'] is not None:
+            name1 = data['team_full_name'].strip()
+        else:
+            name1 = None
+        if data['team_player_name'] is not None:
+            name2 = data['team_player_name'].strip()
+        else:
+            name2 = None
 
     return name1, name2
 
@@ -547,14 +583,19 @@ def ParsePropagator(type, data):
 def ParseRatingTournament(type, data):
     if type == "singles":
         var1 = data["player_rating_during_tournament"]
-        var2 = False
+        var2 = None
     elif type == "doubles":
-        var1 = data["player_1_rating_during_tournament"]
-        var2 = data["player_2_rating_during_tournament"]
+        #import pdb; pdb.set_trace()
+        var1 = data['player_1_rating_during_tournament']
+        var2 = data['player_2_rating_during_tournament']
     else:
         var1 = data["team_rating_during_tournament"]
-        var2 = False
+        var2 = None
 
+    if var1 == "":
+        var1 = None
+    if var2 == "":
+        var2 = None
     return var1, var2
 
 def ParseTournamentPlacement(var):
@@ -633,7 +674,7 @@ def ParsePlayerRoundRating(var):
 
 def CalculateAvgFromRounds(throws, rounds):
     if throws is not None:
-        if throws == 0:
+        if throws == 0 or len(rounds) == 0:
             return 0
         else:
             ttl = throws / len(rounds)
@@ -645,7 +686,6 @@ def CalculateAvgRoundRating(rounds):
     total_rating = 0
     for r in rounds:
         r = json.loads(r.to_json())
-        print (r)
         try:
             if r['round_rating'] is not None and r['round_throws'] < 980:
                 total_rating += r['round_rating']
@@ -657,10 +697,22 @@ def CalculateAvgRoundRating(rounds):
         avgrating = total_rating / r_numbers
     except:
         avgrating = None
-    print ('-------')
-    print (r_numbers)
-    print (total_rating)
-    print (avgrating)
-    print ('-------')
 
     return avgrating
+
+def ParseTournamentPoints(points):
+    if points is not None:
+        try:
+            points = float(points.strip())
+        except:
+            points = None
+
+    return points
+
+def ParseTournamentTeamName(team_name):
+    if team_name is not None:
+        team_name = team_name.strip()
+    else:
+        team_name = None
+
+    return team_name

@@ -7,6 +7,6 @@ from crawl_tournament import CrawlTournament
 from helpers_data_management import SaveFile
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-tournament_data = CrawlTournament("test")
+tournament_data = CrawlTournament("all")
 
 SaveFile('tournament', 'crawl',  tournament_data)

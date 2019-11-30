@@ -12,34 +12,38 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
 def ParseTournament(data):
-    #ConnectMongo()
+    ConnectMongo()
     #print (json.dumps(data, indent=4))
     #Fields from crawler
     tournament, exists, tournament.tournament_id, tournament.pdga_page_link = TournamentExists(data['event_link'])
-    tournament.tournament_name = ParseTournamentName(data['event_title'])
-    tournament.location_full = data["event_location"]
-    tournament.location_city, tournament.location_state, tournament.location_country = ParseFullLocation(data["event_location"])
-    tournament.tournament_start, tournament.tournament_end, tournament.tournament_length_days = ParseTournamentDates(data["event_date"])
-    tournament.tournament_director, tournament.tournament_director_id = ParseTournamentDirector(data['event_tournament_director_name'], data['event_tournament_director_id'])
-    tournament.assistant_director, tournament.assistant_director_id = ParseTournamentDirector(data['event_assistant_dt_name'], data['event_assistant_dt_id'])
-    tournament.tournament_tier = data['event_tier']
-    tournament.tournament_website = ParseTournamentWebsite(data["event_website"])
-    tournament.tournament_phone = data["event_phone"]
-    tournament.tournament_email = data["event_email"]
-    tournament.total_players = int(data["event_total_players"])
-    tournament.tournament_classification = data["event_classification"]
-    tournament.event_results_status = data["event_status"]
-    tournament.pdga_latest_update = ParseDate(data["event_status_last_updated"])
-    tournament.pro_prize_money = ParseTournamentProPurse(data["event_pro_purse"])
-    tournament.tournament_type = data["event_type"]
-    tournament.first_crawl_date = data["event_crawl_date"]
-    tournament.latest_update = str(date.today())
-    hole_by_hole_scoring = data['event_livescoring']
-    tournament.divisions = ParseDivisions(data)
-    #players (just collects player ids )
-    #divisions
+    if not exists:
+        tournament.tournament_name = ParseTournamentName(data['event_title'])
+        tournament.location_full = data["event_location"]
+        tournament.location_city, tournament.location_state, tournament.location_country = ParseFullLocation(data["event_location"])
+        tournament.tournament_start, tournament.tournament_end, tournament.tournament_length_days = ParseTournamentDates(data["event_date"])
+        tournament.tournament_director, tournament.tournament_director_id = ParseTournamentDirector(data['event_tournament_director_name'], data['event_tournament_director_id'])
+        tournament.assistant_director, tournament.assistant_director_id = ParseTournamentDirector(data['event_assistant_dt_name'], data['event_assistant_dt_id'])
+        tournament.tournament_tier = data['event_tier']
+        tournament.tournament_website = ParseTournamentWebsite(data["event_website"])
+        tournament.tournament_phone = data["event_phone"]
+        tournament.tournament_email = data["event_email"]
+        tournament.total_players = int(data["event_total_players"])
+        tournament.tournament_classification = data["event_classification"]
+        tournament.event_results_status = data["event_status"]
+        tournament.pdga_latest_update = ParseDate(data["event_status_last_updated"])
+        tournament.pro_prize_money = ParseTournamentProPurse(data["event_pro_purse"])
+        tournament.tournament_type = data["event_type"]
+        tournament.first_crawl_date = data["event_crawl_date"]
+        tournament.latest_update = str(date.today())
+        hole_by_hole_scoring = data['event_livescoring']
+        tournament.divisions, tournament.players = ParseDivisions(data)
+        #print (tournament.to_json())
+        print (tournament.pdga_page_link)
+        print (tournament.tournament_name)
 
-    print (tournament.to_json())
+        bbb = json.loads(tournament.to_json())
+        print (json.dumps(bbb, indent=4, sort_keys=True))
+        tournament.save()
 
     #Divisions (Open, FPO, MP40)
         #division name

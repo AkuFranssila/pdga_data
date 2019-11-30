@@ -13,7 +13,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 def ParseDivisions(data):
     #ConnectMongo()
     all_divisions = []
-
+    all_pdga_numbers = []
     for div in data['event_divisions']:
         #print (div)
         division = Division()
@@ -56,7 +56,7 @@ def ParseDivisions(data):
             divisionplayer.money_won = ParseTournamentWinnings(player['player_money_won'])
             divisionplayer.total_throws, dnf_found, dns_found = ParseTournamentTotalThrows(player['player_total_throws'])
             divisionplayer.total_par, dnf_found, dns_found = ParseTournamentPar(player["player_total_par"], dnf_found, dns_found) #funk player_total_par
-            divisionplayer.event_points = float(player["player_event_points"])
+            divisionplayer.event_points = ParseTournamentPoints(player["player_event_points"])
             divisionplayer.dns = dns_found
             divisionplayer.dnf = dnf_found
             divisionplayer.rounds = []
@@ -71,6 +71,12 @@ def ParseDivisions(data):
                 #r.avg_throw_length_feet
                 r.dns = False
                 divisionplayer.rounds.append(r)
+
+            if divisionplayer.pdga_number_1 is not None:
+                all_pdga_numbers.append(divisionplayer.pdga_number_1)
+
+            if divisionplayer.pdga_number_2 is not None:
+                all_pdga_numbers.append(divisionplayer.pdga_number_2)
 
             divisionplayer.avg_throws_per_round = CalculateAvgFromRounds(divisionplayer.total_throws, divisionplayer.rounds)
             divisionplayer.avg_par_per_round = CalculateAvgFromRounds(divisionplayer.total_par, divisionplayer.rounds)
@@ -89,7 +95,7 @@ def ParseDivisions(data):
 
         all_divisions.append(division)
 
-    return all_divisions
+    return all_divisions, all_pdga_numbers
 
 
 
