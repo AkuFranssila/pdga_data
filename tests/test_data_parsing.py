@@ -4,9 +4,8 @@ import unittest
 import sys
 import os
 cwd = os.getcwd()
-os.chdir("..")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
 from helpers_data_parsing import *
-print (cwd)
 #sys.path.append('../pdga_data')
 #from helpers_data_parsing import *
 #import .helpers_data_parsing

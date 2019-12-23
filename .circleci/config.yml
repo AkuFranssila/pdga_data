@@ -20,7 +20,8 @@ jobs:
       - run:
           command: |
             . env/bin/activate
-            python -m tests.test_data_parsing
+            cd tests
+            python test_data_parsing.py
       - store_artifacts:
           path: tests/test-reports/
           destination: tr1
