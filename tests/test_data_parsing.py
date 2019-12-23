@@ -4,10 +4,9 @@ import unittest
 import sys
 import os
 cwd = os.getcwd()
-from os import listdir
-
+os.chdir("..")
+from helpers_data_parsing import *
 print (cwd)
-print (os.listdir())
 #sys.path.append('../pdga_data')
 #from helpers_data_parsing import *
 #import .helpers_data_parsing
@@ -16,8 +15,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 class TestDataParsers(unittest.TestCase):
 
     def test_fullname_parser(self):
-        #self.assertEqual(ParseFullName("Clark Kent"), ('Clark', 'Kent'))
-        print ('lol')
+        self.assertEqual(ParseFullName("Clark Kent"), ('Clark', 'Kent'))
 
     # def test_upper(self):
     #     self.assertEqual('foo'.upper(), 'FOO')
