@@ -1,7 +1,14 @@
 # coding=utf-8
 import runpy
 
-runpy.run_path(file_path='test_data_parsing.py')
+def RunAllTests():
+    runpy.run_path('test_data_parsing.py', run_name='__main__')
 
-if __name__ == '__main__':
-    main()
+def RunSingleTest(filename):
+    runpy.run_path(filename)
+
+def main():
+    RunAllTests()
+
+if __name__=='__main__':
+   main()
