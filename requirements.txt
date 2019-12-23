@@ -2,3 +2,4 @@ bs4
 mongoengine
 requests
 pylint
+pycountry

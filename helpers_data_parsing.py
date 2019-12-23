@@ -1,7 +1,10 @@
 # coding=utf-8
+import os
 import json
 import logging
 import datetime
+import requests
+import pycountry
 from schemas import Player, Tournament
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
@@ -88,18 +91,23 @@ def ParseFullLocation(location):
     location = location.replace('Location:', '').split(',')
     cleaned_location = []
     for loc in location:
+        loc = loc.strip()
+        if loc == "USA":
+            loc = "United States"
         cleaned_location.append(loc.strip())
     location = cleaned_location
     if len(location) >= 3 and location[-1] == "United States":
+        logging.info('Location if statement 1')
+        logging.info(location)
         city = location[0]
         try:
             state = us_states[location[1]]
         except:
             state = location[1]
         country = "United States"
-        logging.info('If statement 1')
     elif len(location) >= 3 and "United States" in location:
         logging.info('If statement 2')
+        logging.info(location)
         city = location[0]
         try:
             state = us_states[location[1]]
@@ -108,11 +116,13 @@ def ParseFullLocation(location):
         country = location[-1]
     elif len(location) >= 3:
         logging.info('If statement 3')
+        logging.info(location)
         city = location[0]
         state = location[1]
         country = location[-1]
     elif len(location) == 2 and "United States" not in location:
         logging.info('If statement 4')
+        logging.info(location)
         if len(location[1]) == 2:
             country = "United States"
             try:
@@ -126,19 +136,47 @@ def ParseFullLocation(location):
             country = location[-1]
     elif len(location) == 2 and "United States" in location:
         logging.info('If statement 5')
+        logging.info(location)
         city = None
         state = location[0]
         country = location[-1]
     elif len(location) == 1 and len(location[0]) == 2:
         logging.info('If statement 6')
+        logging.info(location)
         city = None
         state = us_states[location[0]]
         country = "United States"
-    else:
-        logging.info('If statement 6')
+    elif len(location) == 1 and pycountry.countries.get(name=location[0]):
+        logging.info('If statement 7')
+        logging.info(location)
         city = None
         state = None
-        country = location[-1]
+        country = location[0]
+    elif len(location) == 1:
+        logging.info('If statement 8')
+        logging.info(location)
+        if len(location[0]) > 1:
+            google_geolocation_query = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + location[0] + '&key=' + os.environ['google_geolocation_apikey'])
+            json_data = json.loads(google_geolocation_query.text)
+            logging.info(json_data)
+            try:
+                city, state, country = ParseFullLocation(json_data['results'][0]['formatted_address'])
+                if location[0] not in city and location[0] not in state and location[0] not in country:
+                    city = None
+                    state = None
+                    country = None
+            except:
+                None
+        else:
+            city = None
+            state = None
+            country = None
+    else:
+        logging.info('If statement 9')
+        logging.info(location)
+        city = None
+        state = None
+        country = None
 
     return city, state, country
 

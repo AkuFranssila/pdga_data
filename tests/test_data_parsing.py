@@ -20,12 +20,14 @@ class TestDataParsers(unittest.TestCase):
         logging.info('Testing ParseFullLocation')
         #Returns city, state, country
         self.assertEqual(ParseFullLocation('Helsinki, Finland'), ('Helsinki', None, 'Finland'))
-        self.assertEqual(ParseFullLocation('Helsinki'), ('Helsinki', None, None))
+        self.assertEqual(ParseFullLocation('Helsinki'), ('Helsinki', None, 'Finland'))
+        self.assertEqual(ParseFullLocation('New York'), ('New York', 'New York', 'United States'))
+        self.assertEqual(ParseFullLocation('New York, NY, United States'), ('New York', 'New York', 'United States'))
         self.assertEqual(ParseFullLocation('Finland'), (None, None, 'Finland'))
         self.assertEqual(ParseFullLocation('IL'), (None, 'Illinois', 'United States'))
         self.assertEqual(ParseFullLocation('Gotham, IL, United States'), ('Gotham', 'Illinois', 'United States'))
         self.assertEqual(ParseFullLocation('United States'), (None, None, 'United States'))
-        self.assertEqual(ParseFullLocation('Gotham'), ('Gotham', None, None))
+        self.assertEqual(ParseFullLocation('Gotham'), (None, None, None))
 
 if __name__ == '__main__':
     unittest.main()
