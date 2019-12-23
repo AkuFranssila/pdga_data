@@ -1,5 +1,4 @@
 
 send_data_to_mongo.py
-connect_mongodb.py
 crawled_tournaments/tournament_data_2019-11-24.json
 crawled_tournaments/tournament_data_2019-11-22.json
