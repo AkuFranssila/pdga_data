@@ -2,8 +2,9 @@
 import logging
 import unittest
 import sys
-sys.path.append('/pdga_ratings/pdga_data')
+sys.path.append('../pdga_data')
 from helpers_data_parsing import *
+#import .helpers_data_parsing
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 class TestDataParsers(unittest.TestCase):
