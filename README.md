@@ -27,9 +27,9 @@ This project is to collect all player and tournament data available on PDGA. PDG
 - [x] Add crawling for tournaments
 - [x] Add parsing for tournaments
 - [x] Check any mistakes/errors after all tournaments crawled and rerun files if fixable in merge
-- [ ] Add CLI for automated testing
+- [x] Add CLI for automated testing
+- [ ] Create tests
 - [ ] Create cronjobs and automate the process
 - [ ] Create API for the data (mongoDB + python + Flask)
 - [ ] Create webpage where to show pdga data
 - [ ] Make the data searchable through filters and/or remade statistics. (React)
-- [ ] Tests
