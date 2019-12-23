@@ -12,13 +12,10 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 class TestDataParsers(unittest.TestCase):
 
     def test_ParseFullName(self):
-        logging.info('Testing ParseFullName')
         self.assertEqual(ParseFullName("Clark Kent"), ('Clark', 'Kent'))
         self.assertEqual(ParseFullName("Clark Superman Kent"), ('Clark Superman', 'Kent'))
 
     def test_ParseFullLocation(self):
-        logging.info('Testing ParseFullLocation')
-        #Returns city, state, country
         self.assertEqual(ParseFullLocation('Helsinki, Finland'), ('Helsinki', None, 'Finland'))
         self.assertEqual(ParseFullLocation('Helsinki'), ('Helsinki', None, 'Finland'))
         self.assertEqual(ParseFullLocation('New York'), ('New York', 'New York', 'United States'))
@@ -28,6 +25,10 @@ class TestDataParsers(unittest.TestCase):
         self.assertEqual(ParseFullLocation('Gotham, IL, United States'), ('Gotham', 'Illinois', 'United States'))
         self.assertEqual(ParseFullLocation('United States'), (None, None, 'United States'))
         self.assertEqual(ParseFullLocation('Gotham'), (None, None, None))
+
+    def test_ParseDate(self):
+        self.assertEqual(ParseDate(None), None)
+        self.assertEqual(ParseDate('01-Jan-1993'), '1993-01-01')
 
 if __name__ == '__main__':
     unittest.main()
