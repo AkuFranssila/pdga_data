@@ -13,9 +13,6 @@ jobs:
             python3 -m venv env
             . env/bin/activate
             pip install -r requirements.txt
-          name: "Setup custom environment variables"
-          command: |
-            echo 'export MY_ENV_VAR=' >> $BASH_ENV # Redirect MY_ENV_VAR into $BASH_ENV
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
