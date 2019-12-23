@@ -4,8 +4,10 @@ import unittest
 import sys
 import os
 cwd = os.getcwd()
+from os import listdir
 
 print (cwd)
+print (os.listdir())
 #sys.path.append('../pdga_data')
 #from helpers_data_parsing import *
 #import .helpers_data_parsing
