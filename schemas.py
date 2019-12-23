@@ -2,6 +2,61 @@
 from mongoengine import *
 import datetime
 
+class PlayerYearStats(EmbeddedDocument):
+    type = StringField()
+    position = IntField()
+    year = IntField()
+    player_name = StringField()
+    pdga_number = IntField()
+    money_won = FloatField()
+    tournaments_won = IntField()
+    tournaments_played = IntField()
+    highest_rated_round = IntField()
+    highest_rated_round_number = IntField()
+    highest_rated_round_tournament_id = IntField()
+    highest_rated_round_tournament_name = StringField()
+    lowest_rated_round = IntField()
+    lowest_rated_round_number = IntField()
+    lowest_rated_round_tournament_id = IntField()
+    lowest_rated_round_tournament_name = StringField()
+
+class DivisionYearStats(EmbeddedDocument):
+    type = StringField(help_text="What is the statistics type")
+    division_name = StringField(help_text="Division that this data is made from")
+    players = ListField(EmbeddedDocumentField(PlayerYearStats))
+
+class CountryYearlyStatistics(EmbeddedDocument):
+    year = IntField(help_text="Year field in string as we want to have one option also for alltime")
+    highest_rated_players = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 highest rated players with player id, player name, rating, money won that year, tournaments played that year, tournaments won that year")
+    most_money_won = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 most money won players with player id, player name, rating, money won that year, tournaments played that year, tournaments won that year")
+    most_tournaments_won = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 highest rated players with player id, player name, rating, money won that year, tournaments played that year, tournaments won that year")
+    most_tournaments_played = ListField(EmbeddedDocumentField(DivisionYearStats))
+    highest_rated_rounds = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 highest rated rounds for the year. Include player name, tournament name, player id, tournament id, round rating, round number")
+    lowest_rated_rounds = ListField(EmbeddedDocumentField(DivisionYearStats))
+    registered_players = IntField(help_text="Number of registered players during the year. Data from member_since field")
+    active_players = IntField(help_text="Current number of players with active PDGA status, only collect this info for latest year as there is no reliable way to collect it for previous years")
+    inactive_players = IntField(help_text="Current number of inactive players from total players minus unused numbers, only collect this info for latest year as there is no reliable way to collect it for previous years")
+    total_money_won = FloatField(help_text="Total money won by players from the specific country during that year")
+
+class CountryAnalytics(Document):
+    country = StringField(help_text="Country which the analytics is from")
+    yearly_statistics = ListField(EmbeddedDocumentField(CountryYearlyStatistics))
+    highest_rated_players = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 highest rated players with player id, player name, rating, money won that year, tournaments played that year, tournaments won that year")
+    most_money_won = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 most money won players with player id, player name, rating, money won that year, tournaments played that year, tournaments won that year")
+    most_tournaments_won = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 highest rated players with player id, player name, rating, money won that year, tournaments played that year, tournaments won that year")
+    most_tournaments_played = ListField(EmbeddedDocumentField(DivisionYearStats))
+    highest_rated_rounds = ListField(EmbeddedDocumentField(DivisionYearStats), help_text="Include top 10 highest rated rounds for the year. Include player name, tournament name, player id, tournament id, round rating, round number")
+    lowest_rated_rounds = ListField(EmbeddedDocumentField(DivisionYearStats))
+    total_money_won = FloatField()
+    total_tournament_count = IntField()
+    total_throws = IntField()
+    current_total_players = IntField()
+    current_active_players = IntField(help_text="Current number of players with active PDGA status")
+    current_inactive_players = IntField(help_text="Current number of inactive players from total players minus unused numbers")
+    current_unused_pdga_numbers = IntField(help_text="Number of PDGA numbers inbetween first and last pdga number that are not being used")
+    current_certified_players = IntField(help_text="Number of certified people currently")
+    current_registered_players = IntField(help_text="Current total number of PDGA members minus unused pdga number")
+
 class PlayerRound(EmbeddedDocument):
     round_number = IntField(help_text="Which round is the data from")
     round_throws = IntField(help_text="Total number of throws during this specific round")
@@ -79,6 +134,25 @@ class Division(EmbeddedDocument):
     rounds = ListField(EmbeddedDocumentField(DivisionRound))
     players = ListField(EmbeddedDocumentField(DivisionPlayer))
 
+class PlayerYearlyStatistics(EmbeddedDocument):
+    year = IntField()
+    money_won = FloatField()
+    tournaments_played = IntField()
+    highest_rating = IntField()
+    lowest_rating = IntField()
+    year_final_rating = IntField()
+    rating_growth = IntField()
+    total_points = FloatField()
+    certified = BooleanField()
+    total_throws = IntField()
+    best_round_rating = IntField()
+    best_round_rating_tournament_id = IntField()
+    lowest_round_rating = IntField()
+    lowest_round_rating_tournament_id = IntField()
+    best_round_rating_rank_local = IntField()
+    best_round_rating_rank_global = IntField()
+
+
 class Player(Document):
     full_name = StringField(max_lenght=50, help_text="Full non parsed name")
     first_name = StringField(max_lenght=25, help_text="Parsed first name")
@@ -108,6 +182,7 @@ class Player(Document):
     certified_status = BooleanField(default=False, help_text="If player has done certification exam. Defaults to false as most people haven't done it")
     certified_status_expiration_date = DateTimeField(help_text="Certification lasts for around 3 years. Gives exact date when it expires")
     career_earnings = FloatField(help_text="Total earnings in dollars. Inflation not taken into account")
+    yearly_statistics = ListField(EmbeddedDocumentField(PlayerYearlyStatistics))
     individual_tournament_years = ListField(IntField(max_lenght=5), help_text="Checks on how many years player has played in tournaments. Player can be member for 20 years but only play once in a tournament. List that contains played years as int")
     pdga_page_link = URLField(help_text="Direct link to PDGA page. Link could be also generated from the ID")
     played_event_ids = ListField(IntField(max_lenght=10), help_text="All pdga events have own IDs, collect the tournament IDs here where the player has participated.")
@@ -128,6 +203,7 @@ class Tournament(Document):
     tournament_start = DateTimeField(help_text="Start date of the tournament")
     tournament_end = DateTimeField(help_text="End date of the tournament")
     tournament_length_days = IntField(help_text="Number of days the tournament was")
+    tournament_year = IntField(help_text="The year the tournament was played, the year is taken from the start date if there tournament extends over to the next year")
     location_full = StringField(max_lenght=100, help_text="Unparsed location of the tournament")
     location_city = StringField(max_lenght=50, help_text="Parsed city from the full location")
     location_state = StringField(max_lenght=50, help_text="Parsed state from the full location")

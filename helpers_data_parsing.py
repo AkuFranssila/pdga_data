@@ -130,6 +130,11 @@ def ParseFullLocation(location):
         city = None
         state = location[0]
         country = location[-1]
+    elif len(location) == 1 and len(location[0]) == 2:
+        logging.info('If statement 6')
+        city = None
+        state = us_states[location[0]]
+        country = "United States"
     else:
         logging.info('If statement 6')
         city = None
