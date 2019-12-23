@@ -2,7 +2,6 @@
 import json
 import logging
 import datetime
-from connect_mongodb import ConnectMongo
 from schemas import Player, Tournament
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
