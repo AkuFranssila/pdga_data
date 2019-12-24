@@ -16,14 +16,14 @@ class TestDataParsers(unittest.TestCase):
         self.assertEqual(ParseFullName("Clark Superman Kent"), ('Clark Superman', 'Kent'))
 
     def test_ParseFullLocation(self):
-        self.assertEqual(ParseFullLocation('Helsinki, Finland'), ('Helsinki', None, 'Finland'))
-        self.assertEqual(ParseFullLocation('Helsinki'), ('Helsinki', None, 'Finland'))
-        self.assertEqual(ParseFullLocation('New York'), ('New York', 'New York', 'United States'))
-        self.assertEqual(ParseFullLocation('New York, NY, United States'), ('New York', 'New York', 'United States'))
-        self.assertEqual(ParseFullLocation('Finland'), (None, None, 'Finland'))
-        self.assertEqual(ParseFullLocation('IL'), (None, 'Illinois', 'United States'))
-        self.assertEqual(ParseFullLocation('Gotham, IL, United States'), ('Gotham', 'Illinois', 'United States'))
-        self.assertEqual(ParseFullLocation('United States'), (None, None, 'United States'))
+        self.assertEqual(ParseFullLocation('Helsinki, Finland'), ('helsinki', None, 'finland'))
+        self.assertEqual(ParseFullLocation('Helsinki'), ('helsinki', None, 'finland'))
+        self.assertEqual(ParseFullLocation('New York'), ('new york', 'new york', 'united states'))
+        self.assertEqual(ParseFullLocation('New York, NY, United States'), ('new york', 'new york', 'united states'))
+        self.assertEqual(ParseFullLocation('Finland'), (None, None, 'finland'))
+        self.assertEqual(ParseFullLocation('IL'), (None, 'illinois', 'united states'))
+        self.assertEqual(ParseFullLocation('Gotham, IL, United States'), ('gotham', 'illinois', 'united states'))
+        self.assertEqual(ParseFullLocation('United States'), (None, None, 'united states'))
         self.assertEqual(ParseFullLocation('Gotham'), (None, None, None))
 
     def test_ParseDate(self):

@@ -13,8 +13,8 @@ logging.info('Starting country analytics generation script')
 ConnectMongo()
 
 all_countries = Player.objects.filter().distinct(field="country")
+import pdb; pdb.set_trace()
 all_countries.append('all')
 
-for country in all_countries:
-    if country == "all":
-        
+#for country in all_countries:
+#    if country == "all":

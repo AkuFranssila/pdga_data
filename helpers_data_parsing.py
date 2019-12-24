@@ -26,91 +26,91 @@ def ParseFullName(name):
 
 def ParseFullLocation(location):
     us_states = {
-        'AK': 'Alaska',
-        'AL': 'Alabama',
-        'AR': 'Arkansas',
-        'AS': 'American Samoa',
-        'AZ': 'Arizona',
-        'CA': 'California',
-        'CO': 'Colorado',
-        'CT': 'Connecticut',
-        'DC': 'District of Columbia',
-        'DE': 'Delaware',
-        'FL': 'Florida',
-        'GA': 'Georgia',
-        'GU': 'Guam',
-        'HI': 'Hawaii',
-        'IA': 'Iowa',
-        'ID': 'Idaho',
-        'IL': 'Illinois',
-        'IN': 'Indiana',
-        'KS': 'Kansas',
-        'KY': 'Kentucky',
-        'LA': 'Louisiana',
-        'MA': 'Massachusetts',
-        'MD': 'Maryland',
-        'ME': 'Maine',
-        'MI': 'Michigan',
-        'MN': 'Minnesota',
-        'MO': 'Missouri',
-        'MP': 'Northern Mariana Islands',
-        'MS': 'Mississippi',
-        'MT': 'Montana',
-        'NA': 'National',
-        'NC': 'North Carolina',
-        'ND': 'North Dakota',
-        'NE': 'Nebraska',
-        'NH': 'New Hampshire',
-        'NJ': 'New Jersey',
-        'NM': 'New Mexico',
-        'NV': 'Nevada',
-        'NY': 'New York',
-        'OH': 'Ohio',
-        'OK': 'Oklahoma',
-        'OR': 'Oregon',
-        'PA': 'Pennsylvania',
-        'PR': 'Puerto Rico',
-        'RI': 'Rhode Island',
-        'SC': 'South Carolina',
-        'SD': 'South Dakota',
-        'TN': 'Tennessee',
-        'TX': 'Texas',
-        'UT': 'Utah',
-        'VA': 'Virginia',
-        'VI': 'Virgin Islands',
-        'VT': 'Vermont',
-        'WA': 'Washington',
-        'WI': 'Wisconsin',
-        'WV': 'West Virginia',
-        'WY': 'Wyoming'
+        'ak': 'Alaska',
+        'al': 'Alabama',
+        'ar': 'Arkansas',
+        'as': 'American Samoa',
+        'az': 'Arizona',
+        'ca': 'California',
+        'co': 'Colorado',
+        'ct': 'Connecticut',
+        'dc': 'District of Columbia',
+        'de': 'Delaware',
+        'fl': 'Florida',
+        'ga': 'Georgia',
+        'gu': 'Guam',
+        'hi': 'Hawaii',
+        'ia': 'Iowa',
+        'id': 'Idaho',
+        'il': 'Illinois',
+        'in': 'Indiana',
+        'ks': 'Kansas',
+        'ky': 'Kentucky',
+        'la': 'Louisiana',
+        'ma': 'Massachusetts',
+        'md': 'Maryland',
+        'me': 'Maine',
+        'mi': 'Michigan',
+        'mn': 'Minnesota',
+        'mo': 'Missouri',
+        'mp': 'Northern Mariana Islands',
+        'ms': 'Mississippi',
+        'mt': 'Montana',
+        'na': 'National',
+        'nc': 'North Carolina',
+        'nd': 'North Dakota',
+        'ne': 'Nebraska',
+        'nh': 'New Hampshire',
+        'nj': 'New Jersey',
+        'nm': 'New Mexico',
+        'nv': 'Nevada',
+        'ny': 'New York',
+        'oh': 'Ohio',
+        'ok': 'Oklahoma',
+        'or': 'Oregon',
+        'pa': 'Pennsylvania',
+        'pr': 'Puerto Rico',
+        'ri': 'Rhode Island',
+        'sc': 'South Carolina',
+        'sd': 'South Dakota',
+        'tn': 'Tennessee',
+        'tx': 'Texas',
+        'ut': 'Utah',
+        'va': 'Virginia',
+        'vi': 'Virgin Islands',
+        'vt': 'Vermont',
+        'wa': 'Washington',
+        'wi': 'Wisconsin',
+        'wv': 'West Virginia',
+        'wy': 'Wyoming'
         }
 
     if location is None:
         return None, None, None
 
-    location = location.replace('Location:', '').split(',')
+    location = location.replace('Location:', '').replace('?', '').split(',')
     cleaned_location = []
     for loc in location:
         loc = loc.strip()
-        if loc == "USA":
-            loc = "United States"
-        cleaned_location.append(loc.strip())
+        if loc == "usa":
+            loc = "united states"
+        cleaned_location.append(loc.strip().lower())
     location = cleaned_location
-    if len(location) >= 3 and location[-1] == "United States":
+    if len(location) >= 3 and location[-1] == "united states":
         logging.info('Location if statement 1')
         logging.info(location)
         city = location[0]
         try:
-            state = us_states[location[1]]
+            state = us_states[location[1]].lower()
         except:
             state = location[1]
-        country = "United States"
-    elif len(location) >= 3 and "United States" in location:
+        country = "united states"
+    elif len(location) >= 3 and "united states" in location:
         logging.info('If statement 2')
         logging.info(location)
         city = location[0]
         try:
-            state = us_states[location[1]]
+            state = us_states[location[1]].lower()
         except:
             state = location[1]
         country = location[-1]
@@ -120,13 +120,13 @@ def ParseFullLocation(location):
         city = location[0]
         state = location[1]
         country = location[-1]
-    elif len(location) == 2 and "United States" not in location:
+    elif len(location) == 2 and "united states" not in location:
         logging.info('If statement 4')
         logging.info(location)
         if len(location[1]) == 2:
-            country = "United States"
+            country = "united states"
             try:
-                state = us_states[location[1]]
+                state = us_states[location[1]].lower()
             except:
                 state = location[1]
             city = location[0]
@@ -134,7 +134,7 @@ def ParseFullLocation(location):
             city = location[0]
             state = None
             country = location[-1]
-    elif len(location) == 2 and "United States" in location:
+    elif len(location) == 2 and "united states" in location:
         logging.info('If statement 5')
         logging.info(location)
         city = None
@@ -144,9 +144,9 @@ def ParseFullLocation(location):
         logging.info('If statement 6')
         logging.info(location)
         city = None
-        state = us_states[location[0]]
-        country = "United States"
-    elif len(location) == 1 and pycountry.countries.get(name=location[0]):
+        state = us_states[location[0]].lower()
+        country = "united states"
+    elif len(location) == 1 and pycountry.countries.get(name=location[0].title()):
         logging.info('If statement 7')
         logging.info(location)
         city = None
@@ -160,13 +160,17 @@ def ParseFullLocation(location):
             json_data = json.loads(google_geolocation_query.text)
             logging.info(json_data)
             try:
-                city, state, country = ParseFullLocation(json_data['results'][0]['formatted_address'])
-                if location[0] not in city and location[0] not in state and location[0] not in country:
+                parsed_new_location = ParseFullLocation(json_data['results'][0]['formatted_address'].lower())
+                city, state, country = parsed_new_location
+                logging.info(parsed_new_location)
+                if location[0] not in parsed_new_location:
                     city = None
                     state = None
                     country = None
             except:
-                None
+                city = None
+                state = None
+                country = None
         else:
             city = None
             state = None
