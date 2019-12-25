@@ -30,5 +30,12 @@ class TestDataParsers(unittest.TestCase):
         self.assertEqual(ParseDate(None), None)
         self.assertEqual(ParseDate('01-Jan-1993'), '1993-01-01')
 
+    def test_CheckMembershipStatus(self):
+        self.assertEqual(CheckMembershipStatus(None), (None, False))
+        self.assertEqual(CheckMembershipStatus('Ace Club'), ('ace club', True))
+        self.assertEqual(CheckMembershipStatus('EAGLE CLUB'), ('eagle club', True))
+        self.assertEqual(CheckMembershipStatus('Current'), ('current', True))
+        self.assertEqual(CheckMembershipStatus(1234), ('1234', False))
+
 if __name__ == '__main__':
     unittest.main()

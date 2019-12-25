@@ -224,7 +224,7 @@ def ParseIdStatus(full_name, id_status):
 
 def CheckMembershipStatus(membership_status):
     if membership_status is not None:
-        membership_status = membership_status.lower().strip()
+        membership_status = str(membership_status).lower().strip()
     accepted_statuses = ['ace club', 'eagle club', 'birdie club', 'active', 'current']
     if membership_status in accepted_statuses:
         return membership_status, True
