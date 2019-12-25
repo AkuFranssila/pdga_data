@@ -242,6 +242,8 @@ def ParseMemberSince(year):
         return 0
     elif year is not None:
         return year
+    else:
+        return None
 
 def CheckIfValueNone(value):
     if value is not None:

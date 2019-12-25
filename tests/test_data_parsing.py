@@ -42,5 +42,10 @@ class TestDataParsers(unittest.TestCase):
         self.assertEqual(ParseClassification('Something here'), 'something here')
         self.assertEqual(ParseClassification('Professional'), 'professional')
 
+    def test_ParseMemberSince(self):
+        self.assertEqual(ParseMemberSince('Unknown'), 0)
+        self.assertEqual(ParseMemberSince(1234), 1234)
+        self.assertEqual(ParseMemberSince(None), None)
+
 if __name__ == '__main__':
     unittest.main()
