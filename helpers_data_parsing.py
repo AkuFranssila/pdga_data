@@ -235,7 +235,7 @@ def ParseClassification(classification):
     if classification is None:
         return None
     else:
-        return classification.lower()
+        return str(classification).lower()
 
 def ParseMemberSince(year):
     if year == "Unknown":

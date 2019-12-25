@@ -37,5 +37,10 @@ class TestDataParsers(unittest.TestCase):
         self.assertEqual(CheckMembershipStatus('Current'), ('current', True))
         self.assertEqual(CheckMembershipStatus(1234), ('1234', False))
 
+    def test_ParseClassification(self):
+        self.assertEqual(ParseClassification(1234), '1234')
+        self.assertEqual(ParseClassification('Something here'), 'something here')
+        self.assertEqual(ParseClassification('Professional'), 'professional')
+
 if __name__ == '__main__':
     unittest.main()
