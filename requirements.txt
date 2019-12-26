@@ -3,3 +3,4 @@ mongoengine
 requests
 pylint
 pycountry
+mongomock

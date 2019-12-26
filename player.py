@@ -2,9 +2,9 @@
 import json
 import logging
 from datetime import date
+from connect_mongodb import ConnectMongo
 from schemas import Player
 from mongoengine import *
-from connect_mongodb import ConnectMongo
 from helpers_data_parsing import *
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)

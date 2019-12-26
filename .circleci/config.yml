@@ -21,7 +21,8 @@ jobs:
           command: |
             . env/bin/activate
             cd tests
-            python run_tests.py
+            python test_data_parsing.py
+            python test_mongodb.py
       - store_artifacts:
           path: tests/test-reports/
           destination: tr1

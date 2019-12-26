@@ -6,6 +6,7 @@ import os
 cwd = os.getcwd()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
 from helpers_data_parsing import *
+from schemas import Player, Tournament
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
