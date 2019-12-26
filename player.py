@@ -2,7 +2,6 @@
 import json
 import logging
 from datetime import date
-from connect_mongodb import ConnectMongo
 from schemas import Player
 from mongoengine import *
 from helpers_data_parsing import *
@@ -11,7 +10,6 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
 def ParsePlayer(data):
-    ConnectMongo()
     player, player.player_exists = PlayerExists(data['player_pdga_number'])
     player.pdga_id_status = ParseIdStatus(data['player_name'], data['player_id'])
     player.membership, player.membership_status = CheckMembershipStatus(data['player_membership_status'])
