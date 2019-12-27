@@ -22,7 +22,7 @@ jobs:
             . env/bin/activate
             cd tests
             python test_data_parsing.py
-            python test_mongodb.py
+            python test_player.py
       - store_artifacts:
           path: tests/test-reports/
           destination: tr1

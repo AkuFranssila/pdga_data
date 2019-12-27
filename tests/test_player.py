@@ -12,7 +12,7 @@ from schemas import Player, Tournament
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-class TestMongoDB(unittest.TestCase):
+class TestPlayer(unittest.TestCase):
     logging.info('Starting mongodb tests')
     @classmethod
     def setUpClass(cls):
