@@ -22,14 +22,6 @@ class TestMongoDB(unittest.TestCase):
     def tearDownClass(cls):
        disconnect()
 
-    def test_player_schema(self):
-        pers = Player(full_name='John', pdga_number=1234569)
-        pers.save()
-
-        fresh_pers = Player.objects().first()
-        assert fresh_pers.full_name ==  'John'
-
-
     def test_create_and_update_player(self):
         player1_data = {"player_name": "Test Player", "player_pdga_number": 1, "player_id": True, "player_location_raw": "Watsonville, California, United States", "player_classification": "Professional", "player_member_since": 1976, "player_membership_status": "Eagle Club", "player_membership_expiration_date": "31-Dec-2200", "player_current_rating": 736, "player_rating_difference": None, "player_rating_updated": "15-Sep-2004", "player_events_played": 41, "player_career_wins": 8, "player_certified_status": None, "player_certified_status_expiration": None, "player_career_earnings": 602.0, "player_individual_tournament_years": [2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985, 1984, 1983, 1981], "player_crawl_date": "2019-10-21"}
 
