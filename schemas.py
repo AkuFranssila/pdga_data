@@ -154,13 +154,11 @@ class PlayerYearlyStatistics(EmbeddedDocument):
 
 
 class Player(Document):
+    #Basic data fields
     full_name = StringField(max_lenght=50, help_text="Full non parsed name")
     first_name = StringField(max_lenght=25, help_text="Parsed first name")
     middle_name = StringField(max_lenght=25, help_text="Parsed middle name")
     last_name = StringField(max_lenght=25, help_text="Parsed last name")
-    gender = StringField(help_text="Gender info provided by PDGA or from played divisions")
-    date_of_birth = StringField(help_text="If we are able to get the exact age somewhere")
-    age_estimate = IntField(help_text="Estimate what is the player age depending on the divisions played in")
     pdga_number = IntField(required=True, help_text="PDGA ID, used to check if player exists in DB")
     pdga_id_status = BooleanField(help_text="Field that tells if the PDGA number is in use or not. There are PDGA numbers between the players that not in use.")
     location_full = StringField(max_lenght=100, help_text="Full non parsed location")
@@ -182,11 +180,35 @@ class Player(Document):
     certified_status = BooleanField(default=False, help_text="If player has done certification exam. Defaults to false as most people haven't done it")
     certified_status_expiration_date = DateTimeField(help_text="Certification lasts for around 3 years. Gives exact date when it expires")
     career_earnings = FloatField(help_text="Total earnings in dollars. Inflation not taken into account")
-    yearly_statistics = ListField(EmbeddedDocumentField(PlayerYearlyStatistics))
     individual_tournament_years = ListField(IntField(max_lenght=5), help_text="Checks on how many years player has played in tournaments. Player can be member for 20 years but only play once in a tournament. List that contains played years as int")
     pdga_page_link = URLField(help_text="Direct link to PDGA page. Link could be also generated from the ID")
+
+    #Player analytics/statistic fields generated from tournament data or from other pdga sources other than the player page
+    gender = StringField(help_text="Gender info provided by PDGA or from played divisions")
+    date_of_birth = StringField(help_text="If we are able to get the exact age somewhere")
+    year_of_birth = IntField(help_text="Collected year of birth data from played divisions")
+    age_estimate = IntField(help_text="Estimate what is the player age depending on the divisions played in")
     played_event_ids = ListField(IntField(max_lenght=10), help_text="All pdga events have own IDs, collect the tournament IDs here where the player has participated.")
     played_countries = ListField(StringField(max_lenght=50), help_text="Fun additional info. Collect all countries where the player has played. Make a list that contains individual countries.")
+    players_played_with_in_same_tournament = ListField(IntField(max_lenght=15), help_text="Collect all unique player ids of players who have played in the same tournaments as the player in question")
+    players_played_with_in_same_divisions = ListField(IntField(max_lenght=15), help_text="Collect all unique player ids of players who have played in the same tournament and same division as the player in question")
+    total_throws = IntField(help_text="Collect total number of throws player has thrown in tournaments")
+    top_three_placements = IntField(help_text="Number of times the player has placed in the specified range in tournaments")
+    top_five_placements = IntField(help_text="Number of times the player has placed in the specified range in tournaments")
+    top_ten_placements = IntField(help_text="Number of times the player has placed in the specified range in tournaments")
+    total_rounds_played = IntField(help_text="Collect total number of rounds played from tournaments")
+    avg_position = FloatField(help_text="Calculate the avg position that the player has had in his tournaments")
+    avg_par = FloatField(help_text="Calculate avg par the player has had in all of their tournaments")
+    avg_throw_length_feet = FloatField(help_text="Calculate the avg throw length from tournament round data")
+    avg_throw_length_meters = FloatField(help_text="Calculate the avg throw length from tournament round data")
+    avg_earnings_per_tournament = FloatField(help_text="Avg amount of money made per tournament. Calculate total money won divided by total events played")
+    tournaments_played_per_division = DynamicField(help_text="Contains total number of tournaments played by each division, include division name, number of events played in the dynamicfield for each division")
+    highest_paid_event = DynamicField(help_text="Contains information about the event that the player won most money from. DynamicField should include all necessary info about the tournament")
+    best_round_rating = DynamicField(help_text="Contains information about the event that the player had best round rating in. DynamicField should include all necessary info about the tournament")
+    best_round_rating_over_rating = DynamicField(help_text="Contains information about the event that the player had when they shot the best rated round that was the most over their rating at that time. DynamicField should include all necessary info about the tournament")
+    yearly_statistics = ListField(EmbeddedDocumentField(PlayerYearlyStatistics))
+
+    #Data processing fields
     first_crawl_date = DateTimeField(default=datetime.datetime.now, help_text="Data should be given when crawling, but if it isn't then defaults to datetime now")
     latest_update = DateTimeField(default=datetime.datetime.now, help_text="Should be given when parsed, but if not given gives datetime now")
     fields_updated = ListField(DynamicField(), help_text="If player exists and is recrawled, what data was changed. Dict that contains dynamic data about the fields that were changed and also datetime when it was updated")

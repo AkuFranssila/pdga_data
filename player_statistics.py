@@ -3,7 +3,6 @@ import json
 import logging
 from datetime import date
 from schemas import Player
-from mongoengine import *
 from helpers_data_parsing import *
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
@@ -11,7 +10,9 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def GeneratePlayerStatistics(player):
 
+    #player.gender = ''
     #player.date_of_birth = ''
+    #player.year_of_birth = ''
     #player.age_estimate = ''
     #player.yearly_statistics = ''
     #player.played_event_ids = ''
@@ -30,7 +31,8 @@ def GeneratePlayerStatistics(player):
     #player.tournaments_played_per_division = '' #dynamicfield division name, number events played
     #player.highest_paid_event = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
     #player.best_round_rating = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
-    #player.best_round_rating_over_current_rating = '' #dynamicfield which includes course name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
-    player.save()
+    #player.best_round_rating_over_rating = '' #dynamicfield which includes course name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
+    logging.info(player.to_json())
+    #player.save()
 
 #ParsePlayer(data)
