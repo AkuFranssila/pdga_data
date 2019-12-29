@@ -10,6 +10,10 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def GeneratePlayerStatistics(player):
 
+    #Find all tournament Ids that the player has played in
+    all_tournaments = Tournament.objects.filter(players__contains=player.pdga_number)
+
+
     #player.gender = ''
     #player.date_of_birth = ''
     #player.year_of_birth = ''
