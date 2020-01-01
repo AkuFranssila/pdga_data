@@ -16,6 +16,9 @@ def GeneratePlayerStatistics(player):
     played_tournament_countries = []
     tournaments_as_td = []
     tournaments_as_assistant_td = []
+    singles = 0
+    doubles = 0
+    teams = 0
     #Find all tournament Ids that the player has played in
     all_tournaments = Tournament.objects.filter(players=player.pdga_number)
 
@@ -23,6 +26,7 @@ def GeneratePlayerStatistics(player):
     for tournament in all_tournaments:
         logging.info(json.dumps(json.loads(tournament.to_json()), indent=4))
         import pdb; pdb.set_trace()
+    #player.current_rating = '' #if player is inactive we can get the current rating from the last tournament the player played
     #player.gender = ''
     #player.date_of_birth = ''
     #player.year_of_birth = ''
