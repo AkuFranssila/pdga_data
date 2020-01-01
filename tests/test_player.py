@@ -13,7 +13,7 @@ from schemas import Player, Tournament
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 class TestPlayer(unittest.TestCase):
-    logging.info('Starting mongodb tests')
+    logging.info('Starting mongodb player schema tests')
     @classmethod
     def setUpClass(cls):
         connect('mongoenginetest', host='mongomock://localhost')
