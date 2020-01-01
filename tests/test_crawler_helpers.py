@@ -23,9 +23,10 @@ class TestHelpersCrawler(unittest.TestCase):
         logging.info('Running TournamentDate test')
         self.assertEqual(TournamentDate('all'), "https://www.pdga.com/tour/search?date_filter[min][date]=1979-01-01&date_filter[max][date]=2020-12-31")
 
-    #def test_TournamentLastPage(self):
-    #    logging.info('Running TournamentLastPage test')
+    def test_TournamentLastPage(self):
+        logging.info('Running TournamentLastPage test')
 
+        self.assertTrue(TournamentLastPage("https://www.pdga.com/tour/search?date_filter[min][date]=2020-01-01&date_filter[max][date]=2020-12-31"))
 
 if __name__ == '__main__':
     unittest.main()
