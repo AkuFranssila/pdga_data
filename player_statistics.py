@@ -20,22 +20,54 @@ def GeneratePlayerStatistics(player):
     doubles = 0
     teams = 0
     #Find all tournament Ids that the player has played in
-    all_tournaments = Tournament.objects.filter(players=player.pdga_number)
+    all_tournaments = Tournament.objects(players=player.pdga_number)
 
     logging.info('Player %s, with pdga number %s has played in %s tournaments' % (player.full_name, str(player.pdga_number), str(all_tournaments.count())))
     for tournament in all_tournaments:
         logging.info(json.dumps(json.loads(tournament.to_json()), indent=4))
         import pdb; pdb.set_trace()
+        if "tournament_director_id" in tournament:
+            if tournament.tournament_director_id == player.pdga_number and tournament.tournament_id not in tournaments_as_td:
+                tournaments_as_td.append(tournament.tournament_id)
+
+        if "assistant_director_id" in tournament:
+            if tournament.assistant_director_id == player.pdga_number and tournament.tournament_id not in tournaments_as_assistant_td:
+                tournaments_as_assistant_td.append(tournament.tournament_id)
+
+        if tournament.tournament_id not in played_tournament_ids:
+            played_tournament_ids.append(tournament.tournament_id)
+
+        if "location_country" in tournament:
+            if tournament.location_country
+
+
+
+
+    ###############################
+    #Fields that can be updated only after checking every tournament
     #player.current_rating = '' #if player is inactive we can get the current rating from the last tournament the player played
     #player.gender = ''
     #player.date_of_birth = ''
     #player.year_of_birth = ''
     #player.age_estimate = ''
     #player.yearly_statistics = ''
-    #player.events_as_td = ''
-    #player.events_as_assistant_td = ''
-    #player.played_event_ids = ''
+    #player.avg_position = ''
+    #player.avg_par = ''
+    #player.avg_throw_length_feet = ''
+    #player.avg_throw_length_meters = ''
+    #player.avg_earnings_per_tournament = ''
+    #player.highest_paid_event = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
+    #player.best_round_rating = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
+    #player.best_round_rating_over_rating = '' #dynamicfield which includes course name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
+
+    ###############################
+    #Fields that need to be updated when checking each tournament
+    #DONE #player.events_as_td = ''
+    #DONE #player.events_as_assistant_td = ''
+    #DONE #player.played_event_ids = ''
     #player.played_countries = ''
+    #player.played_states = ''
+    #player.played_cities = ''
     #player.singles_played = ''
     #player.doubles_played = ''
     #player.teams_played = ''
@@ -47,16 +79,8 @@ def GeneratePlayerStatistics(player):
     #player.top_five_placements = ''
     #player.top_ten_placements = ''
     #player.total_rounds_played = ''
-    #player.avg_position = ''
-    #player.avg_par = ''
-    #player.avg_throw_length_feet = ''
-    #player.avg_throw_length_meters = ''
-    #player.avg_earnings_per_tournament = ''
     #player.tournaments_played_per_division = '' #dynamicfield division name, number events played
     #player.tournaments_played_per_tier = '' #dynamicfield tier code, number events played
-    #player.highest_paid_event = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
-    #player.best_round_rating = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
-    #player.best_round_rating_over_rating = '' #dynamicfield which includes course name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
     logging.info(player.to_json())
     #player.save()
 

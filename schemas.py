@@ -192,6 +192,8 @@ class Player(Document):
     events_as_assistant_td = ListField(help_text="List of event IDs where the player was the assistant tournament TD")
     played_event_ids = ListField(IntField(max_lenght=10), help_text="All pdga events have own IDs, collect the tournament IDs here where the player has participated.")
     played_countries = ListField(StringField(max_lenght=50), help_text="Fun additional info. Collect all countries where the player has played. Make a list that contains individual countries.")
+    played_states = ListField()
+    played_cities = ListField()
     players_played_with_in_same_tournament = ListField(IntField(max_lenght=15), help_text="Collect all unique player ids of players who have played in the same tournaments as the player in question")
     players_played_with_in_same_divisions = ListField(IntField(max_lenght=15), help_text="Collect all unique player ids of players who have played in the same tournament and same division as the player in question")
     total_throws = IntField(help_text="Collect total number of throws player has thrown in tournaments")

@@ -74,9 +74,11 @@ def ParseDivisions(data):
 
             if divisionplayer.pdga_number_1 is not None:
                 all_pdga_numbers.append(divisionplayer.pdga_number_1)
+                logging.info('Division name: %s. Pdga number: %s.' % (division.name, str(divisionplayer.pdga_number_1)))
 
             if divisionplayer.pdga_number_2 is not None:
                 all_pdga_numbers.append(divisionplayer.pdga_number_2)
+                logging.info('Division name: %s. Pdga number: %s.' % (division.name, str(divisionplayer.pdga_number_2)))
 
             divisionplayer.avg_throws_per_round = CalculateAvgFromRounds(divisionplayer.total_throws, divisionplayer.rounds)
             divisionplayer.avg_par_per_round = CalculateAvgFromRounds(divisionplayer.total_par, divisionplayer.rounds)
