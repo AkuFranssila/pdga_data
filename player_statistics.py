@@ -14,11 +14,15 @@ def GeneratePlayerStatistics(player):
     junior_divisions = ['MJ18', 'MJ15', 'MJ12', 'MJ10', 'MJ08', 'MJ06']
     played_tournament_ids = []
     played_tournament_countries = []
+    played_tournament_states = []
+    played_tournament_cities = []
     tournaments_as_td = []
     tournaments_as_assistant_td = []
     singles = 0
     doubles = 0
     teams = 0
+    dnf = 0
+    dns = 0
     #Find all tournament Ids that the player has played in
     all_tournaments = Tournament.objects(players=player.pdga_number)
 
@@ -38,7 +42,28 @@ def GeneratePlayerStatistics(player):
             played_tournament_ids.append(tournament.tournament_id)
 
         if "location_country" in tournament:
-            if tournament.location_country
+            if tournament.location_country not in played_tournament_countries:
+                played_tournament_countries.append(tournament.location_country)
+
+        if "location_state" in tournament:
+            if tournament.location_state not in played_tournament_states:
+                played_tournament_states.append(tournament.location_state)
+
+        if "location_city" in tournament:
+            if tournament.location_city not in played_tournament_cities:
+                played_tournament_cities.append(tournament.location_city)
+
+        if "tournament_type" in tournament:
+            if tournament.tournament_type == "singles":
+                singles += 1
+            elif tournament.tournament_type == "doubles":
+                doubles += 1
+            elif tournament.tournament_type == "team":
+                teams += 1
+
+        """
+        Data points that need to be collected from the division and rounds the player has played in the tournament
+        """
 
 
 
@@ -65,12 +90,12 @@ def GeneratePlayerStatistics(player):
     #DONE #player.events_as_td = ''
     #DONE #player.events_as_assistant_td = ''
     #DONE #player.played_event_ids = ''
-    #player.played_countries = ''
-    #player.played_states = ''
-    #player.played_cities = ''
-    #player.singles_played = ''
-    #player.doubles_played = ''
-    #player.teams_played = ''
+    #DONE #player.played_countries = ''
+    #DONE #player.played_states = ''
+    #DONE #player.played_cities = ''
+    #DONE #player.singles_played = ''
+    #DONE #player.doubles_played = ''
+    #DONE #player.teams_played = ''
     #player.dns_count = ''
     #player.dnf_count = ''
     #player.players_played_with_in_same_tournament = '' #list of unique player ids that the player has played with in same tournaments
