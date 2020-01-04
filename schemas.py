@@ -197,6 +197,7 @@ class Player(Document):
     players_played_with_in_same_tournament = ListField(IntField(max_lenght=15), help_text="Collect all unique player ids of players who have played in the same tournaments as the player in question")
     players_played_with_in_same_divisions = ListField(IntField(max_lenght=15), help_text="Collect all unique player ids of players who have played in the same tournament and same division as the player in question")
     total_throws = IntField(help_text="Collect total number of throws player has thrown in tournaments")
+    total_points = FloatField(help_text="Total number of points received from tournaments")
     top_three_placements = IntField(help_text="Number of times the player has placed in the specified range in tournaments")
     top_five_placements = IntField(help_text="Number of times the player has placed in the specified range in tournaments")
     top_ten_placements = IntField(help_text="Number of times the player has placed in the specified range in tournaments")

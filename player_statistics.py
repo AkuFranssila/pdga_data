@@ -12,6 +12,8 @@ def GeneratePlayerStatistics(player):
 
     womens_divisions = ['FPO', 'FP40', 'FP50', 'FP55', 'FP60', 'FP65', 'FP70', 'FA1', 'FA2', 'FA3', 'FA4', 'FA40', 'FA50', 'FA55', 'FA60', 'FA65', 'FA70', 'FJ18', 'FJ15', 'FJ12', 'FJ10', 'FJ08', 'FJ06']
     junior_divisions = ['MJ18', 'MJ15', 'MJ12', 'MJ10', 'MJ08', 'MJ06']
+    players_same_tournament = {}
+    players_same_division = {}
     played_tournament_ids = []
     played_tournament_countries = []
     played_tournament_states = []
@@ -61,8 +63,17 @@ def GeneratePlayerStatistics(player):
             elif tournament.tournament_type == "team":
                 teams += 1
 
+        for player_id in tournament.players:
+            try:
+                players_same_tournament[player_id] += 1
+            except KeyError:
+                players_same_tournament[player_id] = 1
+
         """
         Data points that need to be collected from the division and rounds the player has played in the tournament
+        player.dns_count
+        player.dnf_count
+        player.players_played_with_in_same_divisions
         """
 
 
@@ -98,9 +109,10 @@ def GeneratePlayerStatistics(player):
     #DONE #player.teams_played = ''
     #player.dns_count = ''
     #player.dnf_count = ''
-    #player.players_played_with_in_same_tournament = '' #list of unique player ids that the player has played with in same tournaments
+    #DONE #player.players_played_with_in_same_tournament = '' #list of unique player ids that the player has played with in same tournaments
     #player.players_played_with_in_same_divisions = '' #list of unique player ids that the player has played with in same tournaments and same divisions
     #player.total_throws = ''
+    #player.total_points = ''
     #player.top_five_placements = ''
     #player.top_ten_placements = ''
     #player.total_rounds_played = ''
