@@ -27,9 +27,16 @@ This project is to collect all player and tournament data available on PDGA. PDG
 - [x] Add crawling for tournaments
 - [x] Add parsing for tournaments
 - [x] Check any mistakes/errors after all tournaments crawled and rerun files if fixable in merge
-- [x] Add CLI for automated testing
-- [ ] Create tests
-- [ ] Fix any errors and problems found after tests are done 
+- [x] Add CircleCI for automated testing
+- [x] Create tests
+- [x] Fix any errors and problems found after tests are done
+- [ ] Refactor whole crawling process to collect the whole page instead of crawling it for player and tournament data
+- [ ] Save the crawled pages to AWS S3
+- [ ] Refactor the parsing process to parse the crawled full html page
+- [ ] Save parsed data as json to AWS S3
+- [ ] Refactor sending data to mongodb for player and tournaments
+- [ ] Create statistics for players, tournaments
+- [ ] Create statistics on country level + all
 - [ ] Create cronjobs and automate the process
 - [ ] Create API for the data (mongoDB + python + Flask)
 - [ ] Create webpage where to show pdga data
