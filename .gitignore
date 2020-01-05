@@ -2,3 +2,4 @@
 send_data_to_mongo.py
 crawled_tournaments/tournament_data_2019-11-24.json
 crawled_tournaments/tournament_data_2019-11-22.json
+crawled_tournaments/tournament_data_2020-01-05.json
