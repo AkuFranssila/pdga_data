@@ -173,18 +173,24 @@ def CrawlTournament(tournament_dates):
                     div['division_players_singles'] = []
 
                     round_course_infos = division.find_all("div", class_="tooltip-templates")
-                    for count, course_info in enumerate(round_course_infos):
-                        course_details = {}
-                        try:
-                            course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
-                        except:
+                    if len(round_course_infos) > 0:
+                        for count, course_info in enumerate(round_course_infos):
+                            course_details = {}
                             try:
-                                course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                                course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
                             except:
-                                course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+                                try:
+                                    course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                                except:
+                                    course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
 
-                        div['division_course_details'].append(course_details)
-
+                            div['division_course_details'].append(course_details)
+                    else:
+                        round_course_infos = division.find('tr').find_all(class_="round") + division.find('tr').find_all(class_="semi-finals") + division.find('tr').find_all(class_="finals")
+                        for count, course_info in enumerate(round_course_infos):
+                            course_details = {}
+                            course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+                            div['division_course_details'].append(course_details)
 
                     all_players = division.find('tbody').find_all('tr')
                     for player in all_players:
@@ -237,7 +243,7 @@ def CrawlTournament(tournament_dates):
                                 try:
                                     player_data['player_total_par'] = player.find(class_="par over").text
                                 except:
-                                    player_data['player_total_par'] = "DNF/DNS"
+                                    player_data['player_total_par'] = None
                         try:
                             player_data['player_event_points'] = player.find(class_="points").text
                         except:
@@ -266,17 +272,25 @@ def CrawlTournament(tournament_dates):
                     div['division_total_players'] = division.find(class_="players").text
                     div['division_players_doubles'] = []
                     div['division_course_details'] = []
-                    for count, course_info in enumerate(round_course_infos):
-                        course_details = {}
-                        try:
-                            course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
-                        except:
+                    round_course_infos = division.find_all("div", class_="tooltip-templates")
+                    if len(round_course_infos) > 0:
+                        for count, course_info in enumerate(round_course_infos):
+                            course_details = {}
                             try:
-                                course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                                course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
                             except:
-                                course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+                                try:
+                                    course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                                except:
+                                    course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
 
-                        div['division_course_details'].append(course_details)
+                            div['division_course_details'].append(course_details)
+                    else:
+                        round_course_infos = division.find('tr').find_all(class_="round") + division.find('tr').find_all(class_="semi-finals") + division.find('tr').find_all(class_="finals")
+                        for count, course_info in enumerate(round_course_infos):
+                            course_details = {}
+                            course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+                            div['division_course_details'].append(course_details)
 
                     all_players_odd = division.find('tbody').find_all('tr', class_="odd")
                     all_players_even = division.find('tbody').find_all('tr', class_="even")
@@ -287,7 +301,6 @@ def CrawlTournament(tournament_dates):
                         if counter % 2 == 0:
                             even_or_odd = "odd"
                         player_data = {}
-                        #import pdb; pdb.set_trace()
                         try:
                             logging.info('Player name ' + player_1.find(class_= even_or_odd + " player").text)
                             logging.info('Player name ' + player_2.find(class_= even_or_odd + " player").text)
@@ -399,17 +412,25 @@ def CrawlTournament(tournament_dates):
                     div['division_total_players'] = division.find(class_="players").text
                     div['division_players_team'] = []
                     div['division_course_details'] = []
-                    for count, course_info in enumerate(round_course_infos):
-                        course_details = {}
-                        try:
-                            course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
-                        except:
+                    round_course_infos = division.find_all("div", class_="tooltip-templates")
+                    if len(round_course_infos) > 0:
+                        for count, course_info in enumerate(round_course_infos):
+                            course_details = {}
                             try:
-                                course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                                course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": course_info.find('a')['href']}
                             except:
-                                course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+                                try:
+                                    course_details['round_' + str(count + 1)] = {"course_details" : course_info.text, "course_pdga_link": None}
+                                except:
+                                    course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
 
-                        div['division_course_details'].append(course_details)
+                            div['division_course_details'].append(course_details)
+                    else:
+                        round_course_infos = division.find('tr').find_all(class_="round") + division.find('tr').find_all(class_="semi-finals") + division.find('tr').find_all(class_="finals")
+                        for count, course_info in enumerate(round_course_infos):
+                            course_details = {}
+                            course_details['round_' + str(count + 1)] = {"course_details" : None, "course_pdga_link": None}
+                            div['division_course_details'].append(course_details)
 
                     all_teams = division.find('tbody').find_all('tr')
                     counter = 0

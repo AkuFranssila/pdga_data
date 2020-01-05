@@ -31,7 +31,7 @@ def GeneratePlayerStatistics(player):
     logging.info('Player %s, with pdga number %s has played in %s tournaments' % (player.full_name, str(player.pdga_number), str(all_tournaments.count())))
     for tournament in all_tournaments:
         logging.info(json.dumps(json.loads(tournament.to_json()), indent=4))
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         if "tournament_director_id" in tournament:
             if tournament.tournament_director_id == player.pdga_number and tournament.tournament_id not in tournaments_as_td:
                 tournaments_as_td.append(tournament.tournament_id)
@@ -74,7 +74,19 @@ def GeneratePlayerStatistics(player):
         player.dns_count
         player.dnf_count
         player.players_played_with_in_same_divisions
+        player.total_throws
+        player.total_points
+        player.top_five_placements
+        player.top_ten_placements
+        player.total_rounds_played
+        player.tournaments_played_per_division
+        player.tournaments_played_per_tier
         """
+
+        for division in tournament.divisions:
+            import pdb; pdb.set_trace()
+            if player.full_name in division.to_json():
+                import pdb; pdb.set_trace()
 
 
 
