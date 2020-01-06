@@ -42,5 +42,6 @@ def send_file_to_s3(filename, type):
         else:
             return False
 
-latest_file = FindFiles('crawled_players').find_latest_file()
-send_file_to_s3(latest_file, "player-raw-data")
+#latest_file = FindFiles('crawled_players').find_latest_file()
+#print(latest_file)
+#send_file_to_s3(latest_file, "player-raw-data")

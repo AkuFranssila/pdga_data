@@ -2,7 +2,9 @@
 import json
 import logging
 import sys
+import os
 from datetime import date
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 def OpenFileReturnData(file):
     if isinstance(file, str):
@@ -55,3 +57,33 @@ def SaveFile(type, target, data):
         json.dump(data, file)
 
 #file = '.\\crawled_players\\player_data_2019-09-13.json'
+
+def DeleteFile(file_location):
+    if os.path.exists(file_location):
+        logging.info("File at %s has been removed" % file_location)
+        os.remove(file_location)
+    else:
+      logging.critical("The file at %s does not exist" % str(file_location))
+
+def AppendToFile(type, target, data):
+    today = str(date.today())
+    file_location = ''
+    file_name = ''
+    if type == 'player' and target == 'crawl':
+        file_location = 'crawled_players'
+        file_name = 'player_raw_data_'
+    elif type == 'player' and target == 'parse':
+        file_location = 'parsed_players'
+        file_name = 'player_parsed_data_'
+    elif type == 'tournament' and target == 'crawl':
+        file_location = 'crawled_tournaments'
+        file_name = 'tournament_raw_data_'
+    elif type == 'tournament' and target == 'parse':
+        file_location = 'parsed_tournaments'
+        file_name = 'tournament_parsed_data_'
+    else:
+        sys.exit('Wrong type or target set')
+
+    with open(file_location + '/' + file_name + today + '.json', 'a') as file:
+        json.dump(data, file)
+        file.write("\n")
