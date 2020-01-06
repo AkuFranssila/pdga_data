@@ -4,3 +4,4 @@ requests
 pylint
 pycountry
 mongomock
+boto3
