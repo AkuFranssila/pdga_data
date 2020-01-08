@@ -3,7 +3,9 @@ import json
 import logging
 import sys
 import os
-from datetime import date
+import re
+from datetime import date, datetime
+from aws_s3_client import AWS_S3CLIENT
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 def OpenFileReturnData(file):
@@ -31,7 +33,7 @@ def OpenFileReturnData(file):
             sys.exit('Something went wrong when opening the file. File not list full of dicts')
     else:
         sys.exit('File format was not string or list')
-        
+
 def SaveFile(type, target, data):
     if not isinstance(data, list) and isintance(data[0], dict):
         sys.exit('Data in wrong format')
@@ -106,3 +108,51 @@ def ReturnFileLocation(type, target):
         sys.exit('Wrong type or target set')
 
     return file_location + '/' + file_name + today + '.json'
+
+def FindLatestFileFromS3(type):
+    s3 = AWS_S3CLIENT()
+
+    if type not in ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]:
+        sys.exit('Type not in the predefined types')
+
+    files = s3.list_objects_v2(Bucket="pdga-project-data", Prefix=type)["Contents"]
+
+    newest_file_key = ""
+    newest_file_date = ""
+    for f in files:
+        date_from_filename = re.findall(r'([0-9]{4}-[0-9]{2}-[0-9]{2})', str(f))
+
+        if len(date_from_filename) > 0:
+            print("Current key: %s" % newest_file_key)
+            print("Current date: %s" % newest_file_date)
+            if newest_file_date == "":
+                newest_file_date = date_from_filename[0]
+                newest_file_key = f["Key"]
+            else:
+                year, month, date = newest_file_date.split("-")
+                newest_file_date_datetime = datetime(int(year), int(month), int(date))
+
+                year, month, date = date_from_filename[0].split('-')
+                current_file_datetime = datetime(int(year), int(month), int(date))
+                if current_file_datetime > newest_file_date_datetime:
+                    newest_file_date = date_from_filename[0]
+                    newest_file_key = f["Key"]
+
+    return newest_file_key
+
+
+def DownloadFileFromS3(type):
+    #file location
+    #destination location
+    if type not in ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]:
+        sys.exit('Type not in the predefined types')
+
+    if type == "player-parsed-data":
+        print('')
+
+
+    #s3 = AWS_S3CLIENT()
+
+    #s3.download_file('pdga-project-data','player-raw-data/january-test-data.json','.\\crawled_players\\list_of_dicts.json')
+
+#FindLatestFileFromS3("player-raw-data")

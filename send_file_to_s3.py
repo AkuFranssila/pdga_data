@@ -49,8 +49,9 @@ def send_file_to_s3(filename, type):
             logging.info("File exists on S3")
             return True
         else:
+            logging.info("File not found on S3")
             return False
 
 #latest_file = FindFiles('crawled_players').find_latest_file()
 #print(latest_file)
-send_file_to_s3('.\\crawled_players\\january-test-data.txt', "player-raw-data")
+#send_file_to_s3('.\\crawled_players\\january-test-data.txt', "player-raw-data")
