@@ -123,8 +123,8 @@ def FindLatestFileFromS3(type):
         date_from_filename = re.findall(r'([0-9]{4}-[0-9]{2}-[0-9]{2})', str(f))
 
         if len(date_from_filename) > 0:
-            print("Current key: %s" % newest_file_key)
-            print("Current date: %s" % newest_file_date)
+            logging.info("Current key: %s" % newest_file_key)
+            logging.info("Current date: %s" % newest_file_date)
             if newest_file_date == "":
                 newest_file_date = date_from_filename[0]
                 newest_file_key = f["Key"]
@@ -142,17 +142,21 @@ def FindLatestFileFromS3(type):
 
 
 def DownloadFileFromS3(type):
-    #file location
-    #destination location
     if type not in ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]:
         sys.exit('Type not in the predefined types')
 
-    if type == "player-parsed-data":
-        print('')
+    type_to_location = {"old_pdga_data" : "old_pdga_data",
+                        "player-parsed-data" : "parsed_players",
+                        "player-raw-data" : "crawled_players",
+                        "tournament-parsed-data" : "parsed_tournaments",
+                        "tournament-raw-data" : "crawled_tournaments"
+                        }
 
+    folder_name = type_to_location[type]
+    key = FindLatestFileFromS3(type)
+    file_name = key.split("/")[-1]
+    save_location = '.\\' + folder_name + '\\' + file_name
 
-    #s3 = AWS_S3CLIENT()
-
-    #s3.download_file('pdga-project-data','player-raw-data/january-test-data.json','.\\crawled_players\\list_of_dicts.json')
-
-#FindLatestFileFromS3("player-raw-data")
+    s3 = AWS_S3CLIENT()
+    logging.info("Trying to find file %s from S3 and saving it to %s" % (key, save_location))
+    s3.download_file('pdga-project-data', key, save_location)
