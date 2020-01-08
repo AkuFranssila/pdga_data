@@ -11,4 +11,4 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 #player_data = CrawlPlayer(1,100,True)
 #SaveFile('player', 'crawl',  player_data)
 
-PlayerCrawlRawData(1,10, False)
+PlayerCrawlRawData(1,10, True)

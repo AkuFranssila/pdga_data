@@ -29,8 +29,3 @@ def PlayerCrawlRawData(first_id, last_id, crawl_all):
     file_send_status = send_file_to_s3(file_location, "player-raw-data")
     if file_send_status:
         DeleteFile(file_location)
-
-# f = open('.\\crawled_players\\player_raw_data_2020-01-06.json', "r")
-# for x in f:
-#     print(x)
-#     print('\n\n\n\n\n\n')
