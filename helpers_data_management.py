@@ -31,7 +31,7 @@ def OpenFileReturnData(file):
             sys.exit('Something went wrong when opening the file. File not list full of dicts')
     else:
         sys.exit('File format was not string or list')
-
+        
 def SaveFile(type, target, data):
     if not isinstance(data, list) and isintance(data[0], dict):
         sys.exit('Data in wrong format')
@@ -87,3 +87,22 @@ def AppendToFile(type, target, data):
     with open(file_location + '/' + file_name + today + '.json', 'a') as file:
         json.dump(data, file)
         file.write("\n")
+
+def ReturnFileLocation(type, target):
+    today = str(date.today())
+    if type == 'player' and target == 'crawl':
+        file_location = 'crawled_players'
+        file_name = 'player_raw_data_'
+    elif type == 'player' and target == 'parse':
+        file_location = 'parsed_players'
+        file_name = 'player_parsed_data_'
+    elif type == 'tournament' and target == 'crawl':
+        file_location = 'crawled_tournaments'
+        file_name = 'tournament_raw_data_'
+    elif type == 'tournament' and target == 'parse':
+        file_location = 'parsed_tournaments'
+        file_name = 'tournament_parsed_data_'
+    else:
+        sys.exit('Wrong type or target set')
+
+    return file_location + '/' + file_name + today + '.json'
