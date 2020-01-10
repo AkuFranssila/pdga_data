@@ -10,14 +10,12 @@ from send_file_to_s3 import send_file_to_s3
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
-def PlayerCrawlRawData(first_id, last_id, crawl_all):
+def PlayerCrawlRawData(first_id, last_id, crawl_all, file_location):
     first_id = first_id
     last_id = last_id
     if crawl_all:
         first_id = 1
         last_id = FindNewestMemberId()
-
-    file_location = ReturnFileLocation("player", "crawl")
 
     for i in range(first_id, last_id):
         logging.info('Crawling player with pdga number %s' % str(i))

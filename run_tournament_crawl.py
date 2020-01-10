@@ -3,10 +3,9 @@ import json
 import logging
 import sys
 from datetime import date
-from crawl_tournament import CrawlTournament
-from helpers_data_management import SaveFile
+from tournament_crawl_raw_data import TournamentCrawlRawData
+from helpers_data_management import SaveFile, ReturnFileLocation
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-tournament_data = CrawlTournament("all")
-
-SaveFile('tournament', 'crawl',  tournament_data)
+file_loc = ReturnFileLocation("tournament", "crawl")
+tournament_data = TournamentCrawlRawData("all", file_loc)

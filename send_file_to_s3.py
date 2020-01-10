@@ -40,7 +40,8 @@ def send_file_to_s3(filename, type):
         return False
     else:
         file_extension = ".json"
-        data_location = type + "/" + filename.split('\\')[-1].rsplit('.', 1)[0] + file_extension
+        data_location = type + "/" + type + filename.split(type)[-1].rsplit('.', 1)[0] + file_extension
+        #data_location = type + "/" + filename.split('\\')[-1].rsplit('.', 1)[0] + file_extension
         logging.info('Sending data to S3 bucket pdga-project-data, location of the file is %s' % data_location)
         s3.put_object(Bucket="pdga-project-data", Key=data_location, Body=binary_data)
 
@@ -54,4 +55,4 @@ def send_file_to_s3(filename, type):
 
 #latest_file = FindFiles('crawled_players').find_latest_file()
 #print(latest_file)
-#send_file_to_s3('.\\crawled_players\\january-test-data.txt', "player-raw-data")
+#send_file_to_s3('.\\crawled_players\\player-raw-data-2020-01-08.json', "player-raw-data")

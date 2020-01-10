@@ -91,19 +91,21 @@ def AppendToFile(type, target, data):
         file.write("\n")
 
 def ReturnFileLocation(type, target):
+
+    types = ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]
     today = str(date.today())
     if type == 'player' and target == 'crawl':
         file_location = 'crawled_players'
-        file_name = 'player_raw_data_'
+        file_name = 'player-raw-data-'
     elif type == 'player' and target == 'parse':
         file_location = 'parsed_players'
-        file_name = 'player_parsed_data_'
+        file_name = 'player-parsed-data-'
     elif type == 'tournament' and target == 'crawl':
         file_location = 'crawled_tournaments'
-        file_name = 'tournament_raw_data_'
+        file_name = 'tournament-raw-data-'
     elif type == 'tournament' and target == 'parse':
         file_location = 'parsed_tournaments'
-        file_name = 'tournament_parsed_data_'
+        file_name = 'tournament-parsed-data-'
     else:
         sys.exit('Wrong type or target set')
 
