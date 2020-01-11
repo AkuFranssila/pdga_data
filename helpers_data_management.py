@@ -94,6 +94,7 @@ def ReturnFileLocation(type, target):
     return './' + file_location + '/' + file_name + today + '.txt'
 
 def FindLatestFileFromS3(type):
+    logging.info("Running FindLatestFileFromS3, searching for type: %s" % type)
     s3 = AWS_S3CLIENT()
 
     if type not in ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]:
@@ -105,7 +106,7 @@ def FindLatestFileFromS3(type):
     newest_file_date = ""
     for f in files:
         date_from_filename = re.findall(r'([0-9]{4}-[0-9]{2}-[0-9]{2})', str(f))
-
+        logging.info("Date found from filename: %s" % date_from_filename)
         if len(date_from_filename) > 0:
             logging.info("Current key: %s" % newest_file_key)
             logging.info("Current date: %s" % newest_file_date)
@@ -121,11 +122,12 @@ def FindLatestFileFromS3(type):
                 if current_file_datetime > newest_file_date_datetime:
                     newest_file_date = date_from_filename[0]
                     newest_file_key = f["Key"]
-
+    logging.info("Returning key %s" % newest_file_key)
     return newest_file_key
 
 
 def DownloadFileFromS3(type):
+    logging.info("Running DownloadFileFromS3")
     if type not in ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]:
         sys.exit('Type not in the predefined types')
 
