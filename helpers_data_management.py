@@ -67,31 +67,13 @@ def DeleteFile(file_location):
     else:
       logging.critical("The file at %s does not exist" % str(file_location))
 
-def AppendToFile(type, target, data):
-    today = str(date.today())
-    file_location = ''
-    file_name = ''
-    if type == 'player' and target == 'crawl':
-        file_location = 'crawled_players'
-        file_name = 'player_raw_data_'
-    elif type == 'player' and target == 'parse':
-        file_location = 'parsed_players'
-        file_name = 'player_parsed_data_'
-    elif type == 'tournament' and target == 'crawl':
-        file_location = 'crawled_tournaments'
-        file_name = 'tournament_raw_data_'
-    elif type == 'tournament' and target == 'parse':
-        file_location = 'parsed_tournaments'
-        file_name = 'tournament_parsed_data_'
-    else:
-        sys.exit('Wrong type or target set')
-
-    with open(file_location + '/' + file_name + today + '.json', 'a') as file:
+def AppendToFile(file_location, data):
+    with open(file_location, 'a') as file:
         json.dump(data, file)
         file.write("\n")
 
 def ReturnFileLocation(type, target):
-
+    logging.info("Running ReturnFileLocation with type: %s and target %s" % (type, target))
     types = ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]
     today = str(date.today())
     if type == 'player' and target == 'crawl':
@@ -109,7 +91,7 @@ def ReturnFileLocation(type, target):
     else:
         sys.exit('Wrong type or target set')
 
-    return file_location + '/' + file_name + today + '.json'
+    return './' + file_location + '/' + file_name + today + '.txt'
 
 def FindLatestFileFromS3(type):
     s3 = AWS_S3CLIENT()
@@ -162,3 +144,25 @@ def DownloadFileFromS3(type):
     s3 = AWS_S3CLIENT()
     logging.info("Trying to find file %s from S3 and saving it to %s" % (key, save_location))
     s3.download_file('pdga-project-data', key, save_location)
+    return save_location
+
+
+def CombineFiles(filenames, output_name):
+    # with open(output_name, 'w') as outfile:
+    #     for fname in filenames:
+    #         with open(fname) as infile:
+    #             for line in infile:
+    #                 import pdb; pdb.set_trace()
+    #                 outfile.write(line)
+
+    data_to_s3 = []
+    for filename in filenames:
+        with open(filename, "r") as file_data:
+            for single_line in file_data:
+                json_data = json.loads(single_line)
+                data_to_s3.append(json_data)
+
+    with open(output_name, 'w') as outfile:
+        json.dump(data_to_s3)
+
+#CombineFiles(['.\\crawled_players\\player-raw-data-2020-01-08.json', '.\\crawled_players\\player-raw-data-2020-01-09.json', '.\\crawled_players\\player-raw-data-2020-01-10.json'], '.\\crawled_players\\player-raw-data-2020-01-11.json')

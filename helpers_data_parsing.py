@@ -658,7 +658,7 @@ def ParseTournamentWinnings(var):
         try:
             var = float(var)
         except ValueError:
-            import pdb; pdb.set_trace()
+            var = 0
     else:
         var = float(0)
 
