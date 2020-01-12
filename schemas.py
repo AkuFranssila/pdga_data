@@ -88,6 +88,9 @@ class DivisionRound(EmbeddedDocument):
     dnf_count = IntField(help_text="Number of players who DNF this round")
 
 class DivisionPlayer(EmbeddedDocument):
+
+    ######
+    #Old player fields
     full_name_1 = StringField(help_text="Full player name")
     pdga_number_1 = IntField(help_text="Player PDGA number")
     pdga_page_1 = URLField(help_text="Player PDGA page link")
@@ -98,6 +101,16 @@ class DivisionPlayer(EmbeddedDocument):
     pdga_page_2 = URLField(help_text="Player PDGA page link if doubles")
     propagator_2 = BooleanField(help_text="Was player propagator during tournament True/False if doubles")
     rating_during_tournament_2 = IntField(help_text="Player rating during tournament if doubles")
+
+    ######
+    #New player fields, having own fields for both players if the tournament was doubles was confusing
+    full_name = ListField(help_text="Full player name, if doubles then field will contain more than one name")
+    pdga_number = ListField(help_text="PDGA Number, if doubles then field will contain more than one number")
+    pdga_page = ListField(help_text="PDGA page link, if doubles then field will contain more than one link")
+    propagator = BooleanField(help_text="True False if player was propagator during tournament. If doubles value is used for both")
+    rating_during_tournament = ListField(help_text="Player rating during tournament if doubles then more than one rating in the list")
+
+
     final_placement = IntField(help_text="Player position at the end of the tournament")
     money_won = FloatField(help_text="Prize money won in tournament")
     total_throws = IntField(help_text="Total number of throws made by player")
@@ -151,6 +164,9 @@ class PlayerYearlyStatistics(EmbeddedDocument):
     lowest_round_rating_tournament_id = IntField()
     best_round_rating_rank_local = IntField()
     best_round_rating_rank_global = IntField()
+    singles_played = IntField()
+    doubles_played = IntField()
+    teams_played = IntField()
 
 
 class Player(Document):
