@@ -17,10 +17,10 @@ def PlayerCrawlRawData(first_id, last_id, crawl_all, file_location):
     if crawl_all:
         logging.info("Crawling all players. Running FindNewestMemberId")
         first_id = 1
-        last_id = FindNewestMemberId()
+        last_id = FindNewestMemberId() + 1
 
     for i in range(first_id, last_id):
-        logging.info('Crawling player with pdga number %s' % str(i))
+        logging.info('Crawling player with pdga number %s/%s' % (str(i), last_id))
         response = requests.get('https://www.pdga.com/player/' + str(i))
         data = response.content.decode('utf8').replace("'", '"')
         json_data = {"pdga_number" : i, "raw_data" : data}

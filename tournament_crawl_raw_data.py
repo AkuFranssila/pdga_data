@@ -35,7 +35,7 @@ def TournamentCrawlRawData(options, file_location):
         response = requests.get(link)
         data = response.content.decode('utf8').replace("'", '"')
         json_data = {"pdga_number" : i, "raw_data" : data}
-        AppendToFile('tournament', 'crawl',  json_data)
+        AppendToFile(file_location,  json_data)
 
     file_send_status = send_file_to_s3(file_location, "tournament-raw-data")
     if file_send_status:
