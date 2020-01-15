@@ -27,5 +27,5 @@ def PlayerCrawlRawData(first_id, last_id, crawl_all, file_location):
         AppendToFile(file_location,  json_data)
 
     file_send_status = send_file_to_s3(file_location, "player-raw-data")
-    if file_send_status:
-        DeleteFile(file_location)
+    #if file_send_status:
+    #    DeleteFile(file_location)
