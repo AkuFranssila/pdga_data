@@ -1,8 +1,9 @@
 # coding=utf-8
 import json
 import logging
-from helpers_data_management import DownloadFileFromS3
+from helpers_data_management import DownloadFileFromS3, SaveFile
 from player_parse_raw_data import PlayerParseRawData
+from send_file_to_s3 import send_multipart_file_to_s3
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info("Starting run_player_raw_data_parse.py")
 
@@ -23,6 +24,12 @@ with open(file_location, "r") as data:
 
         all_parsed_data.append(parsed_data)
         #import pdb; pdb.set_trace()
+
+
+saved_file_location = SaveFile("player", "parse", all_parsed_data)
+
+send_multipart_file_to_s3(saved_file_location, "player-parsed-data")
+
 
 print(json.dumps(all_parsed_data, indent=4))
 

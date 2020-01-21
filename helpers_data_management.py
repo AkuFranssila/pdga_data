@@ -55,8 +55,12 @@ def SaveFile(type, target, data):
     else:
         sys.exit('Wrong type or target set')
 
-    with open(file_location + '/' + file_name + today + '.json', 'w') as file:
+    full_file_location = file_location + '/' + file_name + today + '.json'
+
+    with open(full_file_location, 'w') as file:
         json.dump(data, file)
+
+    return full_file_location
 
 #file = '.\\crawled_players\\player_data_2019-09-13.json'
 
