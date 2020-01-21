@@ -8,3 +8,5 @@ crawled_players/player-raw-data-2020-01-09.json
 crawled_players/player-raw-data-2020-01-10.json
 crawled_players/player-raw-data-2020-01-08.json
 crawled_tournaments/tournament-raw-data-2020-01-11.json
+*.txt
+crawled_players/player-raw-data-2020-01-11.json
