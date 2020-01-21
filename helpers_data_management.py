@@ -42,16 +42,16 @@ def SaveFile(type, target, data):
     file_name = ''
     if type == 'player' and target == 'crawl':
         file_location = 'crawled_players'
-        file_name = 'player_data_'
+        file_name = 'player-raw-data-'
     elif type == 'player' and target == 'parse':
         file_location = 'parsed_players'
-        file_name = 'parsed_player_data_'
+        file_name = 'player-parsed-data-'
     elif type == 'tournament' and target == 'crawl':
         file_location = 'crawled_tournaments'
-        file_name = 'tournament_data_'
+        file_name = 'tournament-raw-data-'
     elif type == 'tournament' and target == 'parse':
         file_location = 'parsed_tournaments'
-        file_name = 'parsed_tournament_data_'
+        file_name = 'tournament-parsed-data-'
     else:
         sys.exit('Wrong type or target set')
 

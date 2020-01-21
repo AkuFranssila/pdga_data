@@ -9,7 +9,6 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
 def PlayerParseRawData(pdga_number, raw_data, file_location):
-    data = []
     soup = BeautifulSoup(raw_data, "html.parser")
     logging.info('----------------------------------------')
     logging.info("Parsing raw data for player %s" % str(pdga_number))
@@ -144,9 +143,8 @@ def PlayerParseRawData(pdga_number, raw_data, file_location):
     player_data['player_career_earnings'] = player_career_earnings
     player_data['player_individual_tournament_years'] = player_individual_tournament_years
     player_data['player_crawl_date'] = str(date.today())
-    data.append(player_data)
 
-    return data
+    return player_data
 
 
 #print (json.dumps(CrawlPlayers(1,20,False), indent=4))
