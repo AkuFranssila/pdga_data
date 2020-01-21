@@ -38,5 +38,5 @@ def TournamentCrawlRawData(options, file_location):
         AppendToFile(file_location,  json_data)
 
     file_send_status = send_file_to_s3(file_location, "tournament-raw-data")
-    if file_send_status:
-        DeleteFile(file_location)
+    #if file_send_status:
+    #    DeleteFile(file_location)

@@ -20,9 +20,8 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info('Starting country highest rated analytics script')
 ConnectMongo()
 
-import pdb; pdb.set_trace()
 all_pdga_numbers = []
-all_country_players = Player.objects.filter(country="Finland").only("pdga_number")
+all_country_players = Player.objects.filter(country="united states").only("pdga_number")
 for country_player in all_country_players:
     all_pdga_numbers.append(country_player.pdga_number)
 
@@ -31,6 +30,8 @@ all_tournaments = Tournament.objects.filter().only("players", "tournament_id")
 highest_round_rating = 0
 player_id = 0
 tournament_id = 0
+
+dict = {}
 
 same_round_rating = []
 
@@ -53,18 +54,25 @@ for count, tournament in enumerate(all_tournaments):
                 if p.pdga_number_1 in found_country_players:
                     for r in p.rounds:
                         if r.round_rating is not None:
-                            if r.round_rating == highest_round_rating:
-                                same_round_rating.append(p.pdga_number_1)
-                                logging.info('New same highest round rating found.')
-                            elif r.round_rating > highest_round_rating and r.round_rating < 1300:
-                                tournament_id = tournament.tournament_id
-                                player_id = p.pdga_number_1
-                                highest_round_rating = r.round_rating
-                                same_round_rating = []
-                                logging.info(f'Highest round rating for Finland: {str(highest_round_rating)} for player {str(player_id)} in tournament with ID: {str(tournament_id)}')
+                            if len(dict.keys()) < 11:
+                                dict[r.round_rating] = {"tournament": t.tournament_name, "player_name": p.full_name_1, "pdga_number": p.pdga_number_1, "year": str(t.tournament_start).split('-')[0], "round_number": str(r.round_number)}
+                            elif r.round_rating < 1500:
+                                dict[r.round_rating] = {"tournament": t.tournament_name, "player_name": p.full_name_1, "pdga_number": p.pdga_number_1, "year": str(t.tournament_start).split('-')[0], "round_number": str(r.round_number)}
+                                lowest_key = sorted(dict)[0]
+                                highest_key = sorted(dict)[-1]
+                                dict.pop(lowest_key)
+                                print(json.dumps(dict[highest_key], indent=4))
 
 
+                            # if r.round_rating == highest_round_rating:
+                            #     same_round_rating.append(p.pdga_number_1)
+                            #     logging.info('New same highest round rating found.')
+                            # elif r.round_rating > highest_round_rating and r.round_rating < 1400:
+                            #     tournament_id = t.tournament_id
+                            #     player_id = p.pdga_number_1
+                            #     highest_round_rating = r.round_rating
+                            #     same_round_rating = []
+                            #     logging.info(f'Highest round rating for Finland: {str(highest_round_rating)} for player {str(player_id)} in tournament with ID: {str(tournament_id)}')
 
-logging.info('Script finished')
-logging.info(f'Highest round rating for Finland: {str(highest_round_rating)} for player {str(player_id)} in tournament with ID: {str(tournament_id)}')
-logging.info(same_round_rating)
+
+print(json.dumps(dict, indent=4))

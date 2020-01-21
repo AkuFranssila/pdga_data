@@ -84,4 +84,4 @@ def send_multipart_file_to_s3(filename, type):
 #latest_file = FindFiles('crawled_players').find_latest_file()
 #print(latest_file)
 #send_file_to_s3('.\\crawled_players\\player-raw-data-2020-01-08.json', "player-raw-data")
-send_multipart_file_to_s3('.\\crawled_players\\player-raw-data-2020-01-11.txt', "player-raw-data")
+#send_multipart_file_to_s3('.\\crawled_players\\player-raw-data-2020-01-11.txt', "player-raw-data")
