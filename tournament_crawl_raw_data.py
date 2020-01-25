@@ -6,7 +6,7 @@ import logging
 from datetime import date
 from helpers_crawler import TournamentDate, TournamentLastPage
 from helpers_data_management import AppendToFile, ReturnFileLocation, DeleteFile
-from send_file_to_s3 import send_file_to_s3
+from send_file_to_s3 import send_multipart_file_to_s3
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
@@ -37,6 +37,6 @@ def TournamentCrawlRawData(options, file_location):
         json_data = {"pdga_number" : i, "raw_data" : data}
         AppendToFile(file_location,  json_data)
 
-    file_send_status = send_file_to_s3(file_location, "tournament-raw-data")
+    file_send_status = send_multipart_file_to_s3(file_location, "tournament-raw-data")
     #if file_send_status:
     #    DeleteFile(file_location)
