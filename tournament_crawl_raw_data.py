@@ -22,7 +22,7 @@ def TournamentCrawlRawData(options, file_location):
         for link in all_links:
             try:
                 link = "https://www.pdga.com" + link['href']
-                if 'https://www.pdga.com/tour/event/' in link and link not in tournament_links:
+                if 'https://www.pdga.com/tour/event/' in link and link not in tournament_links and "/global-event/results/" not in link:
                     tournament_links.append(link)
                     #print ("https://www.pdga.com" + link['href'])
             except:
@@ -34,7 +34,7 @@ def TournamentCrawlRawData(options, file_location):
         logging.info(f'Parsing tournament number {str(count)}/{str(len(tournament_links))}')
         response = requests.get(link)
         data = response.content.decode('utf8').replace("'", '"')
-        json_data = {"pdga_number" : i, "raw_data" : data}
+        json_data = {"pdga_number" : int(link.rslit("/", 1)[1]), "raw_data" : data}
         AppendToFile(file_location,  json_data)
 
     file_send_status = send_multipart_file_to_s3(file_location, "tournament-raw-data")
