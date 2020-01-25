@@ -7,8 +7,10 @@ from datetime import date
 from helpers_crawler import TournamentDate, TournamentLastPage
 from helpers_data_management import AppendToFile, ReturnFileLocation, DeleteFile
 from send_file_to_s3 import send_multipart_file_to_s3
+from slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
+SendSlackMessageToChannel("%s Starting tournament_crawl_raw_data.py" % str(datetime.datetime.today()), "#data-reports")
 
 def TournamentCrawlRawData(options, file_location):
     url = TournamentDate(options)
@@ -29,6 +31,8 @@ def TournamentCrawlRawData(options, file_location):
                 None
 
     logging.info(f'Number of tournaments found {str(len(tournament_links))}')
+    SendSlackMessageToChannel("%s Tournament link collection done. Found %s tournament links." % (str(datetime.datetime.today()), str(len(tournament_links))), "#data-reports")
+
 
     for count, link in enumerate(tournament_links):
         logging.info(f'Parsing tournament number {str(count)}/{str(len(tournament_links))}')
@@ -38,5 +42,6 @@ def TournamentCrawlRawData(options, file_location):
         AppendToFile(file_location,  json_data)
 
     file_send_status = send_multipart_file_to_s3(file_location, "tournament-raw-data")
+    SendSlackMessageToChannel("%s Finished tournament_crawl_raw_data.py." % (str(datetime.datetime.today())), "#data-reports")
     #if file_send_status:
     #    DeleteFile(file_location)
