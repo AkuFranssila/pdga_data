@@ -5,3 +5,4 @@ pylint
 pycountry
 mongomock
 boto3
+slackclient
