@@ -31,7 +31,9 @@ def ParsePlayer(data):
     player.individual_tournament_years = ParseIndividualTournamentYears(data['player_individual_tournament_years'], data['player_membership_status'], player.individual_tournament_years)
     player.certified_status, player.certified_status_expiration_date = ParseCertifiedStatus(data['player_certified_status'], data['player_certified_status_expiration'])
     added_data, removed_data, modified_data, same_data, all_new = CompareDicts(data['player_pdga_number'], player)
-    player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today()), all_new))
+    #player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today()), all_new))
+    player.fields_updated = []
+    logging.info("Player with PDGA number %s has been added to Mongo", str(player.pdga_number))
 
     player.save()
 

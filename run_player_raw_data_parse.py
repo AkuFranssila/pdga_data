@@ -1,6 +1,7 @@
 # coding=utf-8
 import json
 import logging
+import datetime
 from helpers_data_management import DownloadFileFromS3, SaveFile
 from player_parse_raw_data import PlayerParseRawData
 from send_file_to_s3 import send_multipart_file_to_s3
@@ -28,4 +29,4 @@ with open(file_location, "r") as data:
 saved_file_location = SaveFile("player", "parse", all_parsed_data)
 
 send_multipart_file_to_s3(saved_file_location, "player-parsed-data")
-SendSlackMessageToChannel("%s Player raw data parsed and send to S3.\n\nS3 file location: %s.\n\nNumber of tournaments parsed: %s" % (str(datetime.datetime.today(), saved_file_location, str(len(all_parsed_data)))), "#data-reports")
+SendSlackMessageToChannel("%s Player raw data parsed and send to S3.\n\nS3 file location: %s.\n\nNumber of tournaments parsed: %s" % (str(datetime.datetime.today()), saved_file_location, str(len(all_parsed_data)))), "#data-reports")
