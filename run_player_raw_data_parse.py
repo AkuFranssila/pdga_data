@@ -10,6 +10,7 @@ logging.info("Starting run_player_raw_data_parse.py")
 
 file_location = DownloadFileFromS3("player-raw-data")
 #file_location = '.\\crawled_players\\player-raw-data-2020-01-12.txt'
+#file_location = '.\\crawled_tournaments\\tournament-raw-data-2020-01-16.txt'
 
 all_parsed_data = []
 
