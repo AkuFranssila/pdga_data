@@ -1,12 +1,14 @@
 # coding=utf-8
 import json
 import logging
+import datetime
 from helpers_data_management import DownloadFileFromS3, SaveFile
 from tournament_parse_raw_data import TournamentParseRawData
 from send_file_to_s3 import send_multipart_file_to_s3
+from slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info("Starting run_tournament_raw_data_parse.py")
-
+SendSlackMessageToChannel("%s Starting run_tournament_raw_data_parse.py" % str(datetime.datetime.today()), "#data-reports")
 
 file_location = DownloadFileFromS3("tournament-raw-data")
 
@@ -25,4 +27,5 @@ saved_file_location = SaveFile("tournament", "parse", all_parsed_data)
 
 logging.info("Sending parsed tournament data to S3")
 send_multipart_file_to_s3(saved_file_location, "tournament-parsed-data")
+SendSlackMessageToChannel("%s Tournament raw data parsed and send to S3.\n\nS3 file location: %s.\n\nNumber of tournaments parsed: %s" % (str(datetime.datetime.today(), saved_file_location, str(len(all_parsed_data)))), "#data-reports")
 logging.info("Finished tournament raw data parsing. Parsed %s tournaments" % str(len(all_parsed_data)))
