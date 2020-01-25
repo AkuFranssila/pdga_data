@@ -30,10 +30,11 @@ This project is to collect all player and tournament data available on PDGA. PDG
 - [x] Add CircleCI for automated testing
 - [x] Create tests
 - [x] Fix any errors and problems found after tests are done
-- [ ] Refactor whole crawling process to collect the whole page instead of crawling it for player and tournament data
-- [ ] Save the crawled pages to AWS S3
-- [ ] Refactor the parsing process to parse the crawled full html page
-- [ ] Save parsed data as json to AWS S3
+- [x] Refactor whole crawling process to collect the whole page instead of crawling it for player and tournament data
+- [x] Save the crawled pages to AWS S3
+- [x] Refactor the parsing process to parse the crawled full html page
+- [x] Save parsed data as json to AWS S3
+- [x] Add Slack integration and send messages about important data processes to Slack channel for monitoring purposes.
 - [ ] Refactor sending data to mongodb for player and tournaments
 - [ ] Create statistics for players, tournaments
 - [ ] Create statistics on country level + all
