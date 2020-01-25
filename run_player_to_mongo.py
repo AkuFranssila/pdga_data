@@ -18,7 +18,6 @@ ConnectMongo()
 with open(file_location, "r") as data:
     all_players = json.load(data)
     for player in all_players:
-        import pdb; pdb.set_trace()
         ParsePlayer(player)
 
 

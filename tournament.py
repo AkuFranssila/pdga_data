@@ -40,6 +40,7 @@ def ParseTournament(data):
     #print (tournament.to_json())
     logging.info('----------------------------')
     logging.info('Tournament: %s. PDGA page: %s' % (tournament.tournament_name, tournament.pdga_page_link))
+    logging.info('Tournament ID: %s' % str(tournament.tournament_id))
 
     #bbb = json.loads(tournament.to_json())
     #print (json.dumps(bbb, indent=4, sort_keys=True))
