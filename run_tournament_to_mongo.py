@@ -19,6 +19,7 @@ with open(file_location, "r") as data:
     all_tournaments = json.load(data)
     for tournament in all_tournaments:
         ParseTournament(tournament)
+        import pdb; pdb.set_trace()
 
 
 total = Tournament.objects().count()

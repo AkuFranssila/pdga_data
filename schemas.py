@@ -109,7 +109,7 @@ class DivisionPlayer(EmbeddedDocument):
     pdga_page = ListField(help_text="PDGA page link, if doubles then field will contain more than one link")
     propagator = BooleanField(help_text="True False if player was propagator during tournament. If doubles value is used for both")
     rating_during_tournament = ListField(help_text="Player rating during tournament if doubles then more than one rating in the list")
-
+    rounds_with_results = IntField(help_text="This is a field to collect how many rounds the player has played in a tournament. There might be 5 rounds but the player does not make the cut and only plays 3 rounds. There might be a league of 10 rounds but player only plays 1")
 
     final_placement = IntField(help_text="Player position at the end of the tournament")
     money_won = FloatField(help_text="Prize money won in tournament")

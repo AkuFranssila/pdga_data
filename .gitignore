@@ -11,3 +11,4 @@ crawled_tournaments/tournament-raw-data-2020-01-11.json
 *.txt
 crawled_players/player-raw-data-2020-01-11.json
 parsed_players/player-parsed-data-2020-01-25.json
+parsed_tournaments/tournament-parsed-data-2020-01-26.json

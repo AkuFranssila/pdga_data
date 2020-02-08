@@ -33,15 +33,7 @@ def ParseDivisions(data):
         for count, round in enumerate(div['division_course_details']):
             divisionround = DivisionRound()
             divisionround.round_number = count + 1
-            #divisionround.round_total_players = ""
             divisionround.course_name, divisionround.course_layout, divisionround.course_holes, divisionround.course_par, divisionround.course_pdga_page, divisionround.course_length_meters, divisionround.course_length_feet = ParseCourseDetails(round['round_' + str(count + 1)]['course_details'], round['round_' + str(count + 1)]['course_pdga_link'])
-            #divisionround.round_total_throws = ""
-            #divisionround.avg_throws = ""
-            #divisionround.avg_par = ""
-            #divisionround.avg_throw_length_meters = ""
-            #divisionround.avg_throw_length_meters = ""
-            #divisionround.dns_count = ""
-            #divisionround.dnf_count = ""
             division.rounds.append(divisionround)
 
         parsed_players = []
@@ -52,6 +44,22 @@ def ParseDivisions(data):
             divisionplayer.pdga_page_1, divisionplayer.pdga_page_2 = ParseTournamentPDGApage(data["event_type"][0], player)
             divisionplayer.propagator_1, divisionplayer.propagator_2 = ParsePropagator(data["event_type"][0], player)
             divisionplayer.rating_during_tournament_1, divisionplayer.rating_during_tournament_2 = ParseRatingTournament(data["event_type"][0], player)
+            #Use new fields here
+            divisionplayer.full_name = []
+            if divisionplayer.full_name_1:
+                divisionplayer.full_name.append(divisionplayer.full_name_1)
+            if divisionplayer.full_name_2:
+                divisionplayer.full_name.append(divisionplayer.full_name_2)
+
+            divisionplayer.pdga_number = []
+            if divisionplayer.pdga_number_1
+
+            divisionplayer.pdga_page = []
+            divisionplayer.rating_during_tournament = []
+            divisionplayer.propagator = True
+
+
+            divisionplayer.rounds_with_results = 0
             divisionplayer.final_placement = ParseTournamentPlacement(player['player_final_placement'])
             divisionplayer.money_won = ParseTournamentWinnings(player['player_money_won'])
             divisionplayer.total_throws, dnf_found, dns_found = ParseTournamentTotalThrows(player['player_total_throws'])
@@ -65,11 +73,12 @@ def ParseDivisions(data):
                 r.round_number = round['round_number']
                 r.round_throws, r.dnf = ParsePlayerRoundThrows(round['round_throws'], r.dnf)
                 r.round_rating = ParsePlayerRoundRating(round['round_rating'])
-                #r.round_placement
-                #r.tournament_placement
-                #r.avg_throw_length_meters
-                #r.avg_throw_length_feet
                 r.dns = False
+
+                if r.round_throws > 0:
+                    divisionplayer.rounds_with_results += 1
+                #r.avg_throw_length_meters = PlayerRoundAvgThrowLenghtMeters(division.rounds, r.round_throws, r.round_number)
+                #r.avg_throw_length_feet = PlayerRoundAvgThrowLenghtFeet(division.rounds, r.round_throws, r.round_number)
                 divisionplayer.rounds.append(r)
 
             if divisionplayer.pdga_number_1 is not None:
@@ -87,6 +96,19 @@ def ParseDivisions(data):
             #divisionplayer.avg_throw_length_feet
             #divisionplayer.avg_throws_per_hole
             parsed_players.append(divisionplayer)
+
+        #Calculate extra round statistics here, these can only be calculated after all players have been parsed once.
+        #r.round_placement
+        #r.tournament_placement
+
+        #divisionround.round_total_throws = ""
+        #divisionround.avg_throws = ""
+        #divisionround.avg_par = ""
+        #divisionround.avg_throw_length_meters = ""
+        #divisionround.avg_throw_length_meters = ""
+        #divisionround.dns_count = ""
+        #divisionround.dnf_count = ""
+        #divisionround.round_total_players = ""
 
         division.players = parsed_players
 

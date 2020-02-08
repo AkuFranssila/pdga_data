@@ -12,7 +12,7 @@ from schemas import Player, Tournament
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-class TestPlayer(unittest.TestCase):
+class TestTournament(unittest.TestCase):
     logging.info('Starting mongodb tournament schema tests')
     @classmethod
     def setUpClass(cls):
@@ -25,6 +25,6 @@ class TestPlayer(unittest.TestCase):
     def test_create_and_update_tournament(self):
         tournament_data = {}
 
-        
+
 if __name__ == '__main__':
     unittest.main()

@@ -23,12 +23,10 @@ with open(file_location, "r") as data:
         raw_data = json_data["raw_data"]
         parsed_data = TournamentParseRawData(id, raw_data, '')
         all_parsed_data.append(parsed_data)
-        if len(all_parsed_data) == 50:
-            break
 
 saved_file_location = SaveFile("tournament", "parse", all_parsed_data)
 
 logging.info("Sending parsed tournament data to S3")
 send_multipart_file_to_s3(saved_file_location, "tournament-parsed-data")
-SendSlackMessageToChannel("%s Tournament raw data parsed and send to S3.\n\nS3 file location: %s.\n\nNumber of tournaments parsed: %s" % (str(datetime.datetime.today()), saved_file_location, str(len(all_parsed_data)))), "#data-reports")
+SendSlackMessageToChannel("%s Tournament raw data parsed and send to S3.\n\nS3 file location: %s.\n\nNumber of tournaments parsed: %s" % (str(datetime.datetime.today()), saved_file_location, str(len(all_parsed_data))), "#data-reports")
 logging.info("Finished tournament raw data parsing. Parsed %s tournaments" % str(len(all_parsed_data)))
