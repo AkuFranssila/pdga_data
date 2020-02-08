@@ -52,7 +52,7 @@ def ParseDivisions(data):
                 divisionplayer.full_name.append(divisionplayer.full_name_2)
 
             divisionplayer.pdga_number = []
-            if divisionplayer.pdga_number_1
+            #if divisionplayer.pdga_number_1
 
             divisionplayer.pdga_page = []
             divisionplayer.rating_during_tournament = []
