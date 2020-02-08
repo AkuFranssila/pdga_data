@@ -3,9 +3,9 @@ import json
 import logging
 import sys
 import datetime
-from player_crawl_raw_data import PlayerCrawlRawData
-from helpers_data_management import ReturnFileLocation
-from slack_message_sender import SendSlackMessageToChannel
+from player.player_crawl_raw_data import PlayerCrawlRawData
+from helpers.helpers_data_management import ReturnFileLocation
+from utils.slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 SendSlackMessageToChannel("%s Starting run_player_crawl.py" % str(datetime.datetime.today()), "#data-reports")

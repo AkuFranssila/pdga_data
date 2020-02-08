@@ -2,8 +2,8 @@
 import json
 import logging
 from datetime import date
-from schemas import Player
-from helpers_data_parsing import *
+from models.schemas import Player
+from helpers.helpers_data_parsing import *
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 

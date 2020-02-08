@@ -5,10 +5,10 @@ import sys
 import os
 cwd = os.getcwd()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
-from helpers_data_parsing import *
-from tournament import ParseTournament
+from helpers.helpers_data_parsing import *
+from tournament.tournament import ParseTournament
 from mongoengine import connect, disconnect
-from schemas import Player, Tournament
+from models.schemas import Player, Tournament
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 

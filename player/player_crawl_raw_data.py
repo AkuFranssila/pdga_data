@@ -4,9 +4,9 @@ import requests
 import json
 import logging
 from datetime import date
-from helpers_crawler import FindNewestMemberId
-from helpers_data_management import AppendToFile, ReturnFileLocation, DeleteFile
-from send_file_to_s3 import send_multipart_file_to_s3
+from helpers.helpers_crawler import FindNewestMemberId
+from helpers.helpers_data_management import AppendToFile, ReturnFileLocation, DeleteFile
+from utils.send_file_to_s3 import send_multipart_file_to_s3
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 

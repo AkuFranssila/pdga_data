@@ -5,9 +5,9 @@ import os
 import sys
 import boto3
 from datetime import datetime
-from aws_s3_client import AWS_S3CLIENT
-from helpers_data_management import OpenFileReturnData
-from find_file import FindFiles
+from utils.aws_s3_client import AWS_S3CLIENT
+from helpers.helpers_data_management import OpenFileReturnData
+from utils.find_file import FindFiles
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 def check_if_file_exists_s3(client, key):

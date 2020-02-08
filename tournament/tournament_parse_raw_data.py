@@ -4,7 +4,7 @@ import requests
 import json
 import logging
 from datetime import date
-from helpers_crawler import TournamentDate, TournamentLastPage
+from helpers.helpers_crawler import TournamentDate, TournamentLastPage
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 

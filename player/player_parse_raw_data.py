@@ -4,7 +4,7 @@ import requests
 import json
 import logging
 from datetime import date
-from helpers_crawler import FindNewestMemberId
+from helpers.helpers_crawler import FindNewestMemberId
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
