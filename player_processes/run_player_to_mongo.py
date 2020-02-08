@@ -2,7 +2,7 @@
 import json
 import logging
 import datetime
-from player.player import ParsePlayer
+from player_processes.player import ParsePlayer
 from utils.connect_mongodb import ConnectMongo
 from utils.slack_message_sender import SendSlackMessageToChannel
 from models.schemas import Player

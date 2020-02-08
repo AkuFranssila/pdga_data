@@ -2,7 +2,7 @@
 import json
 import logging
 import datetime
-from tournament.tournament import ParseTournament
+from tournament_processes.tournament import ParseTournament
 from utils.connect_mongodb import ConnectMongo
 from utils.slack_message_sender import SendSlackMessageToChannel
 from models.schemas import Tournament

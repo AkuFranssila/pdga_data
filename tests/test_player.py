@@ -6,7 +6,7 @@ import os
 cwd = os.getcwd()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
 from helpers.helpers_data_parsing import *
-from player.player import ParsePlayer
+from player_processes.player import ParsePlayer
 from mongoengine import connect, disconnect
 from models.schemas import Player, Tournament
 

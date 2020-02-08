@@ -3,7 +3,7 @@ import json
 import logging
 import datetime
 from helpers.helpers_data_management import DownloadFileFromS3, SaveFile
-from player.player_parse_raw_data import PlayerParseRawData
+from player_processes.player_parse_raw_data import PlayerParseRawData
 from utils.send_file_to_s3 import send_multipart_file_to_s3
 from utils.slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)

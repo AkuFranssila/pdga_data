@@ -4,7 +4,7 @@ import logging
 from datetime import date
 from models.schemas import Player
 from mongoengine import *
-from player.helpers_data_parsing import *
+from player_processes.helpers_data_parsing import *
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 

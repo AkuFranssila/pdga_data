@@ -6,7 +6,7 @@ from models.schemas import Tournament
 from mongoengine import *
 from utils.connect_mongodb import ConnectMongo
 from helpers.helpers_data_parsing import *
-from tournament.division import ParseDivisions
+from tournament_processes.division import ParseDivisions
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
