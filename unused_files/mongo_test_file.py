@@ -1,6 +1,6 @@
 from connect_mongodb import ConnectMongo
 from mongoengine import *
-from schemas import Player
+from models.schemas import Player
 from helpers_data_parsing import *
 from datetime import date
 ConnectMongo()

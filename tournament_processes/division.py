@@ -2,7 +2,7 @@
 import json
 import logging
 from datetime import date
-from schemas import *
+from models.schemas import *
 from mongoengine import *
 from utils.connect_mongodb import ConnectMongo
 from helpers.helpers_data_parsing import *
