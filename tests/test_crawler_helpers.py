@@ -5,9 +5,7 @@ import sys
 import os
 #cwd = os.getcwd()
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
-from helpers.helpers_crawler import FindNewestMemberId, TournamentDate, TournamentLastPage
-
-import pdb; pdb.set_trace()
+from pdga_data.helpers.helpers_crawler import FindNewestMemberId, TournamentDate, TournamentLastPage
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
