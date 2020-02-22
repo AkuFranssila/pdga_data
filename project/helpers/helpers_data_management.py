@@ -5,7 +5,7 @@ import sys
 import os
 import re
 from datetime import date, datetime
-from utils.aws_s3_client import AWS_S3CLIENT
+from project.utils.aws_s3_client import AWS_S3CLIENT
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 def OpenFileReturnData(file):

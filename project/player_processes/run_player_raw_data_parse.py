@@ -2,10 +2,10 @@
 import json
 import logging
 import datetime
-from helpers.helpers_data_management import DownloadFileFromS3, SaveFile
-from player_processes.player_parse_raw_data import PlayerParseRawData
-from utils.send_file_to_s3 import send_multipart_file_to_s3
-from utils.slack_message_sender import SendSlackMessageToChannel
+from project.helpers.helpers_data_management import DownloadFileFromS3, SaveFile
+from project.player_processes.player_parse_raw_data import PlayerParseRawData
+from project.utils.send_file_to_s3 import send_multipart_file_to_s3
+from project.utils.slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info("Starting run_player_raw_data_parse.py")
 

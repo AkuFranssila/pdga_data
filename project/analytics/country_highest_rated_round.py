@@ -3,9 +3,8 @@ import sys
 import json
 import logging
 import datetime
-sys.path.append('/pdga_ratings/pdga_data')
-from utils.connect_mongodb import ConnectMongo
-from models.schemas import Player, Tournament
+from project.utils.connect_mongodb import ConnectMongo
+from project.models.schemas import Player, Tournament
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 

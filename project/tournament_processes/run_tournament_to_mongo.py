@@ -2,10 +2,10 @@
 import json
 import logging
 import datetime
-from tournament_processes.tournament import ParseTournament
-from utils.connect_mongodb import ConnectMongo
-from utils.slack_message_sender import SendSlackMessageToChannel
-from models.schemas import Tournament
+from project.tournament_processes.tournament import ParseTournament
+from project.utils.connect_mongodb import ConnectMongo
+from project.utils.slack_message_sender import SendSlackMessageToChannel
+from project.models.schemas import Tournament
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info("Starting run_tournament_to_mongo.py")
 

@@ -2,10 +2,10 @@
 import json
 import logging
 from datetime import date
-from models.schemas import *
+from project.models.schemas import *
 from mongoengine import *
-from utils.connect_mongodb import ConnectMongo
-from helpers.helpers_data_parsing import *
+from project.utils.connect_mongodb import ConnectMongo
+from project.helpers.helpers_data_parsing import *
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 

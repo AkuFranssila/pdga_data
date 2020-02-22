@@ -1,5 +1,5 @@
 import json
-from utils.aws_s3_client import AWS_S3CLIENT
+from project.utils.aws_s3_client import AWS_S3CLIENT
 
 s3 = AWS_S3CLIENT()
 

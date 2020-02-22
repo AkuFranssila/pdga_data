@@ -2,10 +2,10 @@
 import json
 import logging
 import datetime
-from player_processes.player import ParsePlayer
-from utils.connect_mongodb import ConnectMongo
-from utils.slack_message_sender import SendSlackMessageToChannel
-from models.schemas import Player
+from project.player_processes.player import ParsePlayer
+from project.utils.connect_mongodb import ConnectMongo
+from project.utils.slack_message_sender import SendSlackMessageToChannel
+from project.models.schemas import Player
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info("Starting run_player_to_mongo.py")
 

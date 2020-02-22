@@ -2,11 +2,11 @@
 import json
 import logging
 from datetime import date
-from models.schemas import Tournament
+from project.models.schemas import Tournament
 from mongoengine import *
-from utils.connect_mongodb import ConnectMongo
-from helpers.helpers_data_parsing import *
-from tournament_processes.division import ParseDivisions
+from project.utils.connect_mongodb import ConnectMongo
+from project.helpers.helpers_data_parsing import *
+from project.tournament_processes.division import ParseDivisions
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 

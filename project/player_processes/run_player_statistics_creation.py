@@ -3,10 +3,10 @@ import json
 import logging
 import sys
 from datetime import date
-from player_processes.player import ParsePlayer
-from utils.connect_mongodb import ConnectMongo
-from models.schemas import Player
-from player_processes.player_statistics import GeneratePlayerStatistics
+from project.player_processes.player import ParsePlayer
+from project.utils.connect_mongodb import ConnectMongo
+from project.models.schemas import Player
+from project.player_processes.player_statistics import GeneratePlayerStatistics
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
