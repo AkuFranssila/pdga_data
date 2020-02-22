@@ -21,10 +21,10 @@ jobs:
           command: |
             . env/bin/activate
             cd tests
-            python test_data_parsing.py
-            python test_player.py
-            python test_tournament.py
-            python test_crawler_helpers.py
+            python3 test_data_parsing.py
+            python3 test_player.py
+            python3 test_tournament.py
+            python3 test_crawler_helpers.py
       - store_artifacts:
           path: tests/test-reports/
           destination: tr1
