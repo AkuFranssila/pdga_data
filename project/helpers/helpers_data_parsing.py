@@ -5,7 +5,7 @@ import logging
 import datetime
 import requests
 import pycountry
-from models.schemas import Player, Tournament
+from project.models.schemas import Player, Tournament
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
