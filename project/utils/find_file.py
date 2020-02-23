@@ -9,10 +9,10 @@ class FindFiles:
     def __init__(self, folder_name):
         self.folder_name = folder_name
         folders = {
-            "crawled_players" : "player_data_",
-            "parsed_players" : "parsed_player_data_",
-            "crawled_tournaments" : "tournament_data_",
-            "parsed_tournaments" : "parsed_tournament_data_"
+            "project/crawled_players" : "player_data_",
+            "project/parsed_players" : "parsed_player_data_",
+            "project/crawled_tournaments" : "tournament_data_",
+            "project/parsed_tournaments" : "parsed_tournament_data_"
         }
         try:
             self.file_text = folders[self.folder_name]
