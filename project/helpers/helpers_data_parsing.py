@@ -6,85 +6,28 @@ import datetime
 import requests
 import pycountry
 from project.models.schemas import Player, Tournament
+from project.helpers.helper_data import ACCEPTED_STATUSES, US_STATES, MONTH_DICT
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-def ParseFullName(name):
-    if name == "Page not found":
-        return None, None
-    if name is not None:
-        name = name.split(' ')
+def ParsePlayerFullName(data):
+    first_name = None
+    middle_name = None
+    last_name = None
+    full_name = data.get('player_name')
+
+    if full_name and full_name != "Page not found":
+        full_name = full_name.split(' ')
         if len(name) > 2:
-            first_name = name[0] + ' ' + name[1]
-            last_name = name[-1]
+            first_name = full_name[0] + ' ' + full_name[1]
+            last_name = full_name[-1]
         else:
-            first_name = name[0]
-            last_name = name[-1]
-        return first_name, last_name
-    else:
-        return None, None
+            first_name = full_name[0]
+            last_name = full_name[-1]
+
+    return first_name, middle_name, last_name
 
 def ParseFullLocation(location):
-    us_states = {
-        'ak': 'Alaska',
-        'al': 'Alabama',
-        'ar': 'Arkansas',
-        'as': 'American Samoa',
-        'az': 'Arizona',
-        'ca': 'California',
-        'co': 'Colorado',
-        'ct': 'Connecticut',
-        'dc': 'District of Columbia',
-        'de': 'Delaware',
-        'fl': 'Florida',
-        'ga': 'Georgia',
-        'gu': 'Guam',
-        'hi': 'Hawaii',
-        'ia': 'Iowa',
-        'id': 'Idaho',
-        'il': 'Illinois',
-        'in': 'Indiana',
-        'ks': 'Kansas',
-        'ky': 'Kentucky',
-        'la': 'Louisiana',
-        'ma': 'Massachusetts',
-        'md': 'Maryland',
-        'me': 'Maine',
-        'mi': 'Michigan',
-        'mn': 'Minnesota',
-        'mo': 'Missouri',
-        'mp': 'Northern Mariana Islands',
-        'ms': 'Mississippi',
-        'mt': 'Montana',
-        'na': 'National',
-        'nc': 'North Carolina',
-        'nd': 'North Dakota',
-        'ne': 'Nebraska',
-        'nh': 'New Hampshire',
-        'nj': 'New Jersey',
-        'nm': 'New Mexico',
-        'nv': 'Nevada',
-        'ny': 'New York',
-        'oh': 'Ohio',
-        'ok': 'Oklahoma',
-        'or': 'Oregon',
-        'pa': 'Pennsylvania',
-        'pr': 'Puerto Rico',
-        'ri': 'Rhode Island',
-        'sc': 'South Carolina',
-        'sd': 'South Dakota',
-        'tn': 'Tennessee',
-        'tx': 'Texas',
-        'ut': 'Utah',
-        'va': 'Virginia',
-        'vi': 'Virgin Islands',
-        'vt': 'Vermont',
-        'wa': 'Washington',
-        'wi': 'Wisconsin',
-        'wv': 'West Virginia',
-        'wy': 'Wyoming'
-        }
-
     if location is None:
         return None, None, None
 
@@ -101,7 +44,7 @@ def ParseFullLocation(location):
         logging.info(location)
         city = location[0]
         try:
-            state = us_states[location[1]].lower()
+            state = US_STATES[location[1]].lower()
         except:
             state = location[1]
         country = "united states"
@@ -110,7 +53,7 @@ def ParseFullLocation(location):
         logging.info(location)
         city = location[0]
         try:
-            state = us_states[location[1]].lower()
+            state = US_STATES[location[1]].lower()
         except:
             state = location[1]
         country = location[-1]
@@ -126,7 +69,7 @@ def ParseFullLocation(location):
         if len(location[1]) == 2:
             country = "united states"
             try:
-                state = us_states[location[1]].lower()
+                state = US_STATES[location[1]].lower()
             except:
                 state = location[1]
             city = location[0]
@@ -144,7 +87,7 @@ def ParseFullLocation(location):
         logging.info('If statement 6')
         logging.info(location)
         city = None
-        state = us_states[location[0]].lower()
+        state = US_STATES[location[0]].lower()
         country = "united states"
     elif len(location) == 1 and pycountry.countries.get(name=location[0].title()):
         logging.info('If statement 7')
@@ -185,25 +128,23 @@ def ParseFullLocation(location):
     return city, state, country
 
 def ParseDate(date):
-    if date is None:
-        return None
-    day,month,year = date.split(' ')[0].strip().split('-')
-    month_dict = {
-            "Jan":"01",
-            "Feb":"02",
-            "Mar":"03",
-            "Apr":"04",
-            "May":"05",
-            "Jun":"06",
-            "Jul":"07",
-            "Aug":"08",
-            "Sep":"09",
-            "Oct":"10",
-            "Nov":"11",
-            "Dec":"12"
-            }
-    date = year + '-' + month_dict[month] + '-' + day
+    """
+    Accepts date in the format posted in PDGA. Returns the date in year-month-day format.
+    """
+    if date:
+        day,month,year = date.split(' ')[0].strip().split('-')
+        date = year + '-' + MONTH_DICT[month] + '-' + day
     return date
+
+def CleanPlayerFullName(data):
+    """
+    Remove trailing white space. Add more normalization or validation to full name if needed in the future.
+    """
+    full_name = data.get('player_name')
+    if full_name:
+        full_name = full_name.strip()
+
+    return full_name
 
 def PlayerExists(pdga_number):
     logging.info(f'Checking if player exists {str(pdga_number)}')
@@ -216,20 +157,35 @@ def PlayerExists(pdga_number):
 
     return player, player_exists
 
-def ParseIdStatus(full_name, id_status):
-    if full_name == "Page not found":
-        return False
+def ParseIdStatus(data):
+    """
+    If player name can be found then the player ID is in use
+    """
+    name = data.get('player_name')
+    if name:
+        return True
     else:
-        return id_status
+        False
 
-def CheckMembershipStatus(membership_status):
-    if membership_status is not None:
+def CheckAndNormalizeMembershipStatus(data):
+    membership_status = data.get('player_membership_status')
+    if membership_status:
         membership_status = str(membership_status).lower().strip()
-    accepted_statuses = ['ace club', 'eagle club', 'birdie club', 'active', 'current']
-    if membership_status in accepted_statuses:
-        return membership_status, True
-    else:
-        return membership_status, False
+
+    return membership_status
+
+def CheckMembership(membership_status):
+    """
+    Check if membership is active. Return true or false depending on the membership status
+    """
+    membership_active = False
+    membership_status = data.get('player_membership_status')
+    if membership_status:
+        membership_status = str(membership_status).lower().strip()
+        if membership_status in ACCEPTED_STATUSES:
+            membership_active = True
+
+    return membership_active
 
 def ParseClassification(classification):
     if classification is None:
@@ -411,27 +367,12 @@ def ParseTournamentDates(event_dates):
     #Date: 03-Nov-2019
     #Date: 02-Nov to 03-Nov-2019
     #Date: 17-May to 19-May-2019
-    month_dict = {
-            "Jan":"01",
-            "Feb":"02",
-            "Mar":"03",
-            "Apr":"04",
-            "May":"05",
-            "Jun":"06",
-            "Jul":"07",
-            "Aug":"08",
-            "Sep":"09",
-            "Oct":"10",
-            "Nov":"11",
-            "Dec":"12"
-            }
-
     event_dates = event_dates.replace('Date: ', '')
     if " to " in event_dates:
         start = event_dates.split(' to ')[0]
         end = event_dates.split(' to ')[1]
         end = ParseDate(end)
-        start= end.split('-')[0] + '-' + month_dict[start.split('-')[1]] + '-' + start.split('-')[0]
+        start= end.split('-')[0] + '-' + MONTH_DICT[start.split('-')[1]] + '-' + start.split('-')[0]
     else:
         date = ParseDate(event_dates)
         start = date
