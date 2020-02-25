@@ -27,6 +27,37 @@ def ParsePlayerFullName(data):
 
     return first_name, middle_name, last_name
 
+def CleanFullLocation(data):
+    location_full = data.get("player_location_raw")
+    if location_full:
+        location_full = location_full.replace('Location:', '').replace('?', '').strip()
+
+    return location_full
+
+def ParseFullLocation(data):
+    """
+    Parse full location
+    """
+    full_location = data.get("player_location_raw")
+    city = None
+    state = None
+    country = None
+
+    def TurnLocationToList(full_location):
+        full_location_list = []
+        for field in full_location.split(','):
+            field = field.strip().lower()
+            if field == "usa":
+                field == "united states"
+
+            full_location_list.append(field)
+
+        return full_location_list
+
+    if full_location:
+        full_location_list = TurnLocationToList(full_location)
+
+
 def ParseFullLocation(location):
     if location is None:
         return None, None, None

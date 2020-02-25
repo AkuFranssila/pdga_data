@@ -23,6 +23,8 @@ def ParsePlayer(data):
     new_player.membership_status_expiration_date = ParseDate(data.get('player_membership_expiration_date'))
     new_player.full_name = CleanPlayerFullName(data)
     new_player.first_name, new_player.middle_name, new_player.last_name = ParsePlayerFullName(data)
+    new_player.location_full = CleanFullLocation(data)
+    new_player.city, new_player.state, new_player.country = ParseFullLocation(data)
 
     #player, player.player_exists = PlayerExists(data.get('player_pdga_number'))
     #player.pdga_id_status = ParseIdStatus(data.get('player_name'), data.get('player_id'))
@@ -30,7 +32,7 @@ def ParsePlayer(data):
     #player.membership_status_expiration_date = ParseDate(data.get('player_membership_expiration_date'))
     #player.full_name = data.get('player_name')
     #player.first_name, player.last_name = ParseFullName(data.get('player_name'))
-    player.location_full = data.get('player_location_raw')
+    #player.location_full = data.get('player_location_raw')
     player.city, player.state, player.country = ParseFullLocation(data.get('player_location_raw'))
     player.classification = ParseClassification(data.get('player_classification'))
     player.member_since = ParseMemberSince(data.get('player_member_since'))
