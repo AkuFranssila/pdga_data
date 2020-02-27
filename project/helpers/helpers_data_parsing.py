@@ -18,7 +18,7 @@ def ParsePlayerFullName(data):
 
     if full_name and full_name != "Page not found":
         full_name = full_name.split(' ')
-        if len(name) > 2:
+        if len(full_name) > 2:
             first_name = full_name[0] + ' ' + full_name[1]
             last_name = full_name[-1]
         else:
@@ -34,21 +34,36 @@ def CleanFullLocation(data):
 
     return location_full
 
-def ParseFullLocation(data):
+def ParseFullLocation(data, allow_google_api=True, recheck=False):
     """
     Parse full location
     """
-    full_location = data.get("player_location_raw")
+    if not recheck:
+        full_location = data.get("player_location_raw")
+    else:
+        full_location = data
     city = None
     state = None
     country = None
+
+    def GoogleMapsAPILocationCheck(data, allow_google_api):
+        new_location = None
+        if allow_google_api:
+            google_geolocation_query = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + data + '&key=' + os.environ['google_geolocation_apikey'])
+            json_data = json.loads(google_geolocation_query.text)
+            #logging.info(json_data)
+            new_location = json_data['results'][0]['formatted_address'].lower()
+            logging.info(new_location)
+
+        return new_location
+
 
     def TurnLocationToList(full_location):
         full_location_list = []
         for field in full_location.split(','):
             field = field.strip().lower()
             if field == "usa":
-                field == "united states"
+                field = "united states"
 
             full_location_list.append(field)
 
@@ -57,106 +72,145 @@ def ParseFullLocation(data):
     if full_location:
         full_location_list = TurnLocationToList(full_location)
 
-
-def ParseFullLocation(location):
-    if location is None:
-        return None, None, None
-
-    location = location.replace('Location:', '').replace('?', '').split(',')
-    cleaned_location = []
-    for loc in location:
-        loc = loc.strip()
-        if loc == "usa":
-            loc = "united states"
-        cleaned_location.append(loc.strip().lower())
-    location = cleaned_location
-    if len(location) >= 3 and location[-1] == "united states":
-        logging.info('Location if statement 1')
-        logging.info(location)
-        city = location[0]
-        try:
-            state = US_STATES[location[1]].lower()
-        except:
-            state = location[1]
-        country = "united states"
-    elif len(location) >= 3 and "united states" in location:
-        logging.info('If statement 2')
-        logging.info(location)
-        city = location[0]
-        try:
-            state = US_STATES[location[1]].lower()
-        except:
-            state = location[1]
-        country = location[-1]
-    elif len(location) >= 3:
-        logging.info('If statement 3')
-        logging.info(location)
-        city = location[0]
-        state = location[1]
-        country = location[-1]
-    elif len(location) == 2 and "united states" not in location:
-        logging.info('If statement 4')
-        logging.info(location)
-        if len(location[1]) == 2:
+        if "united states" in full_location_list:
             country = "united states"
-            try:
-                state = US_STATES[location[1]].lower()
-            except:
-                state = location[1]
-            city = location[0]
+
+            for field in full_location_list:
+                if not state:
+                    state = US_STATES.get(field)
+                if not state and field != "united states":
+                    city = field
         else:
-            city = location[0]
-            state = None
-            country = location[-1]
-    elif len(location) == 2 and "united states" in location:
-        logging.info('If statement 5')
-        logging.info(location)
-        city = None
-        state = location[0]
-        country = location[-1]
-    elif len(location) == 1 and len(location[0]) == 2:
-        logging.info('If statement 6')
-        logging.info(location)
-        city = None
-        state = US_STATES[location[0]].lower()
-        country = "united states"
-    elif len(location) == 1 and pycountry.countries.get(name=location[0].title()):
-        logging.info('If statement 7')
-        logging.info(location)
-        city = None
-        state = None
-        country = location[0]
-    elif len(location) == 1:
-        logging.info('If statement 8')
-        logging.info(location)
-        if len(location[0]) > 1:
-            google_geolocation_query = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + location[0] + '&key=' + os.environ['google_geolocation_apikey'])
-            json_data = json.loads(google_geolocation_query.text)
-            logging.info(json_data)
-            try:
-                parsed_new_location = ParseFullLocation(json_data['results'][0]['formatted_address'].lower())
-                city, state, country = parsed_new_location
-                logging.info(parsed_new_location)
-                if location[0] not in parsed_new_location:
-                    city = None
-                    state = None
-                    country = None
-            except:
-                city = None
-                state = None
-                country = None
-        else:
-            city = None
-            state = None
-            country = None
-    else:
-        logging.info('If statement 9')
-        logging.info(location)
-        city = None
-        state = None
-        country = None
+
+            if len(full_location_list) >= 3:
+                city = full_location_list[0]
+                state = full_location_list[1]
+                country = full_location_list[2]
+            elif len(full_location_list) == 2:
+
+                if len(full_location_list[1]) == 2:
+                    state = US_STATES.get(full_location_list[1])
+                    if state:
+                        country = "united states"
+                        city = full_location_list[0]
+                else:
+                    city = full_location_list[0]
+                    country = full_location_list[1]
+            elif len(full_location_list) == 1:
+
+                if len(full_location_list[0]) == 2:
+                    country = "united states"
+                    state = US_STATES.get(full_location_list[0])
+                elif pycountry.countries.get(name=full_location_list[0].title()):
+                    country = full_location_list[0]
+                elif len(full_location_list[0]) > 2:
+                    new_location = GoogleMapsAPILocationCheck(full_location_list[0], allow_google_api)
+                    if full_location_list[0] in new_location:
+                        city, state, country = ParseFullLocation(new_location, allow_google_api=False, recheck=True)
+
 
     return city, state, country
+
+
+# def ParseFullLocation(location):
+#     if location is None:
+#         return None, None, None
+#
+#     location = location.replace('Location:', '').replace('?', '').split(',')
+#     cleaned_location = []
+#     for loc in location:
+#         loc = loc.strip()
+#         if loc == "usa":
+#             loc = "united states"
+#         cleaned_location.append(loc.strip().lower())
+#     location = cleaned_location
+#     if len(location) >= 3 and location[-1] == "united states":
+#         logging.info('Location if statement 1')
+#         logging.info(location)
+#         city = location[0]
+#         try:
+#             state = US_STATES[location[1]].lower()
+#         except:
+#             state = location[1]
+#         country = "united states"
+#     elif len(location) >= 3 and "united states" in location:
+#         logging.info('If statement 2')
+#         logging.info(location)
+#         city = location[0]
+#         try:
+#             state = US_STATES[location[1]].lower()
+#         except:
+#             state = location[1]
+#         country = location[-1]
+#     elif len(location) >= 3:
+#         logging.info('If statement 3')
+#         logging.info(location)
+#         city = location[0]
+#         state = location[1]
+#         country = location[-1]
+#     elif len(location) == 2 and "united states" not in location:
+#         logging.info('If statement 4')
+#         logging.info(location)
+#         if len(location[1]) == 2:
+#             country = "united states"
+#             try:
+#                 state = US_STATES[location[1]].lower()
+#             except:
+#                 state = location[1]
+#             city = location[0]
+#         else:
+#             city = location[0]
+#             state = None
+#             country = location[-1]
+#     elif len(location) == 2 and "united states" in location:
+#         logging.info('If statement 5')
+#         logging.info(location)
+#         city = None
+#         state = location[0]
+#         country = location[-1]
+#     elif len(location) == 1 and len(location[0]) == 2:
+#         logging.info('If statement 6')
+#         logging.info(location)
+#         city = None
+#         state = US_STATES[location[0]].lower()
+#         country = "united states"
+#     elif len(location) == 1 and pycountry.countries.get(name=location[0].title()):
+#         logging.info('If statement 7')
+#         logging.info(location)
+#         city = None
+#         state = None
+#         country = location[0]
+#     elif len(location) == 1:
+#         logging.info('If statement 8')
+#         logging.info(location)
+#         if len(location[0]) > 1:
+#             google_geolocation_query = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + location[0] + '&key=' + os.environ['google_geolocation_apikey'])
+#             json_data = json.loads(google_geolocation_query.text)
+#             logging.info(json_data)
+#             try:
+#                 parsed_new_location = ParseFullLocation(json_data['results'][0]['formatted_address'].lower())
+#                 city, state, country = parsed_new_location
+#                 logging.info(parsed_new_location)
+#                 if location[0] not in parsed_new_location:
+#                     city = None
+#                     state = None
+#                     country = None
+#             except:
+#                 city = None
+#                 state = None
+#                 country = None
+#         else:
+#             city = None
+#             state = None
+#             country = None
+#     else:
+#         logging.info('If statement 9')
+#         logging.info(location)
+#         city = None
+#         state = None
+#         country = None
+#
+#     return city, state, country
 
 def ParseDate(date):
     """
@@ -205,7 +259,7 @@ def CheckAndNormalizeMembershipStatus(data):
 
     return membership_status
 
-def CheckMembership(membership_status):
+def CheckMembership(data):
     """
     Check if membership is active. Return true or false depending on the membership status
     """
