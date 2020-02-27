@@ -272,19 +272,21 @@ def CheckMembership(data):
 
     return membership_active
 
-def ParseClassification(classification):
-    if classification is None:
-        return None
-    else:
-        return str(classification).lower()
+def ParseClassification(data):
+    classification = data.get('player_classification')
+    if classification:
+        classification = classification.lower().strip()
 
-def ParseMemberSince(year):
-    if year == "Unknown":
-        return 0
-    elif year is not None:
-        return year
-    else:
-        return None
+    return classification
+
+def ParseMemberSince(data):
+    member_since = data.get('player_member_since')
+
+    if member_since == "Unknown":
+        member_since = None 
+
+    return member_since
+
 
 def CheckIfValueNone(value):
     if value is not None:
