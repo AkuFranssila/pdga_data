@@ -13,19 +13,22 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 class TestDataParsers(unittest.TestCase):
 
     def test_ParseFullName(self):
-        self.assertEqual(ParseFullName("Clark Kent"), ('Clark', 'Kent'))
-        self.assertEqual(ParseFullName("Clark Superman Kent"), ('Clark Superman', 'Kent'))
+
+        test_data1 = {"player_name": "Clark Kent"}
+        test_data2 = {"player_name": "Clark Superman Kent"}
+        self.assertEqual(ParsePlayerFullName(test_data1), ('Clark', None, 'Kent'))
+        self.assertEqual(ParsePlayerFullName(test_data2), ('Clark Superman', None, 'Kent'))
 
     def test_ParseFullLocation(self):
-        self.assertEqual(ParseFullLocation('Helsinki, Finland'), ('helsinki', None, 'finland'))
-        self.assertEqual(ParseFullLocation('Helsinki'), ('helsinki', None, 'finland'))
-        self.assertEqual(ParseFullLocation('New York'), ('new york', 'new york', 'united states'))
-        self.assertEqual(ParseFullLocation('New York, NY, United States'), ('new york', 'new york', 'united states'))
-        self.assertEqual(ParseFullLocation('Finland'), (None, None, 'finland'))
-        self.assertEqual(ParseFullLocation('IL'), (None, 'illinois', 'united states'))
-        self.assertEqual(ParseFullLocation('Gotham, IL, United States'), ('gotham', 'illinois', 'united states'))
-        self.assertEqual(ParseFullLocation('United States'), (None, None, 'united states'))
-        self.assertEqual(ParseFullLocation('Gotham'), (None, None, None))
+        self.assertEqual(ParseFullLocation('Helsinki, Finland', recheck=True), ('helsinki', None, 'finland'))
+        self.assertEqual(ParseFullLocation('Helsinki', recheck=True), ('helsinki', None, 'finland'))
+        self.assertEqual(ParseFullLocation('New York', recheck=True), ('new york', 'new york', 'united states'))
+        self.assertEqual(ParseFullLocation('New York, NY, United States', recheck=True), ('new york', 'new york', 'united states'))
+        self.assertEqual(ParseFullLocation('Finland', recheck=True), (None, None, 'finland'))
+        self.assertEqual(ParseFullLocation('IL', recheck=True), (None, 'illinois', 'united states'))
+        self.assertEqual(ParseFullLocation('Gotham, IL, United States', recheck=True), ('gotham', 'illinois', 'united states'))
+        self.assertEqual(ParseFullLocation('United States', recheck=True), (None, None, 'united states'))
+        self.assertEqual(ParseFullLocation('Gotham', recheck=True), (None, None, None))
 
     def test_ParseDate(self):
         self.assertEqual(ParseDate(None), None)
