@@ -27,12 +27,14 @@ def ParsePlayerFullName(data):
 
     return first_name, middle_name, last_name
 
+
 def CleanFullLocation(data):
     location_full = data.get("player_location_raw")
     if location_full:
         location_full = location_full.replace('Location:', '').replace('?', '').strip()
 
     return location_full
+
 
 def ParseFullLocation(data, allow_google_api=True, recheck=False):
     """
@@ -112,106 +114,6 @@ def ParseFullLocation(data, allow_google_api=True, recheck=False):
     return city, state, country
 
 
-# def ParseFullLocation(location):
-#     if location is None:
-#         return None, None, None
-#
-#     location = location.replace('Location:', '').replace('?', '').split(',')
-#     cleaned_location = []
-#     for loc in location:
-#         loc = loc.strip()
-#         if loc == "usa":
-#             loc = "united states"
-#         cleaned_location.append(loc.strip().lower())
-#     location = cleaned_location
-#     if len(location) >= 3 and location[-1] == "united states":
-#         logging.info('Location if statement 1')
-#         logging.info(location)
-#         city = location[0]
-#         try:
-#             state = US_STATES[location[1]].lower()
-#         except:
-#             state = location[1]
-#         country = "united states"
-#     elif len(location) >= 3 and "united states" in location:
-#         logging.info('If statement 2')
-#         logging.info(location)
-#         city = location[0]
-#         try:
-#             state = US_STATES[location[1]].lower()
-#         except:
-#             state = location[1]
-#         country = location[-1]
-#     elif len(location) >= 3:
-#         logging.info('If statement 3')
-#         logging.info(location)
-#         city = location[0]
-#         state = location[1]
-#         country = location[-1]
-#     elif len(location) == 2 and "united states" not in location:
-#         logging.info('If statement 4')
-#         logging.info(location)
-#         if len(location[1]) == 2:
-#             country = "united states"
-#             try:
-#                 state = US_STATES[location[1]].lower()
-#             except:
-#                 state = location[1]
-#             city = location[0]
-#         else:
-#             city = location[0]
-#             state = None
-#             country = location[-1]
-#     elif len(location) == 2 and "united states" in location:
-#         logging.info('If statement 5')
-#         logging.info(location)
-#         city = None
-#         state = location[0]
-#         country = location[-1]
-#     elif len(location) == 1 and len(location[0]) == 2:
-#         logging.info('If statement 6')
-#         logging.info(location)
-#         city = None
-#         state = US_STATES[location[0]].lower()
-#         country = "united states"
-#     elif len(location) == 1 and pycountry.countries.get(name=location[0].title()):
-#         logging.info('If statement 7')
-#         logging.info(location)
-#         city = None
-#         state = None
-#         country = location[0]
-#     elif len(location) == 1:
-#         logging.info('If statement 8')
-#         logging.info(location)
-#         if len(location[0]) > 1:
-#             google_geolocation_query = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + location[0] + '&key=' + os.environ['google_geolocation_apikey'])
-#             json_data = json.loads(google_geolocation_query.text)
-#             logging.info(json_data)
-#             try:
-#                 parsed_new_location = ParseFullLocation(json_data['results'][0]['formatted_address'].lower())
-#                 city, state, country = parsed_new_location
-#                 logging.info(parsed_new_location)
-#                 if location[0] not in parsed_new_location:
-#                     city = None
-#                     state = None
-#                     country = None
-#             except:
-#                 city = None
-#                 state = None
-#                 country = None
-#         else:
-#             city = None
-#             state = None
-#             country = None
-#     else:
-#         logging.info('If statement 9')
-#         logging.info(location)
-#         city = None
-#         state = None
-#         country = None
-#
-#     return city, state, country
-
 def ParseDate(date):
     """
     Accepts date in the format posted in PDGA. Returns the date in year-month-day format.
@@ -220,6 +122,7 @@ def ParseDate(date):
         day,month,year = date.split(' ')[0].strip().split('-')
         date = year + '-' + MONTH_DICT[month] + '-' + day
     return date
+
 
 def CleanPlayerFullName(data):
     """
@@ -230,6 +133,7 @@ def CleanPlayerFullName(data):
         full_name = full_name.strip()
 
     return full_name
+
 
 def PlayerExists(pdga_number):
     logging.info(f'Checking if player exists {str(pdga_number)}')
@@ -242,6 +146,7 @@ def PlayerExists(pdga_number):
 
     return player, player_exists
 
+
 def ParseIdStatus(data):
     """
     If player name can be found then the player ID is in use
@@ -252,12 +157,14 @@ def ParseIdStatus(data):
     else:
         False
 
+
 def CheckAndNormalizeMembershipStatus(data):
     membership_status = data.get('player_membership_status')
     if membership_status:
         membership_status = str(membership_status).lower().strip()
 
     return membership_status
+
 
 def CheckMembership(data):
     """
@@ -272,12 +179,14 @@ def CheckMembership(data):
 
     return membership_active
 
+
 def ParseClassification(data):
     classification = data.get('player_classification')
     if classification:
         classification = classification.lower().strip()
 
     return classification
+
 
 def ParseMemberSince(data):
     member_since = data.get('player_member_since')
@@ -288,11 +197,19 @@ def ParseMemberSince(data):
     return member_since
 
 
+def GeneratePDGAplayerlink(data):
+    pdga_id = data.get('player_pdga_number')
+    pdga_link = f"https://www.pdga.com/player/{pdga_id}"
+
+    return pdga_link
+
+
 def CheckIfValueNone(value):
     if value is not None:
         return value
     else:
         return None
+
 
 def CheckIfNewPlayer(value, old_data):
     #Checks if player is new or old. If player is old returns current data in db. Used for fields that only need to be updated once.
@@ -343,21 +260,27 @@ def ParseRatings(
     else:
         return (old_lowest, rating,old_highest, rating_difference, latest_update)
 
+
 def ParseIndividualTournamentYears(list_of_years, membership_status, old_data):
     if CheckMembershipStatus(membership_status)[1]:
         return list_of_years
     elif old_data is None:
         return list_of_years
 
-def ParseCertifiedStatus(certified_status, expiration_date):
+
+def ParseCertifiedStatus(data):
+    certified_status = data.get('player_certified_status')
+    status = False
     if certified_status == "Certified":
-        return True, ParseDate(expiration_date)
-    else:
-        return False, None
+        status = True
+
+    return status
+    
 
 def FindPlayedEventIds(pdga_number):
     played_events = Tournament.objects.filter(player__pdga_id=pdga_number).only("tournament_id")
     return played_events
+
 
 def CompareDicts(old_data, new_data):
     old_data = Player.objects(pdga_number=old_data).first()
@@ -379,6 +302,7 @@ def CompareDicts(old_data, new_data):
         all_new = new_data.to_json()
         all_new = json.loads(all_new)
         return None, None, None, None, all_new
+
 
 def CreateFieldsUpdated(added_data, removed_data, modified_data, date, all_new):
     parsed_added = []
@@ -432,11 +356,13 @@ def CreateFieldsUpdated(added_data, removed_data, modified_data, date, all_new):
 
         return updated_data
 
+
 def ParseTournamentName(name):
     if name is not None:
         return name
     else:
         return "Unnamed tournament"
+
 
 def TournamentExists(pdga_link):
     logging.info(f'Checking if tournament exists {str(pdga_link)}')
@@ -449,6 +375,7 @@ def TournamentExists(pdga_link):
         exists = False
 
     return tournament, exists, tournament_id, pdga_link
+
 
 def ParseTournamentDates(event_dates):
     #Date: 03-Nov-2019
@@ -476,6 +403,7 @@ def ParseTournamentDates(event_dates):
 
     return start, end, length
 
+
 def ParseTournamentDirector(td_name, td_id):
     if td_name is not None:
         td_name = td_name.replace('Tournament Director:', '').replace('Asst. Tournament Director:', '').replace('Asst. ', '').strip()
@@ -483,6 +411,7 @@ def ParseTournamentDirector(td_name, td_id):
         td_id = td_id.replace('/general-contact?pdganum=', '').split('&token')[0].strip()
         td_id = int(td_id)
     return td_name, td_id
+
 
 def ParseTournamentWebsite(website):
     if website is not None and website != "n/a":
@@ -499,6 +428,7 @@ def ParseTournamentWebsite(website):
 
     return website
 
+
 def ParseTournamentProPurse(pro_purse):
     if pro_purse is not None:
         pro_purse = pro_purse.replace('$', '').strip().replace(',', '')
@@ -514,11 +444,13 @@ def ParseDivisionFullName(name):
         name = name.split('  ')[0]
     return name
 
+
 def ParseDivisionTotalPlayers(division_players):
     if division_players is not None:
         division_players = division_players.strip().replace('(', '').replace(')', '')
         division_players = int(division_players)
     return division_players
+
 
 def ParseCourseDetails(course, pdga_page):
     #"course_details": "\n\nJoe Wheeler State Park - Default Layout; 18 holes; Par 55\n\n"
@@ -594,6 +526,7 @@ def ParseCourseDetails(course, pdga_page):
 
     return name, layout, holes, par, pdga_page, length_meters, length_feet
 
+
 def ParsePDGAnumber(type, data):
     pdga1 = None
     pdga2 = None
@@ -610,6 +543,7 @@ def ParsePDGAnumber(type, data):
             pdga1 = int(data['team_pdga_number'].strip())
 
     return pdga1, pdga2
+
 
 def ParseTournamentPlayerName(type, data):
     if type == "singles":
@@ -630,6 +564,7 @@ def ParseTournamentPlayerName(type, data):
 
     return name1, name2
 
+
 def ParseTournamentPDGApage(type, data):
     if type == "singles":
         page1 = data["player_pdga_link"]
@@ -643,6 +578,7 @@ def ParseTournamentPDGApage(type, data):
 
     return page1, page2
 
+
 def ParsePropagator(type, data):
     if type == "singles":
         var1 = data["player_propagator"]
@@ -655,6 +591,7 @@ def ParsePropagator(type, data):
         var2 = False
 
     return var1, var2
+
 
 def ParseRatingTournament(type, data):
     if type == "singles":
@@ -674,11 +611,13 @@ def ParseRatingTournament(type, data):
         var2 = None
     return var1, var2
 
+
 def ParseTournamentPlacement(var):
     if var is not None:
         var = int(var)
 
     return var
+
 
 def ParseTournamentWinnings(var):
     if var is not None and len(var.strip()) > 0:
@@ -691,6 +630,7 @@ def ParseTournamentWinnings(var):
         var = float(0)
 
     return var
+
 
 def ParseTournamentTotalThrows(var):
     dnf = False
@@ -710,6 +650,7 @@ def ParseTournamentTotalThrows(var):
 
     return var, dnf, dns
 
+
 def ParseTournamentPar(var, dnf, dns):
     if var is not None:
         var = var.replace(',', '').strip()
@@ -722,6 +663,7 @@ def ParseTournamentPar(var, dnf, dns):
             var = int(var)
 
     return var, dnf, dns
+
 
 def ParsePlayerRoundThrows(var, dnf):
     if dnf is None:
@@ -740,6 +682,7 @@ def ParsePlayerRoundThrows(var, dnf):
 
     return var, dnf
 
+
 def ParsePlayerRoundRating(var):
     if var is not None and len(var) > 0:
         var = int(var)
@@ -747,6 +690,7 @@ def ParsePlayerRoundRating(var):
         var = None
 
     return var
+
 
 def CalculateAvgFromRounds(throws, rounds):
     if throws is not None:
@@ -756,6 +700,7 @@ def CalculateAvgFromRounds(throws, rounds):
             ttl = throws / len(rounds)
     else:
         return None
+
 
 def CalculateAvgRoundRating(rounds):
     r_numbers = len(rounds)
@@ -776,6 +721,7 @@ def CalculateAvgRoundRating(rounds):
 
     return avgrating
 
+
 def ParseTournamentPoints(points):
     if points is not None:
         try:
@@ -784,6 +730,7 @@ def ParseTournamentPoints(points):
             points = None
 
     return points
+
 
 def ParseTournamentTeamName(team_name):
     if team_name is not None:
