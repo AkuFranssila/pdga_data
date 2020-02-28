@@ -219,46 +219,13 @@ def CheckIfNewPlayer(value, old_data):
         return value
 
 
-def ParseRatings(
-                rating,
-                old_rating,
-                old_lowest,
-                old_highest,
-                rating_difference,
-                latest_update,
-                membership_status
-                ):
+def CheckifPlayerExists(pdga_number):
+    player = Player.objects(pdga_number=pdga_number).first()
 
-    if old_rating is None or old_lowest is None and old_highest is None:
-        highest_rating = rating
-        current_rating = rating
-        lowest_rating = rating
-        latest_update = latest_update
-        difference = rating_difference
-        return (lowest_rating,
-                current_rating,
-                highest_rating,
-                difference,
-                latest_update)
-    elif old_rating is not None and old_lowest is not None and old_highest is not None and CheckMembershipStatus(membership_status)[1]:
-        current_rating = rating
-        if rating > old_highest:
-            highest_rating = rating
-        else:
-            highest_rating = old_highest
-        if old_lowest > rating:
-            lowest_rating = rating
-        else:
-            lowest_rating = old_lowest
-
-        return (lowest_rating,
-                current_rating,
-                highest_rating,
-                rating_difference,
-                latest_update
-                )
+    if player:
+        return player
     else:
-        return (old_lowest, rating,old_highest, rating_difference, latest_update)
+        return None
 
 
 def ParseIndividualTournamentYears(list_of_years, membership_status, old_data):
