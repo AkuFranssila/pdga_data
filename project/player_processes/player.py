@@ -17,6 +17,7 @@ def ParsePlayer(data):
     # save the new player and send to mongo
 
     new_player = Player()
+    new_player.pdga_number = str(data.get('player_pdga_number'))
     new_player.pdga_id_status = ParseIdStatus(data)
     new_player.membership_status = CheckAndNormalizeMembershipStatus(data)
     new_player.membership = CheckMembership(data)
@@ -33,7 +34,6 @@ def ParsePlayer(data):
     new_player.pdga_page_link = GeneratePDGAplayerlink(data)
     new_player.latest_update = str(date.today())
     new_player.first_crawl_date = data.get('player_crawl_date')
-    new_player.pdga_number = str(data.get('player_pdga_number'))
     new_player.lowest_rating = data.get('player_current_rating')
     new_player.highest_rating = data.get('player_current_rating')
     new_player.current_rating = data.get('player_current_rating')
@@ -43,7 +43,22 @@ def ParsePlayer(data):
     new_player.certified_status = ParseCertifiedStatus(data.get('player_certified_status')
     new_player.certified_status_expiration_date = ParseDate(data.get('player_certified_status_expiration'))
 
-    old_player = CheckifPlayerExists()
+    old_player = CheckifPlayerExists(new_player.pdga_number)
+
+    if old_player:
+        """
+            If player already exists we want to update only specific fields. 
+            Other fields can be updated always when crawling new player.
+        """
+
+        #new_player.lowest_rating 
+        #new_player.highest_rating
+        #new_player.current_rating
+        #new_player.rating_difference
+        #new_player.latest_rating_update
+        #new_player.first_crawl_date
+        #new_player.certified_status_expiration_date
+
 
 
     # player.lowest_rating, player.current_rating, player.highest_rating, player.rating_difference, player.latest_rating_update = ParseRatings(data.get('player_current_rating'), player.current_rating, player.lowest_rating, player.highest_rating, data.get('player_rating_difference'), ParseDate(data.get('player_rating_updated')), data.get('player_membership_status'))
