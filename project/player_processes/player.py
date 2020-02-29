@@ -74,11 +74,11 @@ def ParsePlayer(data):
             Other fields can be updated always when crawling new player.
         """
 
-        #new_player.lowest_rating = CheckLowestRating()
-        #new_player.highest_rating = CheckHighestRating()
-        #new_player.current_rating = CheckCurrentRating()
-        #new_player.rating_difference = CheckRatingDifference()
-        #new_player.latest_rating_update = CheckLatestRatingUpdate()
+        new_player.lowest_rating = CheckLowestRating(new_player, old_player)
+        new_player.highest_rating = CheckHighestRating(new_player, old_player)
+        new_player.current_rating = CheckCurrentRating(new_player, old_player)
+        new_player.rating_difference = CheckRatingDifference(new_player, old_player)
+        new_player.latest_rating_update = CheckLatestRatingUpdate(new_player, old_player)
 
         new_player.first_crawl_date = old_player.first_crawl_date
 

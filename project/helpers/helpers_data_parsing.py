@@ -706,3 +706,75 @@ def ParseTournamentTeamName(team_name):
         team_name = None
 
     return team_name
+
+
+def CheckLowestRating(new_player, old_player):
+    old_lowest_rating = old_player.lowest_rating
+    new_lowest_rating = new_player.lowest_rating
+
+    lowest_rating = new_lowest_rating
+
+    if old_lowest_rating and new_lowest_rating:
+
+        if new_lowest_rating < old_lowest_rating:
+            lowest_rating = new_lowest_rating 
+        else:
+            lowest_rating = old_lowest_rating 
+    elif old_lowest_rating:
+        lowest_rating = old_lowest_rating
+
+    return lowest_rating
+
+
+def CheckHighestRating(new_player, old_player):
+    old_highest_rating = old_player.lowest_rating
+    new_highest_rating = new_player.lowest_rating
+
+    highest_rating = new_highest_rating
+
+    if old_highest_rating and new_highest_rating:
+
+        if new_highest_rating > old_highest_rating:
+            highest_rating = new_highest_rating 
+        else:
+            highest_rating = old_highest_rating 
+    elif old_highest_rating:
+        highest_rating = old_highest_rating
+
+    return highest_rating
+
+
+def CheckCurrentRating(new_player, old_player):
+    new_rating = new_player.current_rating
+    old_rating = old_player.current_rating
+
+    current_rating = old_rating
+
+    if new_rating:
+        current_rating = new_rating 
+
+    return current_rating
+
+
+def CheckRatingDifference(new_player, old_player):
+    old_difference = old_player.rating_difference
+    new_difference = new_player.rating_difference
+
+    current_difference = old_difference
+
+    if new_difference:
+        current_difference = new_difference 
+
+    return current_difference
+
+
+def CheckLatestRatingUpdate(new_player, old_player):
+    old_update = old_player.latest_rating_update
+    new_update = new_player.latest_rating_update
+
+    current_update = old_difference
+
+    if new_update:
+        current_update = new_update 
+
+    return current_update
