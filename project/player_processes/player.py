@@ -11,6 +11,29 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def ParsePlayer(data):
 
+    HISTORY_FIELDS = [
+        "latest_update",
+        "membership",
+        "membership_status",
+        "membership_status_expiration_date",
+        "first_name", 
+        "middle_name",
+        "last_name",
+        "city",
+        "state",
+        "country",
+        "classification",
+        "career_earnings",
+        "total_wins",
+        "lowest_rating",
+        "highest_rating",
+        "current_rating",
+        "rating_difference",
+        "individual_tournament_years",
+        "certified_status",
+        "certified_status_expiration_date",
+    ]
+
     #first create the new player
     #check if player exists.
     #if player exists compare the fields and generate the new player
@@ -38,7 +61,7 @@ def ParsePlayer(data):
     new_player.highest_rating = data.get('player_current_rating')
     new_player.current_rating = data.get('player_current_rating')
     new_player.rating_difference = data.get('player_rating_difference')
-    new_player.latest_rating_update = ParseDate(data.get('player_rating_updated')
+    new_player.latest_rating_update = ParseDate(data.get('player_rating_updated'))
     new_player.individual_tournament_years = data.get('player_individual_tournament_years')
     new_player.certified_status = ParseCertifiedStatus(data.get('player_certified_status')
     new_player.certified_status_expiration_date = ParseDate(data.get('player_certified_status_expiration'))
@@ -51,13 +74,18 @@ def ParsePlayer(data):
             Other fields can be updated always when crawling new player.
         """
 
-        #new_player.lowest_rating 
-        #new_player.highest_rating
-        #new_player.current_rating
-        #new_player.rating_difference
-        #new_player.latest_rating_update
-        #new_player.first_crawl_date
-        #new_player.certified_status_expiration_date
+        #new_player.lowest_rating = CheckLowestRating()
+        #new_player.highest_rating = CheckHighestRating()
+        #new_player.current_rating = CheckCurrentRating()
+        #new_player.rating_difference = CheckRatingDifference()
+        #new_player.latest_rating_update = CheckLatestRatingUpdate()
+
+        new_player.first_crawl_date = old_player.first_crawl_date
+
+        #new_player.certified_status = CheckCertifiedStatus()
+        #new_player.certified_status_expiration_date = CheckCertifiedStatusExpirationDate()
+
+        #new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
 
 
