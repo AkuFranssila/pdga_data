@@ -60,6 +60,16 @@ US_STATES = {
     'wy': 'wyoming'
     }
 
+
+US_STATES_LIST = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado",
+  "Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois",
+  "Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland",
+  "Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana",
+  "Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York",
+  "North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania",
+  "Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah",
+  "Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
+
 MONTH_DICT = {
         "Jan":"01",
         "Feb":"02",
@@ -76,3 +86,27 @@ MONTH_DICT = {
         }
 
 ACCEPTED_STATUSES = ['ace club', 'eagle club', 'birdie club', 'active', 'current']
+
+
+HISTORY_FIELDS = [
+        "latest_update",
+        "membership",
+        "membership_status",
+        "membership_status_expiration_date",
+        "first_name", 
+        "middle_name",
+        "last_name",
+        "city",
+        "state",
+        "country",
+        "classification",
+        "career_earnings",
+        "total_wins",
+        "lowest_rating",
+        "highest_rating",
+        "current_rating",
+        "rating_difference",
+        "individual_tournament_years",
+        "certified_status",
+        "certified_status_expiration_date",
+    ]

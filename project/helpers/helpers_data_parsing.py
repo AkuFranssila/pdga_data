@@ -5,8 +5,9 @@ import logging
 import datetime
 import requests
 import pycountry
+import time
 from project.models.schemas import Player, Tournament
-from project.helpers.helper_data import ACCEPTED_STATUSES, US_STATES, MONTH_DICT
+from project.helpers.helper_data import ACCEPTED_STATUSES, US_STATES, MONTH_DICT, HISTORY_FIELDS, US_STATES_LIST
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
@@ -76,6 +77,17 @@ def ParseFullLocation(data, allow_google_api=True, recheck=False):
 
         if "united states" in full_location_list:
             country = "united states"
+
+            if len(full_location_list) == 3:
+                city = full_location_list[0]
+                state = US_STATES.get(full_location_list[1], full_location_list[1])
+            elif len(full_location_list) == 2:
+                if full_location_list[0] in map(str.lower, US_STATES_LIST):
+                    state = full_location_list[0]
+                elif len(full_location_list[0]) == 2:
+                    state = US_STATES.get(full_location_list[0])
+                else:
+                    city = full_location_list[0]
 
             for field in full_location_list:
                 if not state:
@@ -772,9 +784,78 @@ def CheckLatestRatingUpdate(new_player, old_player):
     old_update = old_player.latest_rating_update
     new_update = new_player.latest_rating_update
 
-    current_update = old_difference
+    current_update = old_update
 
     if new_update:
         current_update = new_update 
 
     return current_update
+
+
+def CheckCertifiedStatus(new_player, old_player):
+
+    new_expiration_date = new_player.certified_status_expiration_date
+    old_expiration_date = old_player.certified_status_expiration_date
+    old_cert_status = old_player.certified_status
+    new_cert_status = new_player.certified_status
+
+    current_cert_status = None
+
+    if new_cert_status:
+        current_cert_status = new_cert_status 
+    elif not new_cert_status and old_expiration_date:
+        if old_expiration_date > datetime.datetime.today():
+            current_cert_status = True
+
+    return current_cert_status
+
+
+def CheckCertifiedStatusExpirationDate(new_player, old_player):
+    new_expiration_date = new_player.certified_status_expiration_date
+    old_expiration_date = old_player.certified_status_expiration_date
+    current_cert_date = None
+
+    if new_expiration_date:
+        current_cert_date = new_expiration_date
+    elif not new_expiration_date and old_expiration_date:
+        if old_expiration_date > datetime.datetime.today():
+            current_cert_date = old_expiration_date
+
+
+    return current_cert_date
+
+
+def CheckFieldsUpdated(new_player, old_player, reset_history=False):
+
+    if old_player:
+        updated_fields = old_player.fields_updated
+        changed_data = {}
+        new_data = json.loads(new_player.to_json())
+        old_data = json.loads(old_player.to_json())
+
+        for history_field in HISTORY_FIELDS:
+            history_old = old_data.get(history_field)
+            history_new = new_data.get(history_field)
+            try:
+                if "$date" in history_old:
+                    history_old = history_old.get("$date")
+                    history_new = history_new.get("$date")
+                    history_new = datetime.datetime.fromtimestamp(history_new/1000)
+                    history_old = datetime.datetime.fromtimestamp(history_old/1000)
+            except TypeError:
+                continue
+            if history_old != history_new:
+                changed_data_details = {}
+                changed_data_details["new"] = history_new
+                changed_data_details["old"] = history_old
+                changed_data[history_field] = changed_data_details
+
+                updated_fields.append(changed_data.copy())
+
+    else:
+        updated_fields = []
+
+    if reset_history:
+        updated_fields = []
+
+    return updated_fields
