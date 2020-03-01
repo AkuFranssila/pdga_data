@@ -50,7 +50,7 @@ def ParsePlayer(data):
             If player already exists we want to update only specific fields. 
             Other fields can be updated always when crawling new player.
         """
-
+        new_player.id = old_player.id
         new_player.lowest_rating = CheckLowestRating(new_player, old_player)
         new_player.highest_rating = CheckHighestRating(new_player, old_player)
         new_player.current_rating = CheckCurrentRating(new_player, old_player)
@@ -64,7 +64,9 @@ def ParsePlayer(data):
 
         new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
-    new_player.to_mongo().to_dict()
-    new_player.save()
+        new_player.save()
+    else:
+        new_player.to_mongo().to_dict()
+        new_player.save()
     logging.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 
