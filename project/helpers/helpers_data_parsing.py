@@ -739,8 +739,8 @@ def CheckLowestRating(new_player, old_player):
 
 
 def CheckHighestRating(new_player, old_player):
-    old_highest_rating = old_player.lowest_rating
-    new_highest_rating = new_player.lowest_rating
+    old_highest_rating = old_player.highest_rating
+    new_highest_rating = new_player.highest_rating
 
     highest_rating = new_highest_rating
 
