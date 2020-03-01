@@ -23,7 +23,26 @@ class TestPlayer(unittest.TestCase):
        disconnect()
 
     def test_create_and_update_player(self):
-        player1_data = {"player_name": "Test Player", "player_pdga_number": 1, "player_id": True, "player_location_raw": "Watsonville, California, United States", "player_classification": "Professional", "player_member_since": 1976, "player_membership_status": "Eagle Club", "player_membership_expiration_date": "31-Dec-2200", "player_current_rating": 736, "player_rating_difference": None, "player_rating_updated": "15-Sep-2004", "player_events_played": 41, "player_career_wins": 8, "player_certified_status": None, "player_certified_status_expiration": None, "player_career_earnings": 602.0, "player_individual_tournament_years": [2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985, 1984, 1983, 1981], "player_crawl_date": "2019-10-21"}
+        player1_data = {
+            "player_name": "Test Player", 
+            "player_pdga_number": 1, 
+            "player_id": True, 
+            "player_location_raw": "Watsonville, California, United States", 
+            "player_classification": "Professional", 
+            "player_member_since": 1976, 
+            "player_membership_status": "Eagle Club", 
+            "player_membership_expiration_date": "31-Dec-2200", 
+            "player_current_rating": 736, 
+            "player_rating_difference": None, 
+            "player_rating_updated": "15-Sep-2004", 
+            "player_events_played": 41, 
+            "player_career_wins": 8, 
+            "player_certified_status": None, 
+            "player_certified_status_expiration": None, 
+            "player_career_earnings": 602.0, 
+            "player_individual_tournament_years": [2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985, 1984, 1983, 1981], 
+            "player_crawl_date": "2019-10-21"
+        }
 
         ParsePlayer(player1_data)
 
@@ -65,9 +84,28 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(player1.played_countries, [])
         #self.assertEqual(player1.first_crawl_date, '')
         #self.assertEqual(player1.latest_update, '')
-        #self.assertEqual(player1.fields_updated, [{"new_data": ["full_name", "first_name", "last_name", "pdga_number", "pdga_id_status", "location_full", "city", "state", "country", "classification", "member_since", "membership_status", "membership_status_expiration_date", "membership", "current_rating", "highest_rating", "lowest_rating", "latest_rating_update", "total_events", "total_wins", "certified_status", "career_earnings", "individual_tournament_years", "pdga_page_link", "played_event_ids", "played_countries", "players_played_with_in_same_tournament", "players_played_with_in_same_divisions", "yearly_statistics", "first_crawl_date", "latest_update", "fields_updated"], "modified_data": {}, "removed_data": [], "updated_date": updated_date}])
+        self.assertEqual(player1.fields_updated, [])
 
-        player1_updated_data = {"player_name": "Test Player", "player_pdga_number": 1, "player_id": True, "player_location_raw": "Gotham, Batville, Imagination", "player_classification": "Amateur", "player_member_since": 1976, "player_membership_status": "Current", "player_membership_expiration_date": "31-Dec-2200", "player_current_rating": 836, "player_rating_difference": 100, "player_rating_updated": "16-Sep-2004", "player_events_played": 99, "player_career_wins": 10, "player_certified_status": 'Certified', "player_certified_status_expiration": "31-Dec-2200", "player_career_earnings": 802.0, "player_individual_tournament_years": [2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985, 1984, 1983, 1981], "player_crawl_date": "2019-10-21"}
+        player1_updated_data = {
+            "player_name": "Test Player", 
+            "player_pdga_number": 1, 
+            "player_id": True, 
+            "player_location_raw": "Gotham, Batville, Imagination", 
+            "player_classification": "Amateur", 
+            "player_member_since": 1976, 
+            "player_membership_status": "Current", 
+            "player_membership_expiration_date": "31-Dec-2200", 
+            "player_current_rating": 836, 
+            "player_rating_difference": 100, 
+            "player_rating_updated": "16-Sep-2004", 
+            "player_events_played": 99, 
+            "player_career_wins": 10, 
+            "player_certified_status": 'Certified', 
+            "player_certified_status_expiration": "31-Dec-2200", 
+            "player_career_earnings": 802.0, 
+            "player_individual_tournament_years": [2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985, 1984, 1983, 1981], 
+            "player_crawl_date": "2019-10-21"
+        }
 
         ParsePlayer(player1_updated_data)
 
@@ -109,7 +147,7 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(player1.played_countries, [])
         self.assertEqual(player1.first_crawl_date, first_crawl)
         #self.assertEqual(player1.latest_update, '')
-        #self.assertEqual(player1.fields_updated, [{'new_data': ['full_name', 'first_name', 'last_name', 'pdga_number', 'pdga_id_status', 'location_full', 'city', 'state', 'country', 'classification', 'member_since', 'membership_status', 'membership_status_expiration_date', 'membership', 'current_rating', 'highest_rating', 'lowest_rating', 'latest_rating_update', 'total_events', 'total_wins', 'certified_status', 'career_earnings', 'yearly_statistics', 'individual_tournament_years', 'pdga_page_link', 'played_event_ids', 'played_countries', 'first_crawl_date', 'latest_update', 'fields_updated'], 'modified_data': {}, 'removed_data': [], 'updated_date': updated_date}, {'new_data': [], 'modified_data': {}, 'removed_data': [], 'updated_date': updated_date}])
+        self.assertEqual(player1.fields_updated, [{'membership': {'new': 'current', 'old': 'eagle club'}}, {'membership': {'new': 'current', 'old': 'eagle club'}, 'city': {'new': 'gotham', 'old': 'watsonville'}}, {'membership': {'new': 'current', 'old': 'eagle club'}, 'city': {'new': 'gotham', 'old': 'watsonville'}, 'state': {'new': 'batville', 'old': 'california'}}, {'membership': {'new': 'current', 'old': 'eagle club'}, 'city': {'new': 'gotham', 'old': 'watsonville'}, 'state': {'new': 'batville', 'old': 'california'}, 'country': {'new': 'imagination', 'old': 'united states'}}, {'membership': {'new': 'current', 'old': 'eagle club'}, 'city': {'new': 'gotham', 'old': 'watsonville'}, 'state': {'new': 'batville', 'old': 'california'}, 'country': {'new': 'imagination', 'old': 'united states'}, 'classification': {'new': 'amateur', 'old': 'professional'}}])
 
 if __name__ == '__main__':
     unittest.main()

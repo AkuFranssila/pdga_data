@@ -13,40 +13,64 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 class TestDataParsers(unittest.TestCase):
 
     def test_ParseFullName(self):
-        self.assertEqual(ParseFullName("Clark Kent"), ('Clark', 'Kent'))
-        self.assertEqual(ParseFullName("Clark Superman Kent"), ('Clark Superman', 'Kent'))
+
+        test_data1 = {"player_name": "Clark Kent"}
+        test_data2 = {"player_name": "Clark Superman Kent"}
+        self.assertEqual(ParsePlayerFullName(test_data1), ('Clark', None, 'Kent'))
+        self.assertEqual(ParsePlayerFullName(test_data2), ('Clark Superman', None, 'Kent'))
 
     def test_ParseFullLocation(self):
-        self.assertEqual(ParseFullLocation('Helsinki, Finland'), ('helsinki', None, 'finland'))
-        self.assertEqual(ParseFullLocation('Helsinki'), ('helsinki', None, 'finland'))
-        self.assertEqual(ParseFullLocation('New York'), ('new york', 'new york', 'united states'))
-        self.assertEqual(ParseFullLocation('New York, NY, United States'), ('new york', 'new york', 'united states'))
-        self.assertEqual(ParseFullLocation('Finland'), (None, None, 'finland'))
-        self.assertEqual(ParseFullLocation('IL'), (None, 'illinois', 'united states'))
-        self.assertEqual(ParseFullLocation('Gotham, IL, United States'), ('gotham', 'illinois', 'united states'))
-        self.assertEqual(ParseFullLocation('United States'), (None, None, 'united states'))
-        self.assertEqual(ParseFullLocation('Gotham'), (None, None, None))
+        self.assertEqual(ParseFullLocation('Helsinki, Finland', recheck=True), ('helsinki', None, 'finland'))
+        self.assertEqual(ParseFullLocation('Helsinki', recheck=True), ('helsinki', None, 'finland'))
+        self.assertEqual(ParseFullLocation('New York', recheck=True), ('new york', 'new york', 'united states'))
+        self.assertEqual(ParseFullLocation('New York, NY, United States', recheck=True), ('new york', 'new york', 'united states'))
+        self.assertEqual(ParseFullLocation('Finland', recheck=True), (None, None, 'finland'))
+        self.assertEqual(ParseFullLocation('IL', recheck=True), (None, 'illinois', 'united states'))
+        self.assertEqual(ParseFullLocation('Gotham, IL, United States', recheck=True), ('gotham', 'illinois', 'united states'))
+        self.assertEqual(ParseFullLocation('United States', recheck=True), (None, None, 'united states'))
+        self.assertEqual(ParseFullLocation('Gotham', recheck=True), (None, None, None))
 
     def test_ParseDate(self):
         self.assertEqual(ParseDate(None), None)
         self.assertEqual(ParseDate('01-Jan-1993'), '1993-01-01')
 
     def test_CheckMembershipStatus(self):
-        self.assertEqual(CheckMembershipStatus(None), (None, False))
-        self.assertEqual(CheckMembershipStatus('Ace Club'), ('ace club', True))
-        self.assertEqual(CheckMembershipStatus('EAGLE CLUB'), ('eagle club', True))
-        self.assertEqual(CheckMembershipStatus('Current'), ('current', True))
-        self.assertEqual(CheckMembershipStatus(1234), ('1234', False))
+
+        test_data = {"player_membership_status": None}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), None)
+
+        test_data = {"player_membership_status": 'Ace Club'}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), 'ace club')
+
+        test_data = {"player_membership_status": 'EAGLE CLUB'}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), 'eagle club')
+
+        test_data = {"player_membership_status": "Current"}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), 'current')
+
+        test_data = {"player_membership_status": 1234}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), '1234',)
 
     def test_ParseClassification(self):
-        self.assertEqual(ParseClassification(1234), '1234')
-        self.assertEqual(ParseClassification('Something here'), 'something here')
-        self.assertEqual(ParseClassification('Professional'), 'professional')
+
+        test_data = {'player_classification': 1234}
+        self.assertEqual(ParseClassification(test_data), '1234')
+
+        test_data = {'player_classification': 'Something here'}
+        self.assertEqual(ParseClassification(test_data), 'something here')
+
+        test_data = {'player_classification': 'Professional'}
+        self.assertEqual(ParseClassification(test_data), 'professional')
 
     def test_ParseMemberSince(self):
-        self.assertEqual(ParseMemberSince('Unknown'), 0)
-        self.assertEqual(ParseMemberSince(1234), 1234)
-        self.assertEqual(ParseMemberSince(None), None)
+        test_data = {'player_member_since': 'Unknown'}
+        self.assertEqual(ParseMemberSince(test_data), None)
+
+        test_data = {'player_member_since': 1234}
+        self.assertEqual(ParseMemberSince(test_data), 1234)
+
+        test_data = {'player_member_since': None}
+        self.assertEqual(ParseMemberSince(test_data), None)
 
 if __name__ == '__main__':
     unittest.main()

@@ -10,31 +10,63 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
 def ParsePlayer(data):
-    player, player.player_exists = PlayerExists(data['player_pdga_number'])
-    player.pdga_id_status = ParseIdStatus(data['player_name'], data['player_id'])
-    player.membership, player.membership_status = CheckMembershipStatus(data['player_membership_status'])
-    player.membership_status_expiration_date = ParseDate( data['player_membership_expiration_date'])
-    player.full_name = data['player_name']
-    player.first_name, player.last_name = ParseFullName(data['player_name'])
-    player.location_full = data['player_location_raw']
-    player.city, player.state, player.country = ParseFullLocation(data['player_location_raw'])
-    player.classification = ParseClassification(data['player_classification'])
-    player.member_since = ParseMemberSince(data['player_member_since'])
-    player.career_earnings = CheckIfValueNone(data['player_career_earnings'])
-    player.total_events = CheckIfValueNone(data['player_events_played'])
-    player.total_wins= CheckIfValueNone(data['player_career_wins'])
-    player.pdga_page_link = "https://www.pdga.com/player/" + str(data['player_pdga_number'])
-    player.latest_update = str(date.today())
-    player.first_crawl_date = CheckIfNewPlayer(data['player_crawl_date'], player.first_crawl_date)
-    player.pdga_number = CheckIfNewPlayer(data['player_pdga_number'], player.pdga_number)
-    player.lowest_rating, player.current_rating, player.highest_rating, player.rating_difference, player.latest_rating_update = ParseRatings(data['player_current_rating'], player.current_rating, player.lowest_rating, player.highest_rating, data['player_rating_difference'], ParseDate(data['player_rating_updated']), data['player_membership_status'])
-    player.individual_tournament_years = ParseIndividualTournamentYears(data['player_individual_tournament_years'], data['player_membership_status'], player.individual_tournament_years)
-    player.certified_status, player.certified_status_expiration_date = ParseCertifiedStatus(data['player_certified_status'], data['player_certified_status_expiration'])
-    added_data, removed_data, modified_data, same_data, all_new = CompareDicts(data['player_pdga_number'], player)
-    #player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today()), all_new))
-    player.fields_updated = []
-    logging.info("Player with PDGA number %s has been added to Mongo", str(player.pdga_number))
 
-    player.save()
+    #first create the new player
+    #check if player exists.
+    #if player exists compare the fields and generate the new player
+    # save the new player and send to mongo
 
-#ParsePlayer(data)
+    new_player = Player()
+    new_player.pdga_number = str(data.get('player_pdga_number'))
+    new_player.pdga_id_status = ParseIdStatus(data)
+    new_player.membership_status = CheckMembership(data) 
+    new_player.membership = CheckAndNormalizeMembershipStatus(data)
+    new_player.membership_status_expiration_date = ParseDate(data.get('player_membership_expiration_date'))
+    new_player.full_name = CleanPlayerFullName(data)
+    new_player.first_name, new_player.middle_name, new_player.last_name = ParsePlayerFullName(data)
+    new_player.location_full = CleanFullLocation(data)
+    new_player.city, new_player.state, new_player.country = ParseFullLocation(data)
+    new_player.classification = ParseClassification(data)
+    new_player.member_since = ParseMemberSince(data)
+    new_player.career_earnings = data.get('player_career_earnings')
+    new_player.total_events = data.get('player_events_played')
+    new_player.total_wins = data.get('player_career_wins')
+    new_player.pdga_page_link = GeneratePDGAplayerlink(data)
+    new_player.latest_update = str(date.today())
+    new_player.first_crawl_date = data.get('player_crawl_date')
+    new_player.lowest_rating = data.get('player_current_rating')
+    new_player.highest_rating = data.get('player_current_rating')
+    new_player.current_rating = data.get('player_current_rating')
+    new_player.rating_difference = data.get('player_rating_difference')
+    new_player.latest_rating_update = ParseDate(data.get('player_rating_updated'))
+    new_player.individual_tournament_years = data.get('player_individual_tournament_years')
+    new_player.certified_status = ParseCertifiedStatus(data)
+    new_player.certified_status_expiration_date = ParseDate(data.get('player_certified_status_expiration'))
+
+    old_player = CheckifPlayerExists(new_player.pdga_number)
+
+    if old_player:
+        """
+            If player already exists we want to update only specific fields. 
+            Other fields can be updated always when crawling new player.
+        """
+        new_player.id = old_player.id
+        new_player.lowest_rating = CheckLowestRating(new_player, old_player)
+        new_player.highest_rating = CheckHighestRating(new_player, old_player)
+        new_player.current_rating = CheckCurrentRating(new_player, old_player)
+        new_player.rating_difference = CheckRatingDifference(new_player, old_player)
+        new_player.latest_rating_update = CheckLatestRatingUpdate(new_player, old_player)
+
+        new_player.first_crawl_date = old_player.first_crawl_date
+
+        new_player.certified_status = CheckCertifiedStatus(new_player, old_player)
+        new_player.certified_status_expiration_date = CheckCertifiedStatusExpirationDate(new_player, old_player)
+
+        new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
+
+        new_player.save()
+    else:
+        new_player.to_mongo().to_dict()
+        new_player.save()
+    logging.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
+

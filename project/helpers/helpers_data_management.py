@@ -41,16 +41,16 @@ def SaveFile(type, target, data):
     file_location = ''
     file_name = ''
     if type == 'player' and target == 'crawl':
-        file_location = 'crawled_players'
+        file_location = 'project/crawled_players'
         file_name = 'player-raw-data-'
     elif type == 'player' and target == 'parse':
-        file_location = 'parsed_players'
+        file_location = 'project/parsed_players'
         file_name = 'player-parsed-data-'
     elif type == 'tournament' and target == 'crawl':
-        file_location = 'crawled_tournaments'
+        file_location = 'project/crawled_tournaments'
         file_name = 'tournament-raw-data-'
     elif type == 'tournament' and target == 'parse':
-        file_location = 'parsed_tournaments'
+        file_location = 'project/parsed_tournaments'
         file_name = 'tournament-parsed-data-'
     else:
         sys.exit('Wrong type or target set')
@@ -81,16 +81,16 @@ def ReturnFileLocation(type, target):
     types = ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]
     today = str(date.today())
     if type == 'player' and target == 'crawl':
-        file_location = 'crawled_players'
+        file_location = 'project/crawled_players'
         file_name = 'player-raw-data-'
     elif type == 'player' and target == 'parse':
-        file_location = 'parsed_players'
+        file_location = 'project/parsed_players'
         file_name = 'player-parsed-data-'
     elif type == 'tournament' and target == 'crawl':
-        file_location = 'crawled_tournaments'
+        file_location = 'project/crawled_tournaments'
         file_name = 'tournament-raw-data-'
     elif type == 'tournament' and target == 'parse':
-        file_location = 'parsed_tournaments'
+        file_location = 'project/parsed_tournaments'
         file_name = 'tournament-parsed-data-'
     else:
         sys.exit('Wrong type or target set')
@@ -135,11 +135,11 @@ def DownloadFileFromS3(type):
     if type not in ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]:
         sys.exit('Type not in the predefined types')
 
-    type_to_location = {"old_pdga_data" : "old_pdga_data",
-                        "player-parsed-data" : "parsed_players",
-                        "player-raw-data" : "crawled_players",
-                        "tournament-parsed-data" : "parsed_tournaments",
-                        "tournament-raw-data" : "crawled_tournaments"
+    type_to_location = {"old_pdga_data" : "project/old_pdga_data",
+                        "player-parsed-data" : "project/parsed_players",
+                        "player-raw-data" : "project/crawled_players",
+                        "tournament-parsed-data" : "project/parsed_tournaments",
+                        "tournament-raw-data" : "project/crawled_tournaments"
                         }
 
     folder_name = type_to_location[type]
