@@ -11,29 +11,6 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def ParsePlayer(data):
 
-    HISTORY_FIELDS = [
-        "latest_update",
-        "membership",
-        "membership_status",
-        "membership_status_expiration_date",
-        "first_name", 
-        "middle_name",
-        "last_name",
-        "city",
-        "state",
-        "country",
-        "classification",
-        "career_earnings",
-        "total_wins",
-        "lowest_rating",
-        "highest_rating",
-        "current_rating",
-        "rating_difference",
-        "individual_tournament_years",
-        "certified_status",
-        "certified_status_expiration_date",
-    ]
-
     #first create the new player
     #check if player exists.
     #if player exists compare the fields and generate the new player
@@ -42,8 +19,8 @@ def ParsePlayer(data):
     new_player = Player()
     new_player.pdga_number = str(data.get('player_pdga_number'))
     new_player.pdga_id_status = ParseIdStatus(data)
-    new_player.membership_status = CheckAndNormalizeMembershipStatus(data)
-    new_player.membership = CheckMembership(data)
+    new_player.membership_status = CheckMembership(data) 
+    new_player.membership = CheckAndNormalizeMembershipStatus(data)
     new_player.membership_status_expiration_date = ParseDate(data.get('player_membership_expiration_date'))
     new_player.full_name = CleanPlayerFullName(data)
     new_player.first_name, new_player.middle_name, new_player.last_name = ParsePlayerFullName(data)
@@ -63,7 +40,7 @@ def ParsePlayer(data):
     new_player.rating_difference = data.get('player_rating_difference')
     new_player.latest_rating_update = ParseDate(data.get('player_rating_updated'))
     new_player.individual_tournament_years = data.get('player_individual_tournament_years')
-    new_player.certified_status = ParseCertifiedStatus(data.get('player_certified_status')
+    new_player.certified_status = ParseCertifiedStatus(data)
     new_player.certified_status_expiration_date = ParseDate(data.get('player_certified_status_expiration'))
 
     old_player = CheckifPlayerExists(new_player.pdga_number)
@@ -82,26 +59,12 @@ def ParsePlayer(data):
 
         new_player.first_crawl_date = old_player.first_crawl_date
 
-        #new_player.certified_status = CheckCertifiedStatus()
-        #new_player.certified_status_expiration_date = CheckCertifiedStatusExpirationDate()
+        new_player.certified_status = CheckCertifiedStatus(new_player, old_player)
+        new_player.certified_status_expiration_date = CheckCertifiedStatusExpirationDate(new_player, old_player)
 
-        #new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
+        new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
-
-
-    # player.lowest_rating, player.current_rating, player.highest_rating, player.rating_difference, player.latest_rating_update = ParseRatings(data.get('player_current_rating'), player.current_rating, player.lowest_rating, player.highest_rating, data.get('player_rating_difference'), ParseDate(data.get('player_rating_updated')), data.get('player_membership_status'))
-    # player.individual_tournament_years = ParseIndividualTournamentYears(data.get('player_individual_tournament_years'), data.get('player_membership_status'), player.individual_tournament_years)
-    # player.certified_status, player.certified_status_expiration_date = ParseCertifiedStatus(data.get('player_certified_status'), data.get('player_certified_status_expiration'))
-    # added_data, removed_data, modified_data, same_data, all_new = CompareDicts(data.get('player_pdga_number'), player)
-    #player.fields_updated.append(CreateFieldsUpdated(added_data, removed_data, modified_data, str(date.today()), all_new))
-    #player.fields_updated = []
-    #logging.info("Player with PDGA number %s has been added to Mongo", str(player.pdga_number))
-
-
-    #Fields that need to be parsed only when checking if existing player or new.
-    #new_player.fields_updated
-
-
+    new_player.to_mongo().to_dict()
     new_player.save()
+    logging.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 
-#ParsePlayer(data)
