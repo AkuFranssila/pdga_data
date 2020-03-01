@@ -64,9 +64,6 @@ def ParsePlayer(data):
 
         new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
-        new_player.save()
-    else:
-        new_player.to_mongo().to_dict()
-        new_player.save()
+    new_player.save()
     logging.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 
