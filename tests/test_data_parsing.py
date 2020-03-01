@@ -35,21 +35,42 @@ class TestDataParsers(unittest.TestCase):
         self.assertEqual(ParseDate('01-Jan-1993'), '1993-01-01')
 
     def test_CheckMembershipStatus(self):
-        self.assertEqual(CheckMembershipStatus(None), (None, False))
-        self.assertEqual(CheckMembershipStatus('Ace Club'), ('ace club', True))
-        self.assertEqual(CheckMembershipStatus('EAGLE CLUB'), ('eagle club', True))
-        self.assertEqual(CheckMembershipStatus('Current'), ('current', True))
-        self.assertEqual(CheckMembershipStatus(1234), ('1234', False))
+
+        test_data = {"player_membership_status": None}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), None)
+
+        test_data = {"player_membership_status": 'Ace Club'}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), 'ace club')
+
+        test_data = {"player_membership_status": 'EAGLE CLUB'}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), 'eagle club')
+
+        test_data = {"player_membership_status": "Current"}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), 'current')
+
+        test_data = {"player_membership_status": 1234}
+        self.assertEqual(CheckAndNormalizeMembershipStatus(test_data), '1234',)
 
     def test_ParseClassification(self):
-        self.assertEqual(ParseClassification(1234), '1234')
-        self.assertEqual(ParseClassification('Something here'), 'something here')
-        self.assertEqual(ParseClassification('Professional'), 'professional')
+
+        test_data = {'player_classification': 1234}
+        self.assertEqual(ParseClassification(test_data), '1234')
+
+        test_data = {'player_classification': 'Something here'}
+        self.assertEqual(ParseClassification(test_data), 'something here')
+
+        test_data = {'player_classification': 'Professional'}
+        self.assertEqual(ParseClassification(test_data), 'professional')
 
     def test_ParseMemberSince(self):
-        self.assertEqual(ParseMemberSince('Unknown'), 0)
-        self.assertEqual(ParseMemberSince(1234), 1234)
-        self.assertEqual(ParseMemberSince(None), None)
+        test_data = {'player_member_since': 'Unknown'}
+        self.assertEqual(ParseMemberSince(test_data), None)
+
+        test_data = {'player_member_since': 1234}
+        self.assertEqual(ParseMemberSince(test_data), 1234)
+
+        test_data = {'player_member_since': None}
+        self.assertEqual(ParseMemberSince(test_data), None)
 
 if __name__ == '__main__':
     unittest.main()

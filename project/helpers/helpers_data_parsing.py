@@ -195,7 +195,7 @@ def CheckMembership(data):
 def ParseClassification(data):
     classification = data.get('player_classification')
     if classification:
-        classification = classification.lower().strip()
+        classification = str(classification).lower().strip()
 
     return classification
 
