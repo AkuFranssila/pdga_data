@@ -1,0 +1,793 @@
+{
+    "event_crawl_date": "2020-01-26",
+    "event_link": "https://www.pdga.com/tour/event/35937",
+    "event_title": "Kentwood Country Club Fall Tournament (1st)",
+    "event_date": "Date: 13-Nov-1983",
+    "event_location": "Location: Raleigh, North Carolina, United States",
+    "event_tournament_director_name": "Tournament Director: Edward Burt Jr.",
+    "event_tournament_director_id": "/general-contact?pdganum=1445&token=c0a3d73099fcdc809284dad93812b6aecdc0be2f",
+    "event_assistant_dt_name": null,
+    "event_assistant_dt_id": null,
+    "event_website": null,
+    "event_email": null,
+    "event_phone": null,
+    "event_livescoring": [],
+    "event_tier": "C",
+    "event_classification": "Pro/Am",
+    "event_total_players": "23",
+    "event_status": null,
+    "event_status_last_updated": null,
+    "event_pro_purse": null,
+    "event_type": [
+        "singles"
+    ],
+    "event_divisions": [
+        {
+            "division_name": "Open  (6)",
+            "division_short_name": "MPO",
+            "division_total_players": " (6)",
+            "division_course_details": [
+                {
+                    "round_1": {
+                        "course_details": "\n\nKentwood - Layout A; 18 holes; Par 0\n\n",
+                        "course_pdga_link": "/node/25198"
+                    }
+                },
+                {
+                    "round_2": {
+                        "course_details": "\n\nKentwood - Layout A; 18 holes; Par 0\n\n",
+                        "course_pdga_link": "/node/25198"
+                    }
+                },
+                {
+                    "round_3": {
+                        "course_details": "\n\nKentwood - Final; 9 holes; Par 0\n\n",
+                        "course_pdga_link": "/node/25198"
+                    }
+                }
+            ],
+            "division_players_singles": [
+                {
+                    "division_name": "Open  (6)",
+                    "division_short_name": "MPO",
+                    "player_full_name": "Robert Gaddy",
+                    "player_pdga_number": "2484",
+                    "player_pdga_link": "https://www.pdga.com/player/2484",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "1",
+                    "player_money_won": "0",
+                    "player_total_throws": "116",
+                    "player_total_par": "+116",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "49",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "43",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "24",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Open  (6)",
+                    "division_short_name": "MPO",
+                    "player_full_name": "Paul Falcon",
+                    "player_pdga_number": "2419",
+                    "player_pdga_link": "https://www.pdga.com/player/2419",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "2",
+                    "player_money_won": "0",
+                    "player_total_throws": "117",
+                    "player_total_par": "+117",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "46",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "48",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "23",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Open  (6)",
+                    "division_short_name": "MPO",
+                    "player_full_name": "Carlton Howard",
+                    "player_pdga_number": "2300",
+                    "player_pdga_link": "https://www.pdga.com/player/2300",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "2",
+                    "player_money_won": "0",
+                    "player_total_throws": "117",
+                    "player_total_par": "+117",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "48",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "48",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "21",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Open  (6)",
+                    "division_short_name": "MPO",
+                    "player_full_name": "Edward Burt Jr.",
+                    "player_pdga_number": "1445",
+                    "player_pdga_link": "https://www.pdga.com/player/1445",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "4",
+                    "player_money_won": "0",
+                    "player_total_throws": "102",
+                    "player_total_par": "+102",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "51",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "51",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Open  (6)",
+                    "division_short_name": "MPO",
+                    "player_full_name": "Tony Tomasino",
+                    "player_pdga_number": "1576",
+                    "player_pdga_link": "https://www.pdga.com/player/1576",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "5",
+                    "player_money_won": "0",
+                    "player_total_throws": "103",
+                    "player_total_par": "+103",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "52",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "51",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Open  (6)",
+                    "division_short_name": "MPO",
+                    "player_full_name": "Zeke McKinney",
+                    "player_pdga_number": "2831",
+                    "player_pdga_link": "https://www.pdga.com/player/2831",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "6",
+                    "player_money_won": "0",
+                    "player_total_throws": "106",
+                    "player_total_par": "+106",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "58",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "48",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "division_name": "Advanced  (17)",
+            "division_short_name": "MA1",
+            "division_total_players": " (17)",
+            "division_course_details": [
+                {
+                    "round_1": {
+                        "course_details": "\n\nKentwood - Layout A; 18 holes; Par 0\n\n",
+                        "course_pdga_link": "/node/25198"
+                    }
+                },
+                {
+                    "round_2": {
+                        "course_details": "\n\nKentwood - Layout A; 18 holes; Par 0\n\n",
+                        "course_pdga_link": "/node/25198"
+                    }
+                },
+                {
+                    "round_3": {
+                        "course_details": "\n\nKentwood - Final; 9 holes; Par 0\n\n",
+                        "course_pdga_link": "/node/25198"
+                    }
+                }
+            ],
+            "division_players_singles": [
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Jim Markov",
+                    "player_pdga_number": "2866",
+                    "player_pdga_link": "https://www.pdga.com/player/2866",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "1",
+                    "player_money_won": "0",
+                    "player_total_throws": "119",
+                    "player_total_par": "+119",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "48",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "48",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "23",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Steve Braun",
+                    "player_pdga_number": "3122",
+                    "player_pdga_link": "https://www.pdga.com/player/3122",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "2",
+                    "player_money_won": "0",
+                    "player_total_throws": "128",
+                    "player_total_par": "+128",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "49",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "54",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "25",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Rich Cunningham",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "3",
+                    "player_money_won": "0",
+                    "player_total_throws": "131",
+                    "player_total_par": "+131",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "54",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "50",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "27",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Joe Woodruff",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "4",
+                    "player_money_won": "0",
+                    "player_total_throws": "107",
+                    "player_total_par": "+107",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "55",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "52",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Gregory Williams",
+                    "player_pdga_number": "3153",
+                    "player_pdga_link": "https://www.pdga.com/player/3153",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "4",
+                    "player_money_won": "0",
+                    "player_total_throws": "107",
+                    "player_total_par": "+107",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "53",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "54",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Dana Combs",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "6",
+                    "player_money_won": "0",
+                    "player_total_throws": "108",
+                    "player_total_par": "+108",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "54",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "54",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Blair Adams",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "7",
+                    "player_money_won": "0",
+                    "player_total_throws": "113",
+                    "player_total_par": "+113",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "59",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "54",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Dyric Brooks",
+                    "player_pdga_number": "2759",
+                    "player_pdga_link": "https://www.pdga.com/player/2759",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "7",
+                    "player_money_won": "0",
+                    "player_total_throws": "113",
+                    "player_total_par": "+113",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "59",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "54",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Larry Taylor",
+                    "player_pdga_number": "3576",
+                    "player_pdga_link": "https://www.pdga.com/player/3576",
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "9",
+                    "player_money_won": "0",
+                    "player_total_throws": "114",
+                    "player_total_par": "+114",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "57",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "57",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Matt Harless",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "10",
+                    "player_money_won": "0",
+                    "player_total_throws": "116",
+                    "player_total_par": "+116",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "60",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "56",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Bill Wells",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "11",
+                    "player_money_won": "0",
+                    "player_total_throws": "117",
+                    "player_total_par": "+117",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "58",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "59",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Brad Coats",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "12",
+                    "player_money_won": "0",
+                    "player_total_throws": "118",
+                    "player_total_par": "+118",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "59",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "59",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Chris Adams",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "13",
+                    "player_money_won": "0",
+                    "player_total_throws": "119",
+                    "player_total_par": "+119",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "60",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "59",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Andy Starr",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "14",
+                    "player_money_won": "0",
+                    "player_total_throws": "122",
+                    "player_total_par": "+122",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "64",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "58",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Mark Everett",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "15",
+                    "player_money_won": "0",
+                    "player_total_throws": "124",
+                    "player_total_par": "+124",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "62",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "62",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "Gardner Sheffield",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "16",
+                    "player_money_won": "0",
+                    "player_total_throws": "134",
+                    "player_total_par": "+134",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "65",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "69",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                },
+                {
+                    "division_name": "Advanced  (17)",
+                    "division_short_name": "MA1",
+                    "player_full_name": "John Osburn",
+                    "player_pdga_number": null,
+                    "player_pdga_link": null,
+                    "player_propagator": false,
+                    "player_rating_during_tournament": null,
+                    "player_final_placement": "17",
+                    "player_money_won": "0",
+                    "player_total_throws": "140",
+                    "player_total_par": "+140",
+                    "player_event_points": "0.00",
+                    "player_rounds": [
+                        {
+                            "round_number": 1,
+                            "round_throws": "69",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 2,
+                            "round_throws": "71",
+                            "round_rating": ""
+                        },
+                        {
+                            "round_number": 3,
+                            "round_throws": "",
+                            "round_rating": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
