@@ -13,37 +13,45 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def ParseTournament(data):
     ConnectMongo()
-    #print (json.dumps(data, indent=4))
-    #Fields from crawler
-    tournament, exists, tournament.tournament_id, tournament.pdga_page_link = TournamentExists(data['event_link'])
-    #if not exists:
-    tournament.tournament_name = ParseTournamentName(data['event_title'])
-    tournament.location_full = data["event_location"]
-    tournament.location_city, tournament.location_state, tournament.location_country = ParseFullLocation(data["event_location"])
-    tournament.tournament_start, tournament.tournament_end, tournament.tournament_length_days = ParseTournamentDates(data["event_date"])
-    tournament.tournament_director, tournament.tournament_director_id = ParseTournamentDirector(data['event_tournament_director_name'], data['event_tournament_director_id'])
-    tournament.assistant_director, tournament.assistant_director_id = ParseTournamentDirector(data['event_assistant_dt_name'], data['event_assistant_dt_id'])
-    tournament.tournament_tier = data['event_tier']
-    tournament.tournament_website = ParseTournamentWebsite(data["event_website"])
-    tournament.tournament_phone = data["event_phone"]
-    tournament.tournament_email = data["event_email"]
-    tournament.total_players = int(data["event_total_players"])
-    tournament.tournament_classification = data["event_classification"]
-    tournament.event_results_status = data["event_status"]
-    tournament.pdga_latest_update = ParseDate(data["event_status_last_updated"])
-    tournament.pro_prize_money = ParseTournamentProPurse(data["event_pro_purse"])
-    tournament.tournament_type = data["event_type"]
-    tournament.first_crawl_date = data["event_crawl_date"]
-    tournament.latest_update = str(date.today())
-    hole_by_hole_scoring = data['event_livescoring']
-    tournament.divisions, tournament.players = ParseDivisions(data)
-    #print (tournament.to_json())
-    logging.info('----------------------------')
-    logging.info('Tournament: %s. PDGA page: %s' % (tournament.tournament_name, tournament.pdga_page_link))
-    logging.info('Tournament ID: %s' % str(tournament.tournament_id))
 
-    #bbb = json.loads(tournament.to_json())
-    #print (json.dumps(bbb, indent=4, sort_keys=True))
+    tournament = Tournament()
+    tournament.tournament_id = parse_tournament_id(data)
+    tournament.pdga_page_link = data.get("event_link")
+    tournament.tournament_name = data.get("event_title")
+    tournament.location_full = CleanFullLocation(data)
+    tournament.location_city, tournament.location_state, tournament.location_country = ParseFullLocation(data, type="tournament")
+    tournament.tournament_start, tournament.tournament_end, tournament.tournament_length_days = ParseTournamentDates(data)
+    tournament.tournament_director = ParseTournamentDirectorName(data, "td")
+    tournament.tournament_director_id = ParseTournamentDirectorID(data, "td")
+    tournament.assistant_director = ParseTournamentDirectorName(data, "td_assistant")
+    tournament.assistant_director_id = ParseTournamentDirectorID(data, "td_assistant")
+    tournament.tournament_tier = data.get("event_tier")
+    tournament.tournament_website = ParseTournamentWebsite(data)
+    tournament.tournament_phone = data.get("event_phone")
+    tournament.tournament_email = data.get("event_email")
+    tournament.total_players = parse_tournament_total_players(data)
+    tournament.tournament_classification = data.get("event_classification")
+    tournament.event_results_status = data.get("event_status")
+    tournament.pdga_latest_update = ParseDate(data.get("event_status_last_updated"))
+    tournament.pro_prize_money = ParseTournamentProPurse(data)
+    tournament.tournament_type = data.get("event_type")
+    tournament.hole_by_hole_scoring = data.get("event_livescoring")
+    tournament.first_crawl_date = data("event_crawl_date")
+    tournament.latest_update = str(date.today())
+    tournament.divisions = ParseDivisions(data)
+    tournament.players = ""
+
+    old_tournament = TournamentExists(tournament.tournament_id)
+
+    if old_tournament:
+        tournament.id = old_tournament.id
+        tournament.first_crawl_date = old_tournament.first_crawl_date
+        tournament.tournament_director = check_tournament_director(tournament, old_tournament)
+        tournament.tournament_director_id = check_tournament_director_id(tournament, old_tournament)
+        tournament.assistant_director = check_assistant_tournament_director(tournament, old_tournament)
+        tournament.assistant_director_id = check_assistant_tournament_director_id(tournament, old_tournament)
+        tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
+    
     tournament.save()
 
     #Divisions (Open, FPO, MP40)
