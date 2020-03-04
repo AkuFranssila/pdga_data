@@ -24,7 +24,7 @@ def ParsePlayer(data):
     new_player.membership_status_expiration_date = ParseDate(data.get('player_membership_expiration_date'))
     new_player.full_name = CleanPlayerFullName(data)
     new_player.first_name, new_player.middle_name, new_player.last_name = ParsePlayerFullName(data)
-    new_player.location_full = CleanFullLocation(data)
+    new_player.location_full = CleanFullLocation(data, type="player")
     new_player.city, new_player.state, new_player.country = ParseFullLocation(data, type="player")
     new_player.classification = ParseClassification(data)
     new_player.member_since = ParseMemberSince(data)
