@@ -25,7 +25,7 @@ def ParsePlayer(data):
     new_player.full_name = CleanPlayerFullName(data)
     new_player.first_name, new_player.middle_name, new_player.last_name = ParsePlayerFullName(data)
     new_player.location_full = CleanFullLocation(data)
-    new_player.city, new_player.state, new_player.country = ParseFullLocation(data)
+    new_player.city, new_player.state, new_player.country = ParseFullLocation(data, type="player")
     new_player.classification = ParseClassification(data)
     new_player.member_since = ParseMemberSince(data)
     new_player.career_earnings = data.get('player_career_earnings')
