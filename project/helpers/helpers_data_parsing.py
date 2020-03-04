@@ -7,7 +7,7 @@ import requests
 import pycountry
 import time
 from project.models.schemas import Player, Tournament
-from project.helpers.helper_data import ACCEPTED_STATUSES, US_STATES, MONTH_DICT, HISTORY_FIELDS, US_STATES_LIST
+from project.helpers.helper_data import ACCEPTED_STATUSES, US_STATES, MONTH_DICT, HISTORY_FIELDS, US_STATES_LIST, HISTORY_FIELDS_TOURNAMENT
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
@@ -29,22 +29,32 @@ def ParsePlayerFullName(data):
     return first_name, middle_name, last_name
 
 
-def CleanFullLocation(data):
-    location_full = data.get("player_location_raw")
+def CleanFullLocation(data, type=None):
+    if type == "player":
+        location_full = data.get("player_location_raw")
+    elif type == "tournament":
+        location_full = data.get("event_location")
+    else:
+        location_full = data
     if location_full:
         location_full = location_full.replace('Location:', '').replace('?', '').strip()
 
     return location_full
 
 
-def ParseFullLocation(data, allow_google_api=True, recheck=False):
+def ParseFullLocation(data, allow_google_api=True, recheck=False, type=None):
     """
     Parse full location
     """
-    if not recheck:
+    if not recheck and type == "player":
         full_location = data.get("player_location_raw")
+    elif not recheck and type == "tournament":
+        full_location = data.get("event_location")
     else:
         full_location = data
+
+    full_location = CleanFullLocation(full_location)
+
     city = None
     state = None
     country = None
@@ -343,23 +353,20 @@ def ParseTournamentName(name):
         return "Unnamed tournament"
 
 
-def TournamentExists(pdga_link):
-    logging.info(f'Checking if tournament exists {str(pdga_link)}')
-    tournament_id = int(pdga_link.replace('https://www.pdga.com/tour/event/', ''))
-    try:
-        tournament = Tournament.objects.get(tournament_id=tournament_id)
-        exists = True
-    except: #schemas.DoesNotExist
-        tournament = Tournament()
-        exists = False
+def TournamentExists(tournament_id):
+    tournament = Tournament.objects(tournament_id=tournament_id).first()
 
-    return tournament, exists, tournament_id, pdga_link
+    if tournament:
+        return tournament
+    else:
+        return None
 
 
-def ParseTournamentDates(event_dates):
+def ParseTournamentDates(data):
     #Date: 03-Nov-2019
     #Date: 02-Nov to 03-Nov-2019
     #Date: 17-May to 19-May-2019
+    event_dates = data.get("event_date")
     event_dates = event_dates.replace('Date: ', '')
     if " to " in event_dates:
         start = event_dates.split(' to ')[0]
@@ -383,17 +390,40 @@ def ParseTournamentDates(event_dates):
     return start, end, length
 
 
-def ParseTournamentDirector(td_name, td_id):
-    if td_name is not None:
-        td_name = td_name.replace('Tournament Director:', '').replace('Asst. Tournament Director:', '').replace('Asst. ', '').strip()
-    if td_id is not None:
-        td_id = td_id.replace('/general-contact?pdganum=', '').split('&token')[0].strip()
-        td_id = int(td_id)
-    return td_name, td_id
+def ParseTournamentDirectorName(data, type):
+    if type == "td":
+        td = data.get("event_tournament_director_name")
+    elif type == "td_assistant":
+        td = data.get("event_assistant_dt_name")
+
+    parsed_td = None 
+
+    if td:
+        parsed_td = td.replace('Tournament Director:', '').replace('Asst. Tournament Director:', '').replace('Asst. ', '').strip()
+        parsed_td = int(parsed_td)
+
+    return parsed_td
 
 
-def ParseTournamentWebsite(website):
-    if website is not None and website != "n/a":
+def ParseTournamentDirectorID(data, type):
+    if type == "td":
+        td = data.get("event_tournament_director_id")
+    elif type == "td_assistant":
+        td = data.get("event_assistant_dt_id")
+
+    parsed_td = None 
+
+    if td:
+        parsed_td = td.replace('/general-contact?pdganum=', '').split('&token')[0].strip()
+        parsed_td = int(parsed_td)
+
+    return parsed_td
+
+
+def ParseTournamentWebsite(data):
+    website = data.get("event_website")
+
+    if website and website != "n/a":
         #why .split('\m')[0] in the code? There is a random case that was most easy to solve adding the split
         website = website.replace('Website: ', '').replace('[email protected]', '').strip().replace(',', '.').replace('\\', '/')
         if "https://" or "http://" not in website:
@@ -401,15 +431,17 @@ def ParseTournamentWebsite(website):
             website = website.replace('https:///', 'https://').replace('ttp://', '').replace(' ', '')
     else:
         website = None
-    if website is not None:
+    if website:
         if website == "https://n/a" or website == "https://[email protected]" or "." not in website:
             website = None
 
     return website
 
 
-def ParseTournamentProPurse(pro_purse):
-    if pro_purse is not None:
+def ParseTournamentProPurse(data):
+    pro_purse = data.get("event_pro_purse")
+
+    if pro_purse:
         pro_purse = pro_purse.replace('$', '').strip().replace(',', '')
         try:
             pro_purse = float(pro_purse)
@@ -832,6 +864,99 @@ def CheckFieldsUpdated(new_player, old_player, reset_history=False):
         changed_data = {}
         new_data = json.loads(new_player.to_json())
         old_data = json.loads(old_player.to_json())
+
+        for history_field in HISTORY_FIELDS:
+            history_old = old_data.get(history_field)
+            history_new = new_data.get(history_field)
+            try:
+                if "$date" in history_old:
+                    history_old = history_old.get("$date")
+                    history_new = history_new.get("$date")
+                    history_new = datetime.datetime.fromtimestamp(history_new/1000)
+                    history_old = datetime.datetime.fromtimestamp(history_old/1000)
+            except TypeError:
+                continue
+            if history_old != history_new:
+                changed_data_details = {}
+                changed_data_details["new"] = history_new
+                changed_data_details["old"] = history_old
+                changed_data[history_field] = changed_data_details
+
+                updated_fields.append(changed_data.copy())
+
+    else:
+        updated_fields = []
+
+    if reset_history:
+        updated_fields = []
+
+    return updated_fields
+
+def parse_tournament_id(data):
+    event_link = data.get("event_link")
+
+    tournament_id = event_link.strip().split('/')[-1]
+    tournament_id = int(tournament_id)
+
+    return tournament_id
+
+
+def parse_tournament_total_players(data):
+    total_players = data.get("event_total_players")
+
+    if total_players:
+        total_players = int(total_players)
+
+    return total_players
+
+
+def check_tournament_director(tournament, old_tournament):
+    old_td = old_tournament.tournament_director
+    td = tournament.tournament_director
+
+    if not td:
+        td = old_td 
+
+    return td
+
+
+def check_tournament_director_id(tournament, old_tournament):
+    old_td = old_tournament.tournament_director_id
+    td = tournament.tournament_director_id
+
+    if not td:
+        td = old_td 
+
+    return td
+
+
+def check_assistant_tournament_director(tournament, old_tournament):
+    old_td = old_tournament.assistant_director
+    td = tournament.assistant_director
+
+    if not td:
+        td = old_td 
+
+    return td
+
+
+def check_assistant_tournament_director_id(tournament, old_tournament):
+    old_td = old_tournament.assistant_director_id
+    td = tournament.assistant_director_id
+
+    if not td:
+        td = old_td 
+
+    return td
+
+
+def CheckFieldsUpdatedTournament(tournament, old_tournament, reset_history=False):
+
+    if old_tournament:
+        updated_fields = old_tournament.fields_updated
+        changed_data = {}
+        new_data = json.loads(tournament.to_json())
+        old_data = json.loads(old_tournament.to_json())
 
         for history_field in HISTORY_FIELDS:
             history_old = old_data.get(history_field)

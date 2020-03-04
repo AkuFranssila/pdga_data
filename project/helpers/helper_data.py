@@ -110,3 +110,30 @@ HISTORY_FIELDS = [
         "certified_status",
         "certified_status_expiration_date",
     ]
+
+
+HISTORY_FIELDS_TOURNAMENT = [
+        "latest_update",
+        "tournament_name",
+        "city",
+        "state",
+        "country",
+        "tournament_start",
+        "tournament_end",
+        "tournament_length_days",
+        "tournament_director",
+        "tournament_director_id",
+        "assistant_director",
+        "assistant_director_id",
+        "tournament_tier",
+        "tournament_website",
+        "tournament_phone",
+        "tournament_email",
+        "total_players",
+        "tournament_classification",
+        "event_results_status",
+        "pdga_latest_update",
+        "pro_prize_money",
+        "tournament_type",
+        "players",
+    ]

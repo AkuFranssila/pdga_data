@@ -25,7 +25,7 @@ def ParsePlayer(data):
     new_player.full_name = CleanPlayerFullName(data)
     new_player.first_name, new_player.middle_name, new_player.last_name = ParsePlayerFullName(data)
     new_player.location_full = CleanFullLocation(data)
-    new_player.city, new_player.state, new_player.country = ParseFullLocation(data)
+    new_player.city, new_player.state, new_player.country = ParseFullLocation(data, type="player")
     new_player.classification = ParseClassification(data)
     new_player.member_since = ParseMemberSince(data)
     new_player.career_earnings = data.get('player_career_earnings')
@@ -64,9 +64,6 @@ def ParsePlayer(data):
 
         new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
-        new_player.save()
-    else:
-        new_player.to_mongo().to_dict()
-        new_player.save()
+    new_player.save()
     logging.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 
