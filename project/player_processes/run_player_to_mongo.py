@@ -9,18 +9,18 @@ from project.models.schemas import Player
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info("Starting run_player_to_mongo.py")
 
-SendSlackMessageToChannel("%s Starting run_player_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
+def RunPlayerToMongo(file_date):
+    SendSlackMessageToChannel("%s Starting run_player_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
+    file_location = DownloadFileFromS3("player-parsed-data")
+    #file_location = '.\\parsed_players\\player-parsed-data-2020-01-25.json'
 
-file_location = DownloadFileFromS3("player-parsed-data")
-#file_location = '.\\parsed_players\\player-parsed-data-2020-01-25.json'
-
-ConnectMongo()
-with open(file_location, "r") as data:
-    all_players = json.load(data)
-    for player in all_players:
-        ParsePlayer(player)
+    ConnectMongo()
+    with open(file_location, "r") as data:
+        all_players = json.load(data)
+        for player in all_players:
+            ParsePlayer(player)
 
 
-total_players = Player.objects().count()
-logging.info("Finished run_player_to_mongo.py")
-SendSlackMessageToChannel("%s Finished run_player_to_mongo.py. Currently %s players in MongoDB." % (str(datetime.datetime.today()), str(total_players)), "#data-reports")
+    total_players = Player.objects().count()
+    logging.info("Finished run_player_to_mongo.py")
+    SendSlackMessageToChannel("%s Finished run_player_to_mongo.py. Currently %s players in MongoDB." % (str(datetime.datetime.today()), str(total_players)), "#data-reports")

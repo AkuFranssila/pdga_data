@@ -8,10 +8,12 @@ from datetime import date
 from project.helpers.helpers_crawler import FindNewestMemberId
 from project.helpers.helpers_data_management import AppendToFile
 from project.utils.send_file_to_s3 import upload_data_to_s3
+from project.utils.slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
 def CrawlRawPlayerData(first_id, last_id, crawl_all, file_date, chunk_counter=0):
+    SendSlackMessageToChannel("%s Starting run_player_crawl.py" % str(datetime.datetime.today()), "#data-reports")
     logging.info("Starting player raw data crawling %s" % file_date)
     if crawl_all:
         logging.info("Crawling all players. Running FindNewestMemberId")
@@ -28,8 +30,6 @@ def CrawlRawPlayerData(first_id, last_id, crawl_all, file_date, chunk_counter=0)
         collected_json.append(json_data)
 
         if i % 1000 == 0 or i == last_id:
-                #temp = tempfile.NamedTemporaryFile(suffix=".json", mode="w")
-
             with tempfile.NamedTemporaryFile(suffix=".json", mode="w", delete=False) as tp:
                 tp.write(json.dumps(collected_json))
                 s3_folder_key = f'player-raw-data/{file_date}/data_{str(chunk_counter)}.json'
@@ -38,6 +38,8 @@ def CrawlRawPlayerData(first_id, last_id, crawl_all, file_date, chunk_counter=0)
                 tp.close()
             collected_json = []
             chunk_counter += 1
+
+    SendSlackMessageToChannel("%s Finished run_player_crawl.py." % (str(datetime.datetime.today())), "#data-reports")
 
     
 
