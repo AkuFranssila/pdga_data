@@ -20,7 +20,7 @@ def FindNewestMemberId():
     except:
         sys.exit('Errors testing latest PDGA ID found')
     logging.info('The latest member ID is ' + latest_member)
-    return int(latest_member)
+    return int(latest_member) + 1
 
 
 def TournamentDate(crawl_option):

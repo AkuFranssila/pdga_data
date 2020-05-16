@@ -81,6 +81,19 @@ def send_multipart_file_to_s3(filename, type):
     return True
 
 
+def upload_data_to_s3(folders_and_file_name, file_location, bucket="pdga-project-data"):
+    """
+    Upload bigger files to S3. Bucket is by default pdga data project bucket. file_name is the file location. 
+    Folders is the S3 structure where the data needs to be saved and if the file needs to be renamed. 
+    """
+
+    logging.info("Uploading to %s" % folders_and_file_name)
+    s3 = AWS_S3CLIENT()
+    s3.upload_file(file_location, bucket, folders_and_file_name)
+
+
+
+
 #latest_file = FindFiles('crawled_players').find_latest_file()
 #print(latest_file)
 #send_file_to_s3('.\\crawled_players\\player-raw-data-2020-01-24.txt', "player-raw-data")

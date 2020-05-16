@@ -71,26 +71,30 @@ def DeleteFile(file_location):
     else:
       logging.critical("The file at %s does not exist" % str(file_location))
 
-def AppendToFile(file_location, data):
+def AppendToFile(file_location, data, newline=True):
     with open(file_location, 'a') as file:
         json.dump(data, file)
-        file.write("\n")
+        if newline:
+            file.write("\n")
 
 def ReturnFileLocation(type, target):
+
+    date_time = datetime.now().strftime("%m%d%Y")
+
     logging.info("Running ReturnFileLocation with type: %s and target %s" % (type, target))
     types = ["old_pdga_data", "player-parsed-data", "player-raw-data", "tournament-parsed-data", "tournament-raw-data"]
     today = str(date.today())
     if type == 'player' and target == 'crawl':
-        file_location = 'project/crawled_players'
+        file_location = 'project/crawled_players/' + date_time
         file_name = 'player-raw-data-'
     elif type == 'player' and target == 'parse':
-        file_location = 'project/parsed_players'
+        file_location = 'project/parsed_players/' + date_time
         file_name = 'player-parsed-data-'
     elif type == 'tournament' and target == 'crawl':
-        file_location = 'project/crawled_tournaments'
+        file_location = 'project/crawled_tournaments/' + date_time
         file_name = 'tournament-raw-data-'
     elif type == 'tournament' and target == 'parse':
-        file_location = 'project/parsed_tournaments'
+        file_location = 'project/parsed_tournaments/' + date_time
         file_name = 'tournament-parsed-data-'
     else:
         sys.exit('Wrong type or target set')
