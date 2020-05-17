@@ -2,33 +2,55 @@
 import json
 import logging
 import datetime
-from project.helpers.helpers_data_management import DownloadFileFromS3, SaveFile
+import argparse
+import tempfile
 from project.player_processes.player_parse_raw_data import PlayerParseRawData
-from project.utils.send_file_to_s3 import send_multipart_file_to_s3
+from project.utils.send_file_to_s3 import upload_data_to_s3
+from project.utils.s3_tools import find_all_keys_from_s3_folder, download_file_from_s3_return_file_path, save_to_temp_file_and_upload_to_s3
 from project.utils.slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logging.info("Starting run_player_raw_data_parse.py")
+
+def handle_arguments() -> (str):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file_date',
+        type=str,
+        help="S3 folder name that is date in format YearMonthDay",
+        required=False
+    )
+    args = parser.parse_args()
+
+    return args.file_date
+
 
 
 def RunPlayerRawDataParse(file_date):
     SendSlackMessageToChannel("%s Starting run_player_raw_data_parse.py" % str(datetime.datetime.today()), "#data-reports")
 
-    file_location = DownloadFileFromS3("player-raw-data")
-    #file_location = '.\\crawled_players\\player-raw-data-2020-01-12.txt'
-    #file_location = '.\\crawled_tournaments\\tournament-raw-data-2020-01-16.txt'
+    all_file_keys = find_all_keys_from_s3_folder(f"player-raw-data/{file_date}")
 
-    all_parsed_data = []
+    logging.info("Found %s keys" % str(len(all_file_keys)))
 
-    with open(file_location, "r") as data:
-        logging.info("Opening file %s" % file_location)
-        for line in data:
-            json_data = json.loads(line)
-            id = json_data["pdga_number"]
-            raw_data = json_data["raw_data"]
-            parsed_data = PlayerParseRawData(id, raw_data, '')
-            all_parsed_data.append(parsed_data)
+    for file_key in all_file_keys:
+        file_counter = file_key.split('.json')[0].split('data_')[1]
+        download_name = f"data_{file_counter}"
 
-    saved_file_location = SaveFile("player", "parse", all_parsed_data)
+        file_path = download_file_from_s3_return_file_path(file_key, download_name)
 
-    send_multipart_file_to_s3(saved_file_location, "player-parsed-data")
-    #SendSlackMessageToChannel("%s Player raw data parsed and send to S3.\n\nS3 file location: %s.\n\nNumber of tournaments parsed: %s" % (str(datetime.datetime.today()), saved_file_location, str(len(all_parsed_data)))), "#data-reports"))
+        all_parsed_data = []
+        with open(file_path, "r") as data:
+            logging.info("Opening file %s" % file_path)
+            all_data = json.load(data)
+            for page in all_data:
+                id = page["pdga_number"]
+                raw_data = page["raw_data"]
+                parsed_data = PlayerParseRawData(id, raw_data, '')
+                all_parsed_data.append(parsed_data)
+
+
+        save_to_temp_file_and_upload_to_s3("player-parsed-data", file_date, file_counter, all_parsed_data)
+
+
+if __name__ == "__main__":
+    file_date = handle_arguments()
+    RunPlayerRawDataParse(file_date)
