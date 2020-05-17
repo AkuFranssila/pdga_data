@@ -9,10 +9,10 @@ from project.models.schemas import Player
 from project.player_processes.player_statistics import GeneratePlayerStatistics
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
+def RunPlayerStatisticsCreation():
+    ConnectMongo()
+    all_players = Player.objects.filter()
+    for player in all_players:
+        GeneratePlayerStatistics(player)
 
-ConnectMongo()
-all_players = Player.objects.filter()
-for player in all_players:
-    GeneratePlayerStatistics(player)
-
-logging.info('Finished creating statistics for %s players' % (str(all_players.count())))
+    logging.info('Finished creating statistics for %s players' % (str(all_players.count())))
