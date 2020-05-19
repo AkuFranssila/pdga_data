@@ -1,7 +1,9 @@
 import logging
 import datetime
 import tempfile
+import json
 from project.utils.aws_s3_client import AWS_S3CLIENT
+from project.utils.send_file_to_s3 import upload_data_to_s3
 
 logging.getLogger().setLevel("INFO")
 s3_client = AWS_S3CLIENT()
@@ -39,7 +41,7 @@ def download_file_from_s3_return_file_path(key, download_name, bucket="pdga-proj
     return full_download_path
 
 
-def save_to_temp_file_and_upload_to_s3(s3_folder, file_date, file_counter, data_to_send, suffix=".json")
+def save_to_temp_file_and_upload_to_s3(s3_folder, file_date, file_counter, data_to_send, suffix=".json"):
     """
     Create temp file and save crawled or parsed data there. Send it to a specific main folder and subfolder with date.
 
