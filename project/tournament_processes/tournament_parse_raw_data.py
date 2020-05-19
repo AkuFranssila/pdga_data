@@ -148,8 +148,12 @@ def TournamentParseRawData(id, raw_data):
 
 
             if division_type == "singles":
-                all_players = division.find('tbody').find_all('tr')
-                division_players = parse_singles_tournament(all_players, div)
+                all_players = division.find('tbody')
+                all_players = all_players.find_all('tr') if all_players else []
+                if all_players:
+                    division_players = parse_singles_tournament(all_players, div)
+                else:
+                    division_players = []
             elif division_type == "doubles":
                 all_players_odd = division.find('tbody').find_all('tr', class_="odd")
                 all_players_even = division.find('tbody').find_all('tr', class_="even")

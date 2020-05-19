@@ -24,6 +24,7 @@ def handle_arguments() -> (str):
 
 def test_tournament_parsers_on_single_link(link):
     all_data = []
+    all_parsed_data = []
     response = requests.get(link)
     data = response.content.decode('utf8').replace("'", '"')
     json_data = {"pdga_number" : int(link.rsplit("/", 1)[1]), "raw_data" : data}
@@ -32,10 +33,10 @@ def test_tournament_parsers_on_single_link(link):
         id = page["pdga_number"]
         raw_data = page["raw_data"]
         parsed_data = TournamentParseRawData(id, raw_data)
-        all_data.append(parsed_data)
+        all_parsed_data.append(parsed_data)
 
 
-    print(json.dumps(all_data, indent=4))
+    print(json.dumps(all_parsed_data, indent=4))
 
 
 if __name__ == "__main__":
