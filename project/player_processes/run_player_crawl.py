@@ -7,8 +7,8 @@ import argparse
 from project.player_processes.player_crawl_raw_data import CrawlRawPlayerData
 from project.helpers.helpers_data_management import ReturnFileLocation
 from project.utils.slack_message_sender import SendSlackMessageToChannel
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
+logging.getLogger().setLevel("INFO")
 
 def handle_arguments() -> (int, int):
     parser = argparse.ArgumentParser()
@@ -36,4 +36,4 @@ if __name__ == "__main__":
     file_date = datetime.datetime.now().strftime("%m%d%Y")
     CrawlRawPlayerData(start_id, end_id, crawl_all, file_date)
 
-    SendSlackMessageToChannel("%s Finished run_player_crawl.py. Saved crawled players to %s" % (str(datetime.datetime.today()), file_loc), "#data-reports")
+    SendSlackMessageToChannel("%s Finished run_player_crawl.py." % (str(datetime.datetime.today())), "#data-reports")

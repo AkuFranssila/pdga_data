@@ -141,6 +141,7 @@ def ParseDate(date):
     Accepts date in the format posted in PDGA. Returns the date in year-month-day format.
     """
     if date:
+        print(date)
         day,month,year = date.split(' ')[0].strip().split('-')
         date = year + '-' + MONTH_DICT[month] + '-' + day
     return date
@@ -400,7 +401,6 @@ def ParseTournamentDirectorName(data, type):
 
     if td:
         parsed_td = td.replace('Tournament Director:', '').replace('Asst. Tournament Director:', '').replace('Asst. ', '').strip()
-        parsed_td = int(parsed_td)
 
     return parsed_td
 

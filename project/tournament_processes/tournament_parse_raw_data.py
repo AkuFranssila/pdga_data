@@ -9,7 +9,7 @@ from project.helpers.helpers_raw_tournament_parsing import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
-def TournamentParseRawData(id, raw_data, file_location):
+def TournamentParseRawData(id, raw_data):
     logging.info("Starting TournamentParseRawData for pdga ")
     soup = BeautifulSoup(raw_data, "html.parser")
     event = {}
@@ -83,16 +83,17 @@ def TournamentParseRawData(id, raw_data, file_location):
         event_status = soup.find_all(class_="status")
         event['event_status'] = event_status[-1].text if len(event_status) > 1 else None
 
-        event_status_last_updated = soup.find_all(class_="date")
+        event_status_last_updated = soup.find_all(class_="date updated")
         event['event_status_last_updated'] = event_status_last_updated[1].text if len(event_status_last_updated) > 1 else None
 
         event_pro_purse = soup.find_all(class_="purse")
         event['event_pro_purse'] = event_pro_purse[1].text if len(event_pro_purse) > 1 else None
 
         event_type = []
-        singles = soup.find(class_="leaderboard singles")
-        doubles = soup.find(class_="leaderboard doubles")
-        teams = soup.find(class_="leaderboard team")
+
+        singles = soup.find("div", {"class": re.compile('^(leaderboard singles).*$')})
+        doubles = soup.find("div", {"class": re.compile('^(leaderboard doubles).*$')})
+        teams = soup.find("div", {"class": re.compile('^(leaderboard team).*$')})
 
         all_divisions = {}
         event['event_divisions'] = []

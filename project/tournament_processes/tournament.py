@@ -14,11 +14,13 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 def ParseTournament(data):
     ConnectMongo()
 
+    print(json.dumps(data, indent=4))
+
     tournament = Tournament()
     tournament.tournament_id = parse_tournament_id(data)
     tournament.pdga_page_link = data.get("event_link")
     tournament.tournament_name = data.get("event_title")
-    tournament.location_full = CleanFullLocation(data)
+    tournament.location_full = CleanFullLocation(data, type="tournament")
     tournament.location_city, tournament.location_state, tournament.location_country = ParseFullLocation(data, type="tournament")
     tournament.tournament_start, tournament.tournament_end, tournament.tournament_length_days = ParseTournamentDates(data)
     tournament.tournament_director = ParseTournamentDirectorName(data, "td")
@@ -52,6 +54,7 @@ def ParseTournament(data):
         tournament.assistant_director_id = check_assistant_tournament_director_id(tournament, old_tournament)
         tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
     
+    import pdb; pdb.set_trace()
     tournament.save()
 
     #Divisions (Open, FPO, MP40)

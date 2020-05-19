@@ -23,7 +23,6 @@ def handle_arguments() -> (str):
     return args.file_date
 
 
-
 def RunPlayerRawDataParse(file_date):
     SendSlackMessageToChannel("%s Starting run_player_raw_data_parse.py" % str(datetime.datetime.today()), "#data-reports")
 
