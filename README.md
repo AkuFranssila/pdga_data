@@ -1,44 +1,122 @@
-# Collect PDGA Data
+<a href="https://www.pdga.com/"><img src="https://www.pdga.com/sites/all/themes/pdga/logo.png" title="PDGALogo" alt="PDGALogo"></a>
 
-This project is to collect all player and tournament data available on PDGA. PDGA does not offer any API to fetch the player data so all data needs to be crawled and then parsed to correct format and saved to MongoDB. As the project goes forward the work will focus on creating REST API that can be used to fetch data through an UI.
+# PDGA DATA
 
-## Technologies used
+PDGA Data project is to crawl, process, analyze and display data found from PDGA.com. The goal is to provide easily searchable data that provides more insight about players, tournaments and the whole player base.
 
-- Python
-  - MongoEngine
-  - Requests
-  - Logging
-  - BeautifulSoup
-- MongoDB
-- Cronjobs
-- GitHub
-- CircleCI
+PDGA does not provide the best analytical data on their own website which is why this project was created.
 
-## TODO
-- [x] Add PDGA project finally to GitHub
-- [x] Fix any missing fields in player crawling and fields that need to be added to db
-- [x] Switch to MongoEngine
-- [x] Create schemas for MongoDB documents
-- [x] Save files instead of directly uploading to DB
-- [x] Add merge file where logic happens for player and tournament parsing, change some fields from crawling to merge (address, name parsing)
-- [x] Crawl players and add to database
-- [x] Change parsing logic to be simpler so that the data type checks are done inside functions instead of creating more and more rules to parser
-- [x] Check any mistakes/errors after all players crawled and rerun files if fixable in merge
-- [x] Add crawling for tournaments
-- [x] Add parsing for tournaments
-- [x] Check any mistakes/errors after all tournaments crawled and rerun files if fixable in merge
-- [x] Add CircleCI for automated testing
-- [x] Create tests
-- [x] Fix any errors and problems found after tests are done
-- [x] Refactor whole crawling process to collect the whole page instead of crawling it for player and tournament data
-- [x] Save the crawled pages to AWS S3
-- [x] Refactor the parsing process to parse the crawled full html page
-- [x] Save parsed data as json to AWS S3
-- [x] Add Slack integration and send messages about important data processes to Slack channel for monitoring purposes.
-- [ ] Refactor sending data to mongodb for player and tournaments
-- [ ] Create statistics for players, tournaments
-- [ ] Create statistics on country level + all
-- [ ] Create cronjobs and automate the process
-- [ ] Create API for the data (mongoDB + python + Flask)
-- [ ] Create webpage where to show pdga data
-- [ ] Make the data searchable through filters and/or remade statistics. (React)
+[![CircleCI](https://app.circleci.com/pipelines/github/AkuFranssila/pdga_data.svg?style=svg)](https://github.com/AkuFranssila/pdga_data)
+
+[github-last-commit-image]: https://img.shields.io/github/last-commit/commonality/architecture-decision-records.svg?style=flat-square
+
+[github-languages-image]: https://img.shields.io/github/languages/top/commonality/architecture-decision-records.svg?style=flat-square
+
+[github-code-size-image]: https://img.shields.io/github/languages/code-size/commonality/architecture-decision-records.svg?style=flat-square
+
+---
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Features](#features)
+- [Contributing](#contributing)
+- [FAQ](#faq)
+- [Planned features](#Planned features / upcoming changes)
+- [Support](#support)
+- [License](#license)
+
+
+---
+
+## Example
+
+- Crawling all players found from PDGA.com. Arguments available --start_id --end_id --all. 
+
+```python
+
+python -m project.player_processes.run_player_crawl --all
+```
+
+- If you wish to test how crawling a single tournament page works you can use this test file for it. Used for debugging tournament crawling.
+
+```python
+
+python -m tests.test_single_tournament_page --link <pdga tournament link >
+```
+
+---
+
+## Installation
+
+- All the `code` required to get started
+- Images of what it should look like
+
+### Clone
+
+- - Coming in the future
+
+### Setup
+
+- Coming in the future
+
+---
+
+## Features
+
+- Coming in the future
+
+## Usage
+
+- Coming in the future
+
+## Documentation
+
+- Coming in the future
+
+## Tests
+
+- Currently tests are automated using CirceCI. Tests can be found from the test folder. More tests will be added as the project goes on.
+
+---
+
+## Contributing
+
+- **Can I contribute?**
+    - Unfortunately this project is for my own enjoyment. You can always clone this repo and create your own version of this!
+
+
+---
+
+## FAQ
+
+- **When will this project be ready?**
+    - This project is worked slowly over time. No estimates can currently be given as development speed depends on other responsibilites.
+    
+    
+---
+
+## Planned features / upcoming changes
+
+- Frontend
+- API for player, tournament and analytics data
+- Kubernetes for crawling/parsing
+- Add docker
+    
+    
+---
+
+## Support
+
+Reach out to me at one of the following places!
+
+- Message me at <a href="https://www.linkedin.com/in/akufranssila/" target="_blank">`Linkedin`</a>
+
+---
+
+## License
+
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
+
+- **[MIT license](http://opensource.org/licenses/mit-license.php)**
+- Copyright 2015 © <a href="" target="_blank">PDGA DATA</a>.
