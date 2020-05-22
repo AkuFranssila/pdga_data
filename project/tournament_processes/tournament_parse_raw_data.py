@@ -96,6 +96,9 @@ def TournamentParseRawData(id, raw_data):
         doubles = soup.find("div", {"class": re.compile('^(leaderboard doubles).*$')})
         teams = soup.find("div", {"class": re.compile('^(leaderboard team).*$')})
 
+        if not singles and not doubles and not teams:
+            singles = soup.find("div", {"class": re.compile('^(leaderboard unknown).*$')})
+
         all_divisions = {}
         event['event_divisions'] = []
 
