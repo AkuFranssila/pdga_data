@@ -6,13 +6,17 @@ PDGA Data project is to crawl, process, analyze and display data found from PDGA
 
 PDGA does not provide the best analytical data on their own website which is why this project was created.
 
-[![CircleCI](https://app.circleci.com/pipelines/github/AkuFranssila/pdga_data.svg?style=svg)](https://github.com/AkuFranssila/pdga_data)
+[![CircleCI](https://app.circleci.com/pipelines/github/AkuFranssila/pdga_data.svg?style=svg)](https://github.com/AkuFranssila/pdga_data)]
 
-[github-last-commit-image]: https://img.shields.io/github/last-commit/commonality/architecture-decision-records.svg?style=flat-square
+[![Requirements Status](https://requires.io/github/AkuFranssila/pdga_data/requirements.svg?branch=master)](https://requires.io/github/AkuFranssila/pdga_data/requirements/?branch=master)
 
-[github-languages-image]: https://img.shields.io/github/languages/top/commonality/architecture-decision-records.svg?style=flat-square
+![GitHub last commit](https://img.shields.io/github/last-commit/AkuFranssila/pdga_data)
 
-[github-code-size-image]: https://img.shields.io/github/languages/code-size/commonality/architecture-decision-records.svg?style=flat-square
+![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/AkuFranssila/pdga_data)
+
+![GitHub top language](https://img.shields.io/github/languages/top/AkuFranssila/pdga_data)
+
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/AkuFranssila/pdga_data?style=plastic)
 
 ---
 
