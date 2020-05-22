@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import logging
+import re
 from datetime import date
 from project.helpers.helpers_crawler import TournamentDate, TournamentLastPage
 from project.helpers.helpers_raw_tournament_parsing import *
@@ -125,7 +126,8 @@ def TournamentParseRawData(id, raw_data):
 
             division_course_details = []
 
-            round_course_infos = division.find_all("div", class_="tooltip-templates")
+            round_course_infos = division.find_all("span", {"id" : re.compile('^(layout-details-).*$')})
+
             if round_course_infos:
                 for round_number, course_info in enumerate(round_course_infos):
                     course_details = {}
