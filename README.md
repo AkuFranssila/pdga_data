@@ -6,15 +6,30 @@ PDGA Data project is to crawl, process, analyze and display data found from PDGA
 
 PDGA does not provide the best analytical data on their own website which is why this project was created.
 
+
+### CircleCI build status
+
 [![AkuFranssila](https://circleci.com/gh/AkuFranssila/pdga_data.svg?style=svg)](https://github.com/AkuFranssila/pdga_data)
+
+### Requirements status
 
 [![Requirements Status](https://requires.io/github/AkuFranssila/pdga_data/requirements.svg?branch=master)](https://requires.io/github/AkuFranssila/pdga_data/requirements/?branch=master)
 
+### Latest commit
+
 ![GitHub last commit](https://img.shields.io/github/last-commit/AkuFranssila/pdga_data)
+
+
+### CodeFactor Grading
 
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/AkuFranssila/pdga_data)
 
+
+### Top language
+
 ![GitHub top language](https://img.shields.io/github/languages/top/AkuFranssila/pdga_data)
+
+### Whole repository code size in bytes
 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/AkuFranssila/pdga_data?style=plastic)
 
@@ -26,7 +41,6 @@ PDGA does not provide the best analytical data on their own website which is why
 - [Features](#features)
 - [Contributing](#contributing)
 - [FAQ](#faq)
-- [Planned features](#Planned features / upcoming changes)
 - [Support](#support)
 - [License](#license)
 
@@ -46,7 +60,7 @@ python -m project.player_processes.run_player_crawl --all
 
 ```python
 
-python -m tests.test_single_tournament_page --link <pdga tournament link >
+python -m tests.test_single_tournament_page --link <pdga tournament link>
 ```
 
 ---
