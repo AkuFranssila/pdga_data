@@ -6,7 +6,7 @@ PDGA Data project is to crawl, process, analyze and display data found from PDGA
 
 PDGA does not provide the best analytical data on their own website which is why this project was created.
 
-[![CircleCI](https://app.circleci.com/pipelines/github/AkuFranssila/pdga_data.svg?style=svg)](https://github.com/AkuFranssila/pdga_data)]
+[![AkuFranssila](https://app.circleci.com/pipelines/github/AkuFranssila/pdga_data.svg?style=svg)](https://github.com/AkuFranssila/pdga_data)]
 
 [![Requirements Status](https://requires.io/github/AkuFranssila/pdga_data/requirements.svg?branch=master)](https://requires.io/github/AkuFranssila/pdga_data/requirements/?branch=master)
 
