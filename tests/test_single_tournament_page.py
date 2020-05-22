@@ -6,8 +6,6 @@ import logging
 import argparse
 from datetime import date
 from project.tournament_processes.tournament_parse_raw_data import TournamentParseRawData
-from project.helpers.helpers_raw_tournament_parsing import *
-
 
 
 def handle_arguments() -> (str):
