@@ -43,7 +43,7 @@ def RunPlayerRawDataParse(file_date):
             for page in all_data:
                 id = page["pdga_number"]
                 raw_data = page["raw_data"]
-                parsed_data = PlayerParseRawData(id, raw_data, '')
+                parsed_data = PlayerParseRawData(id, raw_data)
                 all_parsed_data.append(parsed_data)
 
 

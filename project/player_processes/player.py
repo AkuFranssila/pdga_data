@@ -9,7 +9,7 @@ import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
-def ParsePlayer(data):
+def ParsePlayer(data, send_data=True):
 
     #first create the new player
     #check if player exists.
@@ -64,6 +64,10 @@ def ParsePlayer(data):
 
         new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
-    new_player.save()
+    if send_data:
+        new_player.save()
+    else:
+        print_data = json.loads(new_player.to_json())
+        print(json.dumps(print_data, indent=4))
     logging.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 

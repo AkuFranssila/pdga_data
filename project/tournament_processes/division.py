@@ -22,13 +22,8 @@ def ParseDivisions(data):
         division.type = data["event_type"][0]
         division.total_players = ParseDivisionTotalPlayers(div["division_total_players"])
         division.rounds = []
-        try:
-            all_players = div['division_players_singles']
-        except:
-            try:
-                all_players = div['division_players_doubles']
-            except:
-                all_players = div['division_players_team']
+        import pdb; pdb.set_trace()
+        all_players = div['division_players']
 
         for count, round in enumerate(div['division_course_details']):
             divisionround = DivisionRound()

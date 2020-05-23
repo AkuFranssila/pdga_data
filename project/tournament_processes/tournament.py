@@ -11,7 +11,7 @@ import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
-def ParseTournament(data):
+def ParseTournament(data, send_data=True):
     ConnectMongo()
 
     print(json.dumps(data, indent=4))
@@ -38,7 +38,7 @@ def ParseTournament(data):
     tournament.pro_prize_money = ParseTournamentProPurse(data)
     tournament.tournament_type = data.get("event_type")
     tournament.hole_by_hole_scoring = data.get("event_livescoring")
-    tournament.first_crawl_date = data("event_crawl_date")
+    tournament.first_crawl_date = data.get("event_crawl_date")
     tournament.latest_update = str(date.today())
     tournament.divisions = ParseDivisions(data)
     tournament.players = ""
@@ -54,8 +54,11 @@ def ParseTournament(data):
         tournament.assistant_director_id = check_assistant_tournament_director_id(tournament, old_tournament)
         tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
     
-    import pdb; pdb.set_trace()
-    tournament.save()
+    if send_data:
+        tournament.save()
+    else:
+        print_data = json.loads(tournament.to_json())
+        print(json.dumps(print_data, indent=4))
 
     #Divisions (Open, FPO, MP40)
         #division name

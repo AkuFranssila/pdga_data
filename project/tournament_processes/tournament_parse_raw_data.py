@@ -169,6 +169,7 @@ def TournamentParseRawData(id, raw_data):
 
             div['division_course_details'] = division_course_details
             div['division_players'] = division_players
+            event['event_type'] = event_type
 
             event['event_divisions'].append(div)
             #import pdb; pdb.set_trace()

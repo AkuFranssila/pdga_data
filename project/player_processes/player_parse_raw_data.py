@@ -8,7 +8,7 @@ from project.helpers.helpers_crawler import FindNewestMemberId
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
-def PlayerParseRawData(pdga_number, raw_data, file_location):
+def PlayerParseRawData(pdga_number, raw_data):
     soup = BeautifulSoup(raw_data, "html.parser")
     logging.info('----------------------------------------')
     logging.info("Parsing raw data for player %s" % str(pdga_number))
