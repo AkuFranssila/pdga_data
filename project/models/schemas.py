@@ -62,9 +62,11 @@ class PlayerRound(EmbeddedDocument):
     round_throws = IntField(help_text="Total number of throws during this specific round")
     round_rating = IntField(help_text="Round rating for this specific round")
     round_placement = IntField(help_text="What was the player placement if only checking throws from this round")
+    round_par = IntField(help_text="How much did the player play under or over the par during that round. Only available if course details are published.")
     tournament_placement = IntField(help_text="What was the player placement if only checking up to this round")
     avg_throw_length_meters = FloatField(help_text="Calculate avg throw length for this specific round")
     avg_throw_length_feet = FloatField(help_text="Calculate avg throw length for this specific round")
+    avg_throws_per_hole = FloatField(help_text="What was the avg number of throws player made per hole. Calculated from round throws and course holes.")
     dns = BooleanField(default=False, help_text="Did the player DNS True/False")
     dnf = BooleanField(default=False, help_text="Did the player DNF True/False")
 
