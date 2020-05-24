@@ -15,7 +15,6 @@ def ParseDivisions(data):
     all_divisions = []
     all_pdga_numbers = []
     for div in data['event_divisions']:
-        #print (div)
         division = Division()
         division.name = ParseDivisionFullName(div['division_name'])
         division.short_name = div['division_short_name']
@@ -29,6 +28,10 @@ def ParseDivisions(data):
             divisionround = DivisionRound()
             divisionround.round_number = count + 1
             divisionround.course_name, divisionround.course_layout, divisionround.course_holes, divisionround.course_par, divisionround.course_pdga_page, divisionround.course_length_meters, divisionround.course_length_feet = ParseCourseDetails(round['round_' + str(count + 1)]['course_details'], round['round_' + str(count + 1)]['course_pdga_link'])
+
+            divisionround.course_avg_hole_par = CalculateAverageFromTwoFields(divisionround.course_par, divisionround.course_holes)
+            divisionround.course_avg_hole_length_meters = CalculateAverageFromTwoFields(divisionround.course_length_meters, divisionround.course_holes)
+            divisionround.course_avg_hole_length_feet = CalculateAverageFromTwoFields(divisionround.course_length_feet, divisionround.course_holes)
             division.rounds.append(divisionround)
 
         parsed_players = []
@@ -62,20 +65,18 @@ def ParseDivisions(data):
                 r.avg_throws_per_hole = PlayerRoundAvgThrowsPerHole(division.rounds, r.round_throws, r.round_number)
                 divisionplayer.rounds.append(r)
 
-            for pdga_number in player.get("player_pdga_number", []):
-                try:
-                    pdga_number = int(pdga_number)
-                    all_pdga_numbers.append(pdga_number)
-                except:
-                    None
-
-            divisionplayer.avg_throws_per_round = CalculateAvgFromRounds(divisionplayer.total_throws, divisionplayer.rounds)
-            divisionplayer.avg_par_per_round = CalculateAvgFromRounds(divisionplayer.total_par, divisionplayer.rounds)
+            divisionplayer.avg_throws_per_round = CalculateAvgFromRounds(divisionplayer.total_throws, divisionplayer.rounds_with_results)
+            divisionplayer.avg_par_per_round = CalculateAvgFromRounds(divisionplayer.total_par, divisionplayer.rounds_with_results)
             divisionplayer.avg_round_rating = CalculateAvgRoundRating(divisionplayer.rounds)
-            #divisionplayer.avg_throw_length_meters
-            #divisionplayer.avg_throw_length_feet
-            #divisionplayer.avg_throws_per_hole
+            divisionplayer.avg_throw_length_meters = CalculatePlayerTournamentAvgThrowLenght(divisionplayer.rounds, type="meters")
+            divisionplayer.avg_throw_length_feet = CalculatePlayerTournamentAvgThrowLenght(divisionplayer.rounds, type="feet")
+            divisionplayer.total_holes_played = CalculateTotalHolesPlayed(divisionplayer.rounds, division.rounds)
+            divisionplayer.avg_throws_per_hole = CalculateAverageFromTwoFields(divisionplayer.total_throws, divisionplayer.total_holes_played)
             parsed_players.append(divisionplayer)
+
+        division.players = parsed_players
+
+        CheckPlayerPlacementOnRound(division.players)
 
         #Calculate extra round statistics here, these can only be calculated after all players have been parsed once.
         #r.round_placement
@@ -89,8 +90,6 @@ def ParseDivisions(data):
         #divisionround.dns_count = ""
         #divisionround.dnf_count = ""
         #divisionround.round_total_players = ""
-
-        division.players = parsed_players
 
         #for r in division.rounds:
 
