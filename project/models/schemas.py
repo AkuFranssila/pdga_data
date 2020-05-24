@@ -73,6 +73,7 @@ class PlayerRound(EmbeddedDocument):
 class DivisionRound(EmbeddedDocument):
     round_number = IntField(help_text="")
     round_total_players = IntField(help_text="Number of players from the division who participated on this round, leagues and finals will have different number of players each round")
+    
     course_name = StringField(help_text="Course full name")
     course_layout = StringField(help_text="Course layout, can be default or special")
     course_holes = IntField(help_text="Number of holes on the course during the round (18/21/24/??)")
@@ -81,13 +82,16 @@ class DivisionRound(EmbeddedDocument):
     course_length_meters = FloatField(help_text="Course length in meters")
     course_length_feet = FloatField(help_text="Course length in feet")
     course_pdga_page = URLField(help_text="Link to the course PDGA page")
-    round_total_throws = IntField(help_text="Total number of throws made by players, not counting 999 dnf")
-    avg_throws = FloatField(help_text="Dividing the total throws from round with round player count")
-    avg_par = FloatField(help_text="Avg par from the round made by all players")
-    avg_throw_length_meters = FloatField(help_text="Calculate avg throw length made by player by diving throw count with course length")
-    avg_throw_length_meters = FloatField(help_text="Calculate avg throw length made by player by diving throw count with course length")
-    dns_count = IntField(help_text="Number of players who DNS this round")
-    dnf_count = IntField(help_text="Number of players who DNF this round")
+    course_avg_hole_length_meters = FloatField(help_text="Average length of holes on the course. Calculated by dividing course length with number of holes")
+    course_avg_hole_length_feet = FloatField(help_text="Average length of holes on the course. Calculated by dividing course length with number of holes")
+
+    players_round_total_throws = IntField(help_text="Total number of throws made by players, not counting 999 dnf")
+    players_avg_throws = FloatField(help_text="Dividing the total throws from round with round player count")
+    players_avg_par = FloatField(help_text="Avg par from the round made by all players")
+    players_avg_throw_length_meters = FloatField(help_text="Calculate avg throw length made by player by diving throw count with course length")
+    players_avg_throw_length_feet = FloatField(help_text="Calculate avg throw length made by player by diving throw count with course length")
+    players_dns_count = IntField(help_text="Number of players who DNS this round")
+    players_dnf_count = IntField(help_text="Number of players who DNF this round")
 
 class DivisionPlayer(EmbeddedDocument):
 
@@ -113,6 +117,7 @@ class DivisionPlayer(EmbeddedDocument):
     rating_during_tournament = ListField(help_text="Player rating during tournament if doubles then more than one rating in the list")
     rounds_with_results = IntField(help_text="This is a field to collect how many rounds the player has played in a tournament. There might be 5 rounds but the player does not make the cut and only plays 3 rounds. There might be a league of 10 rounds but player only plays 1")
 
+    total_holes_played = IntField(help_text="How many holes the player played during the tournament. Only calculated if course details are available.")
     final_placement = IntField(help_text="Player position at the end of the tournament")
     money_won = FloatField(help_text="Prize money won in tournament")
     total_throws = IntField(help_text="Total number of throws made by player")
