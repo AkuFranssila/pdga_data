@@ -37,15 +37,15 @@ def parse_singles_tournament(players, div):
         propagator = True if propagator else False
         
         rating_during_tournament_1 = player.find(class_="player-rating propagator")
-        rating_during_tournament_1 = rating_during_tournament_1.text if rating_during_tournament_1 else "None"
+        rating_during_tournament_1 = int(rating_during_tournament_1.text) if rating_during_tournament_1 else None
         rating_during_tournament_2 = player.find(class_="player-rating")
-        rating_during_tournament_2 = rating_during_tournament_2.text if rating_during_tournament_2 else "None"
+        rating_during_tournament_2 = int(rating_during_tournament_2.text) if rating_during_tournament_2 else None
         rating_during_tournament = rating_during_tournament_1 if rating_during_tournament_1 else rating_during_tournament_2
         
         pdga_number = player.find(class_="pdga-number")
-        pdga_number = pdga_number.text if pdga_number else "None"
+        pdga_number = int(pdga_number.text) if pdga_number else None
         
-        pdga_page_link = "https://www.pdga.com/player/" + pdga_number if pdga_number else "None"
+        pdga_page_link = "https://www.pdga.com/player/" + str(pdga_number) if pdga_number else None
         
         player_final_placement = player.find(class_="place")
         player_final_placement = player_final_placement.text if player_final_placement else None
@@ -85,7 +85,7 @@ def parse_singles_tournament(players, div):
                     round_rating = None
                 round_data['round_rating'] = round_rating
             except:
-                round_data['round_rating'] = "None"
+                round_data['round_rating'] = None
 
             player_rounds.append(round_data)
 
@@ -122,10 +122,10 @@ def parse_doubles_tournament(player1, player2, div):
         rating_during_tournaments = []
 
         player_name_1 = player_1.find(class_=f"{even_or_odd} player")
-        player_name_1 = player_name_1.text if player_name_1 else "None"
+        player_name_1 = player_name_1.text if player_name_1 else None
 
         player_name_2 = player_2.find(class_=f"{even_or_odd} player")
-        player_name_2 = player_name_2.text if player_name_2 else "None"
+        player_name_2 = player_name_2.text if player_name_2 else None
 
         player_names.append(player_name_1)
         player_names.append(player_name_2)
@@ -134,31 +134,31 @@ def parse_doubles_tournament(player1, player2, div):
         propagator = True if propagator else False
         
         rating_during_tournament_check_1_player1 = player_1.find(class_=f"{even_or_odd} player-rating propagator")
-        rating_during_tournament_check_1_player1 = rating_during_tournament_check_1_player1.text if rating_during_tournament_check_1_player1 else "None"
+        rating_during_tournament_check_1_player1 = int(rating_during_tournament_check_1_player1.text) if rating_during_tournament_check_1_player1 else None
         rating_during_tournament_check_2_player1 = player_1.find(class_=f"{even_or_odd} player-rating")
-        rating_during_tournament_check_2_player1 = rating_during_tournament_check_2_player1.text if rating_during_tournament_check_2_player1 else "None"
+        rating_during_tournament_check_2_player1 = int(rating_during_tournament_check_2_player1.text) if rating_during_tournament_check_2_player1 else None
         rating_during_tournament_p1 = rating_during_tournament_check_1_player1 if rating_during_tournament_check_1_player1 else rating_during_tournament_check_2_player1
         
         rating_during_tournament_check_1_player2 = player_2.find(class_=f"{even_or_odd} player-rating propagator")
-        rating_during_tournament_check_1_player2 = rating_during_tournament_check_1_player2.text if rating_during_tournament_check_1_player2 else "None"
+        rating_during_tournament_check_1_player2 = int(rating_during_tournament_check_1_player2.text) if rating_during_tournament_check_1_player2 else None
         rating_during_tournament_check_2_player2 = player_2.find(class_=f"{even_or_odd} player-rating")
-        rating_during_tournament_check_2_player2 = rating_during_tournament_check_2_player2.text if rating_during_tournament_check_2_player2 else "None"
+        rating_during_tournament_check_2_player2 = int(rating_during_tournament_check_2_player2.text) if rating_during_tournament_check_2_player2 else None
         rating_during_tournament_p2 = rating_during_tournament_check_1_player2 if rating_during_tournament_check_1_player2 else rating_during_tournament_check_2_player2
 
         rating_during_tournaments.append(rating_during_tournament_p1)
         rating_during_tournaments.append(rating_during_tournament_p2)
 
         pdga_number_p1 = player_1.find(class_=f"{even_or_odd} pdga-number")
-        pdga_number_p1 = pdga_number_p1.text if pdga_number_p1 else "None"
+        pdga_number_p1 = int(pdga_number_p1.text) if pdga_number_p1 else None
 
         pdga_number_p2 = player_2.find(class_=f"{even_or_odd} pdga-number")
-        pdga_number_p2 = pdga_number_p2.text if pdga_number_p2 else "None"
+        pdga_number_p2 = int(pdga_number_p2.text) if pdga_number_p2 else None
 
         pdga_numbers.append(pdga_number_p1)
         pdga_numbers.append(pdga_number_p2)
         
-        pdga_page_link_p1 = "https://www.pdga.com/player/" + pdga_number_p1 if pdga_number_p1 else "None"
-        pdga_page_link_p2 = "https://www.pdga.com/player/" + pdga_number_p2 if pdga_number_p2 else "None"
+        pdga_page_link_p1 = "https://www.pdga.com/player/" + str(pdga_number_p1) if pdga_number_p1 else None
+        pdga_page_link_p2 = "https://www.pdga.com/player/" + str(pdga_number_p2) if pdga_number_p2 else None
 
         pdga_page_links.append(pdga_page_link_p1)
         pdga_page_links.append(pdga_page_link_p2)
@@ -201,7 +201,7 @@ def parse_doubles_tournament(player1, player2, div):
                     round_rating = None
                 round_data['round_rating'] = round_rating
             except:
-                round_data['round_rating'] = "None"
+                round_data['round_rating'] = None
 
             player_rounds.append(round_data)
 
@@ -266,15 +266,15 @@ def parse_teams_tournament(soup_div, div):
             propagator = True if propagator else False
             
             rating_during_tournament_1 = player.find("td", {"class" : re.compile('^(even player-rating propagator|odd player-rating propagator).*$')})
-            rating_during_tournament_1 = rating_during_tournament_1.text if rating_during_tournament_1 else "None"
+            rating_during_tournament_1 = int(rating_during_tournament_1.text) if rating_during_tournament_1 else None
             rating_during_tournament_2 = player.find("td", {"class" : re.compile('^(even player-rating|odd player-rating).*$')})
-            rating_during_tournament_2 = rating_during_tournament_2.text if rating_during_tournament_2 else "None"
+            rating_during_tournament_2 = int(rating_during_tournament_2.text) if rating_during_tournament_2 else None
             rating_during_tournament = rating_during_tournament_1 if rating_during_tournament_1 else rating_during_tournament_2
             
             pdga_number = player.find("td", {"class" : re.compile('^(even pdga-number|odd pdga-number).*$')})
-            pdga_number = pdga_number.text if pdga_number else "None"
+            pdga_number = int(pdga_number.text) if pdga_number else None
             
-            pdga_page_link = "https://www.pdga.com/player/" + pdga_number if pdga_number else "None"
+            pdga_page_link = "https://www.pdga.com/player/" + str(pdga_number) if pdga_number else None
             
             player_final_placement = position
             
@@ -306,7 +306,7 @@ def parse_teams_tournament(soup_div, div):
                         round_rating = None
                     round_data['round_rating'] = round_rating
                 except:
-                    round_data['round_rating'] = "None"
+                    round_data['round_rating'] = None
 
                 player_rounds.append(round_data)
 
