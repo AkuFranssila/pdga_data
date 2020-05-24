@@ -984,3 +984,63 @@ def CheckFieldsUpdatedTournament(tournament, old_tournament, reset_history=False
         updated_fields = []
 
     return updated_fields
+
+def ParseTournamentRoundsWithResults(player):
+    rounds = player.get("player_rounds")
+
+    rounds_with_results = 0
+
+    if rounds:
+        for round in rounds:
+            if round.get("round_throws"):
+                rounds_with_results += 1
+
+
+    return rounds_with_results
+
+
+def PlayerRoundAvgThrowLength(all_rounds, throws, round_number, type):
+    round_avg_throw_length = None
+
+    if all_rounds and throws and round_number:
+        if type == "meters":
+            round_index = round_number - 1
+            round_info = all_rounds[round_index]
+            course_length = round_info.course_length_meters
+            if course_length:
+                round_avg_throw_length = course_length / throws
+        elif type == "feet":
+            round_index = round_number - 1
+            round_info = all_rounds[round_index]
+            course_length = round_info.course_length_feet
+            if course_length:
+                round_avg_throw_length = course_length / throws
+
+
+    return round_avg_throw_length
+
+
+def PlayerRoundPar(all_rounds, throws, round_number):
+    round_par = None
+    if all_rounds and throws and round_number:
+        round_index = round_number - 1
+        round_info = all_rounds[round_index]
+        course_par = round_info.course_par
+        if course_par:
+            round_par = throws - course_par
+
+
+    return round_par
+
+
+def PlayerRoundAvgThrowsPerHole(all_rounds, throws, round_number):
+    avg_throws_per_hole = None
+    if all_rounds and throws and round_number:
+        round_index = round_number - 1
+        round_info = all_rounds[round_index]
+        course_holes = round_info.course_holes
+        if course_holes:
+            avg_throws_per_hole = throws / course_holes
+
+
+    return avg_throws_per_hole

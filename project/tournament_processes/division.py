@@ -22,7 +22,7 @@ def ParseDivisions(data):
         division.type = data["event_type"][0]
         division.total_players = ParseDivisionTotalPlayers(div["division_total_players"])
         division.rounds = []
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         all_players = div['division_players']
 
         for count, round in enumerate(div['division_course_details']):
@@ -34,27 +34,14 @@ def ParseDivisions(data):
         parsed_players = []
         for player in all_players:
             divisionplayer = DivisionPlayer()
-            divisionplayer.full_name_1, divisionplayer.full_name_2 = ParseTournamentPlayerName(data["event_type"][0], player)
-            divisionplayer.pdga_number_1, divisionplayer.pdga_number_2 = ParsePDGAnumber(data["event_type"][0], player)
-            divisionplayer.pdga_page_1, divisionplayer.pdga_page_2 = ParseTournamentPDGApage(data["event_type"][0], player)
-            divisionplayer.propagator_1, divisionplayer.propagator_2 = ParsePropagator(data["event_type"][0], player)
-            divisionplayer.rating_during_tournament_1, divisionplayer.rating_during_tournament_2 = ParseRatingTournament(data["event_type"][0], player)
-            #Use new fields here
-            divisionplayer.full_name = []
-            if divisionplayer.full_name_1:
-                divisionplayer.full_name.append(divisionplayer.full_name_1)
-            if divisionplayer.full_name_2:
-                divisionplayer.full_name.append(divisionplayer.full_name_2)
 
-            divisionplayer.pdga_number = []
-            #if divisionplayer.pdga_number_1
+            divisionplayer.full_name = player.get("player_full_names")
+            divisionplayer.pdga_number = player.get("player_pdga_number")
+            divisionplayer.pdga_page = player.get("player_pdga_link")
+            divisionplayer.propagator = player.get("player_propagator")
+            divisionplayer.rating_during_tournament = player.get("player_rating_during_tournament")
+            divisionplayer.rounds_with_results = ParseTournamentRoundsWithResults(player)
 
-            divisionplayer.pdga_page = []
-            divisionplayer.rating_during_tournament = []
-            divisionplayer.propagator = True
-
-
-            divisionplayer.rounds_with_results = 0
             divisionplayer.final_placement = ParseTournamentPlacement(player['player_final_placement'])
             divisionplayer.money_won = ParseTournamentWinnings(player['player_money_won'])
             divisionplayer.total_throws, dnf_found, dns_found = ParseTournamentTotalThrows(player['player_total_throws'])
@@ -69,20 +56,18 @@ def ParseDivisions(data):
                 r.round_throws, r.dnf = ParsePlayerRoundThrows(round['round_throws'], r.dnf)
                 r.round_rating = ParsePlayerRoundRating(round['round_rating'])
                 r.dns = False
-
-                if r.round_throws > 0:
-                    divisionplayer.rounds_with_results += 1
-                #r.avg_throw_length_meters = PlayerRoundAvgThrowLenghtMeters(division.rounds, r.round_throws, r.round_number)
-                #r.avg_throw_length_feet = PlayerRoundAvgThrowLenghtFeet(division.rounds, r.round_throws, r.round_number)
+                r.avg_throw_length_meters = PlayerRoundAvgThrowLength(division.rounds, r.round_throws, r.round_number, type="meters")
+                r.avg_throw_length_feet = PlayerRoundAvgThrowLength(division.rounds, r.round_throws, r.round_number, type="feet")
+                r.round_par = PlayerRoundPar(division.rounds, r.round_throws, r.round_number)
+                r.avg_throws_per_hole = PlayerRoundAvgThrowsPerHole(division.rounds, r.round_throws, r.round_number)
                 divisionplayer.rounds.append(r)
 
-            if divisionplayer.pdga_number_1 is not None:
-                all_pdga_numbers.append(divisionplayer.pdga_number_1)
-                logging.info('Division name: %s. Pdga number: %s.' % (division.name, str(divisionplayer.pdga_number_1)))
-
-            if divisionplayer.pdga_number_2 is not None:
-                all_pdga_numbers.append(divisionplayer.pdga_number_2)
-                logging.info('Division name: %s. Pdga number: %s.' % (division.name, str(divisionplayer.pdga_number_2)))
+            for pdga_number in player.get("player_pdga_number", []):
+                try:
+                    pdga_number = int(pdga_number)
+                    all_pdga_numbers.append(pdga_number)
+                except:
+                    None
 
             divisionplayer.avg_throws_per_round = CalculateAvgFromRounds(divisionplayer.total_throws, divisionplayer.rounds)
             divisionplayer.avg_par_per_round = CalculateAvgFromRounds(divisionplayer.total_par, divisionplayer.rounds)

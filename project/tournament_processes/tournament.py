@@ -40,8 +40,7 @@ def ParseTournament(data, send_data=True):
     tournament.hole_by_hole_scoring = data.get("event_livescoring")
     tournament.first_crawl_date = data.get("event_crawl_date")
     tournament.latest_update = str(date.today())
-    tournament.divisions = ParseDivisions(data)
-    tournament.players = ""
+    tournament.divisions, tournament.players = ParseDivisions(data)
 
     old_tournament = TournamentExists(tournament.tournament_id)
 
