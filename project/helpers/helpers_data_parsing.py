@@ -703,34 +703,33 @@ def ParsePlayerRoundRating(var):
     return var
 
 
-def CalculateAvgFromRounds(throws, rounds):
-    if throws is not None:
-        if throws == 0 or len(rounds) == 0:
-            return 0
-        else:
-            ttl = throws / len(rounds)
-    else:
-        return None
+def CalculateAvgFromRounds(data, rounds_with_results):
+    avg_from_rounds = None
+    if data and rounds_with_results:
+        try:
+            avg_from_rounds = data / rounds_with_results
+        except:
+            logging.info("Average from rounds could not be calculated. Data: %s, Rounds: %s" % (str(data), str(rounds_with_results)))
+
+    return avg_from_rounds
+
 
 
 def CalculateAvgRoundRating(rounds):
-    r_numbers = len(rounds)
-    total_rating = 0
-    for r in rounds:
-        r = json.loads(r.to_json())
-        try:
-            if r['round_rating'] is not None and r['round_throws'] < 980:
-                total_rating += r['round_rating']
-            else:
-                r_numbers -= 1
-        except:
-            r_numbers -= 1
-    try:
-        avgrating = total_rating / r_numbers
-    except:
-        avgrating = None
+    avg_round_rating = None
 
-    return avgrating
+    total_round_rating = 0
+    rounds_with_rating = 0
+
+    for round in rounds:
+        if round.round_rating:
+            total_round_rating += round.round_rating
+            rounds_with_rating += 1
+
+    if total_round_rating > 0 and rounds_with_rating > 0:
+        avg_round_rating = total_round_rating / rounds_with_rating
+
+    return avg_round_rating
 
 
 def ParseTournamentPoints(points):
@@ -1044,3 +1043,95 @@ def PlayerRoundAvgThrowsPerHole(all_rounds, throws, round_number):
 
 
     return avg_throws_per_hole
+
+
+def CalculatePlayerTournamentAvgThrowLenght(rounds, type):
+    total_avg_length = 0
+    rounds_with_avg_length = 0
+    total_tournament_avg_length = None
+
+    if rounds:
+        for round in rounds:
+            type_dict = {
+                "meters": round.avg_throw_length_meters,
+                "feet": round.avg_throw_length_feet
+            }
+            avg_length = type_dict.get(type)
+            if avg_length:
+                total_avg_length += avg_length
+                rounds_with_avg_length += 1
+
+    if total_avg_length > 0 and rounds_with_avg_length > 0:
+        total_tournament_avg_length = total_avg_length / rounds_with_avg_length
+
+    return total_tournament_avg_length
+
+
+def CalculateAverageFromTwoFields(first_field, second_field):
+
+    avg_to_return = None
+
+    if first_field and second_field:
+        if first_field > 0 and second_field > 0:
+            avg_to_return = first_field / second_field
+
+    return avg_to_return
+
+            
+def CalculateTotalHolesPlayed(player_rounds, course_rounds):
+
+    total_holes_played = 0
+
+    played_rounds_index = []
+
+    if player_rounds and course_rounds:
+        for p_round in player_rounds:
+            if p_round.round_throws:
+                played_rounds_index.append(p_round.round_number - 1)
+              
+        for round_index in played_rounds_index:
+              c_round = course_rounds[round_index]
+
+              if c_round.course_holes:
+                  total_holes_played += c_round.course_holes
+
+    if total_holes_played == 0:
+        total_holes_played = None
+
+    return total_holes_played
+
+
+def CheckPlayerPlacementOnRound(division_players):
+    rounds_and_throws = {}
+    rounds_and_placement = {}
+    
+    for player in division_players:
+        if player.rounds:
+            for p_round in player.rounds:
+                if p_round.round_throws:
+                    if rounds_and_throws.get(p_round.round_number):
+                        rounds_and_throws[p_round.round_number].append(p_round.round_throws)
+                    else:
+                        rounds_and_throws[p_round.round_number] = [p_round.round_throws]
+
+    for k, v in rounds_and_throws.items():
+        v.sort()
+
+        placement_dict = {}
+        placement_number = 1
+        for throws in v:
+            if not placement_dict.get(throws):
+                placement_dict[throws] = placement_number
+                placement_number += 1
+
+        rounds_and_placement[k] = placement_dict
+
+    for player in division_players:
+        if player.rounds:
+            for p_round in player.rounds:
+                p_round.round_placement = None
+                if p_round.round_throws:
+                    p_round.round_placement = rounds_and_placement[p_round.round_number][p_round.round_throws]
+
+
+
