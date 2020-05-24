@@ -37,8 +37,10 @@ def parse_singles_tournament(players, div):
         propagator = True if propagator else False
         
         rating_during_tournament_1 = player.find(class_="player-rating propagator")
+        rating_during_tournament_1 = None if rating_during_tournament_1 == "" else None
         rating_during_tournament_1 = int(rating_during_tournament_1.text) if rating_during_tournament_1 else None
         rating_during_tournament_2 = player.find(class_="player-rating")
+        rating_during_tournament_2 = None if rating_during_tournament_2 == "" else None
         rating_during_tournament_2 = int(rating_during_tournament_2.text) if rating_during_tournament_2 else None
         rating_during_tournament = rating_during_tournament_1 if rating_during_tournament_1 else rating_during_tournament_2
         
@@ -134,14 +136,18 @@ def parse_doubles_tournament(player1, player2, div):
         propagator = True if propagator else False
         
         rating_during_tournament_check_1_player1 = player_1.find(class_=f"{even_or_odd} player-rating propagator")
+        rating_during_tournament_check_1_player1 = None if rating_during_tournament_check_1_player1 == "" else None
         rating_during_tournament_check_1_player1 = int(rating_during_tournament_check_1_player1.text) if rating_during_tournament_check_1_player1 else None
         rating_during_tournament_check_2_player1 = player_1.find(class_=f"{even_or_odd} player-rating")
+        rating_during_tournament_check_2_player1 = None if rating_during_tournament_check_2_player1 == "" else None
         rating_during_tournament_check_2_player1 = int(rating_during_tournament_check_2_player1.text) if rating_during_tournament_check_2_player1 else None
         rating_during_tournament_p1 = rating_during_tournament_check_1_player1 if rating_during_tournament_check_1_player1 else rating_during_tournament_check_2_player1
         
         rating_during_tournament_check_1_player2 = player_2.find(class_=f"{even_or_odd} player-rating propagator")
+        rating_during_tournament_check_1_player2 = None if rating_during_tournament_check_1_player2 == "" else None
         rating_during_tournament_check_1_player2 = int(rating_during_tournament_check_1_player2.text) if rating_during_tournament_check_1_player2 else None
         rating_during_tournament_check_2_player2 = player_2.find(class_=f"{even_or_odd} player-rating")
+        rating_during_tournament_check_2_player2 = None if rating_during_tournament_check_2_player2 == "" else None
         rating_during_tournament_check_2_player2 = int(rating_during_tournament_check_2_player2.text) if rating_during_tournament_check_2_player2 else None
         rating_during_tournament_p2 = rating_during_tournament_check_1_player2 if rating_during_tournament_check_1_player2 else rating_during_tournament_check_2_player2
 
@@ -266,8 +272,10 @@ def parse_teams_tournament(soup_div, div):
             propagator = True if propagator else False
             
             rating_during_tournament_1 = player.find("td", {"class" : re.compile('^(even player-rating propagator|odd player-rating propagator).*$')})
+            rating_during_tournament_1 = None if rating_during_tournament_1 == "" else None
             rating_during_tournament_1 = int(rating_during_tournament_1.text) if rating_during_tournament_1 else None
             rating_during_tournament_2 = player.find("td", {"class" : re.compile('^(even player-rating|odd player-rating).*$')})
+            rating_during_tournament_2 = None if rating_during_tournament_2 == "" else None
             rating_during_tournament_2 = int(rating_during_tournament_2.text) if rating_during_tournament_2 else None
             rating_during_tournament = rating_during_tournament_1 if rating_during_tournament_1 else rating_during_tournament_2
             
