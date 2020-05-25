@@ -90,6 +90,7 @@ class DivisionRound(EmbeddedDocument):
     players_avg_par = FloatField(help_text="Avg par from the round made by all players")
     players_avg_throw_length_meters = FloatField(help_text="Calculate avg throw length made by player by diving throw count with course length")
     players_avg_throw_length_feet = FloatField(help_text="Calculate avg throw length made by player by diving throw count with course length")
+    players_avg_throw_per_hole = FloatField(help_text="What was the average number of throws per hole during the round.")
     players_dns_count = IntField(help_text="Number of players who DNS this round")
     players_dnf_count = IntField(help_text="Number of players who DNF this round")
 

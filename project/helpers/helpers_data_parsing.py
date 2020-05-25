@@ -6,6 +6,7 @@ import datetime
 import requests
 import pycountry
 import time
+import copy
 from project.models.schemas import Player, Tournament
 from project.helpers.helper_data import ACCEPTED_STATUSES, US_STATES, MONTH_DICT, HISTORY_FIELDS, US_STATES_LIST, HISTORY_FIELDS_TOURNAMENT
 from mongoengine import *
@@ -680,7 +681,7 @@ def ParsePlayerRoundThrows(var, dnf):
     if dnf is None:
         dnf = False
     if var is not None and len(var) > 1:
-        if var == "999":
+        if var in ["999", "888"]:
             dnf = True
             var = None
         else:
@@ -1074,6 +1075,8 @@ def CalculateAverageFromTwoFields(first_field, second_field):
     if first_field and second_field:
         if first_field > 0 and second_field > 0:
             avg_to_return = first_field / second_field
+        elif first_field == 0 and second_field > 0:
+            avg_to_return = 0
 
     return avg_to_return
 
@@ -1133,5 +1136,68 @@ def CheckPlayerPlacementOnRound(division_players):
                 if p_round.round_throws:
                     p_round.round_placement = rounds_and_placement[p_round.round_number][p_round.round_throws]
 
+
+def UpdateDivisionRoundDetails(division_rounds, division_players):
+    start_data = {
+        "players_round_total_throws": 0,
+        "players_avg_throws": 0,
+        "players_avg_par": 0,
+        "players_avg_throw_length_meters": 0,
+        "players_avg_throw_length_feet": 0,
+        "players_dns_count": 0,
+        "players_dnf_count": 0,
+        "round_total_players": 0,
+    }
+
+    collected_data = {}
+
+    if division_rounds and division_players:
+        for player in division_players:
+            for round in player.rounds:
+                if not collected_data.get(round.round_number):
+                    collected_data[round.round_number] = copy.copy(start_data)
+                single_round_data = copy.deepcopy(start_data)
+
+                if round.round_throws:
+                    single_round_data["players_round_total_throws"] += round.round_throws
+                    single_round_data["round_total_players"] += 1
+                
+                if round.dns:
+                    single_round_data["players_dns_count"] += 1
+                
+                if round.dnf:
+                    single_round_data["players_dnf_count"] += 1
+
+                if round.round_par:
+                    single_round_data["players_avg_par"] += round.round_par
+
+                if round.avg_throw_length_meters:
+                    single_round_data["players_avg_throw_length_meters"] += round.avg_throw_length_meters
+
+                if round.avg_throw_length_feet:
+                    single_round_data["players_avg_throw_length_feet"] += round.avg_throw_length_feet
+
+                if round.to_mongo().to_dict().get("round_number"):
+                    for k, v in single_round_data.items():
+                        collected_data[round.round_number][k] += v
+
+        for k, v in collected_data.items():
+            collected_data[k]["players_avg_throws"] = CalculateAverageFromTwoFields(collected_data[k]["players_round_total_throws"], collected_data[k]["round_total_players"])
+            collected_data[k]["players_avg_par"] = CalculateAverageFromTwoFields(collected_data[k]["players_avg_par"], collected_data[k]["round_total_players"])
+            collected_data[k]["players_avg_throw_length_meters"] = CalculateAverageFromTwoFields(collected_data[k]["players_avg_throw_length_meters"], collected_data[k]["round_total_players"])
+            collected_data[k]["players_avg_throw_length_feet"] = CalculateAverageFromTwoFields(collected_data[k]["players_avg_throw_length_feet"], collected_data[k]["round_total_players"])
+
+        for round in division_rounds:
+            data_for_round = collected_data.get(round.round_number)
+
+            round.players_avg_throws = data_for_round["players_avg_throws"]
+            round.players_avg_par = data_for_round["players_avg_par"]
+            round.players_avg_throw_length_meters = data_for_round["players_avg_throw_length_meters"]
+            round.players_avg_throw_length_feet = data_for_round["players_avg_throw_length_feet"]
+            round.players_round_total_throws = data_for_round["players_round_total_throws"]
+            round.round_total_players = data_for_round["round_total_players"]
+            round.players_dnf_count = data_for_round["players_dnf_count"]
+            round.players_dns_count = data_for_round["players_dns_count"]
+            round.players_avg_throw_per_hole = CalculateAverageFromTwoFields(round.players_avg_throws, round.course_holes)
 
 
