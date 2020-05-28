@@ -41,6 +41,7 @@ def ParseTournament(data, send_data=True):
     tournament.first_crawl_date = data.get("event_crawl_date")
     tournament.latest_update = str(date.today())
     tournament.divisions, tournament.players = ParseDivisions(data)
+    CalculateTournamentStatistics(tournament)
 
     old_tournament = TournamentExists(tournament.tournament_id)
 
@@ -58,77 +59,3 @@ def ParseTournament(data, send_data=True):
     else:
         print_data = json.loads(tournament.to_json())
         print(json.dumps(print_data, indent=4))
-
-    #Divisions (Open, FPO, MP40)
-        #division name
-        #division short name
-        #division type (singles, doubles, team)
-        #division total players
-        #division total throws
-        #division avg player rating
-        #division avg throws
-        #division avg par
-        #division avg round rating
-        #division avg throw length_meters
-        #division avg throw length_feet
-        #division total course holes (course)
-        #division total course par (course)
-        #division total course length meters
-        #division total course length feet
-        #dns count
-        #dnf count
-        #rounds
-            #round number
-            #round_total_players
-            #course name
-            #course layout
-            #course holes
-            #course par
-            #course_avg_hole_par
-            #course length meters
-            #course length feet
-            #course pdga page
-            #total throws
-            #avg par
-            #avg throws
-            #avg round rating
-            #dns count
-            #dnf count
-        #players
-            #full_name
-            #pdga_number
-            #pdga_page
-            #propagator
-            #rating_during_tournament
-            #final_placement
-            #money_won
-            #total_throws
-            #total_par
-            #avg_throws_per_round
-            #avg_par_per_round
-            #avg_round_rating
-            #avg throw length meters
-            #avg throw length feet
-            #avg throws per hole
-            #event_points
-            #dns
-            #dnf
-            #rounds
-                #round_number
-                #round_throws
-                #round_rating
-                #round_placement
-                #tournament_placement
-                #avg throw length
-                #avg throws per hole
-                #dns
-                #dnf
-
-
-    #Fields calculated from data received from crawler
-    #avg_total_player_par
-    #avg_player_rating
-    #avg_total_round_rating
-    #avg_money_all_players
-    #avg_money_mpo_players
-    #print (tournament.to_json())

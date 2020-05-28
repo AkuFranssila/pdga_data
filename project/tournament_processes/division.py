@@ -65,6 +65,8 @@ def ParseDivisions(data):
                 r.avg_throws_per_hole = PlayerRoundAvgThrowsPerHole(division.rounds, r.round_throws, r.round_number)
                 divisionplayer.rounds.append(r)
 
+            divisionplayer.total_throws = FillTotalThrowsIfEmpty(divisionplayer.total_throws, divisionplayer.rounds)
+
             divisionplayer.avg_throws_per_round = CalculateAvgFromRounds(divisionplayer.total_throws, divisionplayer.rounds_with_results)
             divisionplayer.avg_par_per_round = CalculateAvgFromRounds(divisionplayer.total_par, divisionplayer.rounds_with_results)
             divisionplayer.avg_round_rating = CalculateAvgRoundRating(divisionplayer.rounds)
@@ -72,15 +74,17 @@ def ParseDivisions(data):
             divisionplayer.avg_throw_length_feet = CalculatePlayerTournamentAvgThrowLenght(divisionplayer.rounds, type="feet")
             divisionplayer.total_holes_played = CalculateTotalHolesPlayed(divisionplayer.rounds, division.rounds)
             divisionplayer.avg_throws_per_hole = CalculateAverageFromTwoFields(divisionplayer.total_throws, divisionplayer.total_holes_played)
+            divisionplayer.players_avg_round_rating_difference_to_rating_during_tournament = CalculateDifferenceFromTwoFields(divisionplayer.avg_round_rating, divisionplayer.rating_during_tournament[0])
             parsed_players.append(divisionplayer)
 
         division.players = parsed_players
 
-        CheckPlayerPlacementOnRound(division.players)
         UpdateDivisionRoundDetails(division.rounds, division.players)
+        CheckPlayerRoundDetails(division)
+        UpdateDivisionDetails(division)
 
         #Statistics left to be calculated
         #player round tournament_placement
         all_divisions.append(division)
-
+        
     return all_divisions, all_pdga_numbers
