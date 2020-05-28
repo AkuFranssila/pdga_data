@@ -35,16 +35,13 @@ def parse_singles_tournament(players, div):
 
         propagator = player.find(class_="player-rating propagator")
         propagator = True if propagator else False
-        
-        rating_during_tournament_1 = player.find(class_="player-rating propagator")
-        rating_during_tournament_1 = None if rating_during_tournament_1 == "" else None
-        rating_during_tournament_1 = int(rating_during_tournament_1.text) if rating_during_tournament_1 else None
-        rating_during_tournament_2 = player.find(class_="player-rating")
-        rating_during_tournament_2 = None if rating_during_tournament_2 == "" else None
-        rating_during_tournament_2 = int(rating_during_tournament_2.text) if rating_during_tournament_2 else None
-        rating_during_tournament = rating_during_tournament_1 if rating_during_tournament_1 else rating_during_tournament_2
-        
+
+        rating_during_tournament = player.find("td", {"class" : re.compile('^(player-rating).*$')})
+        rating_during_tournament = rating_during_tournament.text if rating_during_tournament else None
+        rating_during_tournament = int(rating_during_tournament) if rating_during_tournament != "" else None
+
         pdga_number = player.find(class_="pdga-number")
+        pdga_number = None if str(pdga_number) == '<td class="pdga-number"></td>' else pdga_number
         pdga_number = int(pdga_number.text) if pdga_number else None
         
         pdga_page_link = "https://www.pdga.com/player/" + str(pdga_number) if pdga_number else None
@@ -134,37 +131,31 @@ def parse_doubles_tournament(player1, player2, div):
 
         propagator = player_1.find(class_=f"{even_or_odd} player-rating propagator")
         propagator = True if propagator else False
-        
-        rating_during_tournament_check_1_player1 = player_1.find(class_=f"{even_or_odd} player-rating propagator")
-        rating_during_tournament_check_1_player1 = None if rating_during_tournament_check_1_player1 == "" else None
-        rating_during_tournament_check_1_player1 = int(rating_during_tournament_check_1_player1.text) if rating_during_tournament_check_1_player1 else None
-        rating_during_tournament_check_2_player1 = player_1.find(class_=f"{even_or_odd} player-rating")
-        rating_during_tournament_check_2_player1 = None if rating_during_tournament_check_2_player1 == "" else None
-        rating_during_tournament_check_2_player1 = int(rating_during_tournament_check_2_player1.text) if rating_during_tournament_check_2_player1 else None
-        rating_during_tournament_p1 = rating_during_tournament_check_1_player1 if rating_during_tournament_check_1_player1 else rating_during_tournament_check_2_player1
-        
-        rating_during_tournament_check_1_player2 = player_2.find(class_=f"{even_or_odd} player-rating propagator")
-        rating_during_tournament_check_1_player2 = None if rating_during_tournament_check_1_player2 == "" else None
-        rating_during_tournament_check_1_player2 = int(rating_during_tournament_check_1_player2.text) if rating_during_tournament_check_1_player2 else None
-        rating_during_tournament_check_2_player2 = player_2.find(class_=f"{even_or_odd} player-rating")
-        rating_during_tournament_check_2_player2 = None if rating_during_tournament_check_2_player2 == "" else None
-        rating_during_tournament_check_2_player2 = int(rating_during_tournament_check_2_player2.text) if rating_during_tournament_check_2_player2 else None
-        rating_during_tournament_p2 = rating_during_tournament_check_1_player2 if rating_during_tournament_check_1_player2 else rating_during_tournament_check_2_player2
+
+
+        rating_during_tournament_p1 = player_1.find("td", {"class" : re.compile('^(even player-rating|odd player-rating).*$')})
+        rating_during_tournament_p1 = rating_during_tournament_p1.text if rating_during_tournament_p1 else None
+        rating_during_tournament_p1 = int(rating_during_tournament_p1) if rating_during_tournament_p1 != "" else None
+
+        rating_during_tournament_p2 = player_2.find("td", {"class" : re.compile('^(even player-rating|odd player-rating).*$')})
+        rating_during_tournament_p2 = rating_during_tournament_p2.text if rating_during_tournament_p2 else None
+        rating_during_tournament_p2 = int(rating_during_tournament_p2) if rating_during_tournament_p2 != "" else None
 
         rating_during_tournaments.append(rating_during_tournament_p1)
         rating_during_tournaments.append(rating_during_tournament_p2)
 
-        pdga_number_p1 = player_1.find(class_=f"{even_or_odd} pdga-number")
-        pdga_number_p1 = int(pdga_number_p1.text) if pdga_number_p1 else None
-
-        pdga_number_p2 = player_2.find(class_=f"{even_or_odd} pdga-number")
-        pdga_number_p2 = int(pdga_number_p2.text) if pdga_number_p2 else None
-
-        pdga_numbers.append(pdga_number_p1)
-        pdga_numbers.append(pdga_number_p2)
+        raw_pdga_numbers = [player_1.find("td", {"class" : re.compile('^(even pdga-number|odd pdga-number).*$')}), player_2.find("td", {"class" : re.compile('^(even pdga-number|odd pdga-number).*$')})]
+        for number in raw_pdga_numbers:
+            if number:
+                if number.text != "":
+                    pdga_numbers.append(int(number.text))
+                else:
+                    pdga_numbers.append(None)
+            else:
+                pdga_numbers.append(None)
         
-        pdga_page_link_p1 = "https://www.pdga.com/player/" + str(pdga_number_p1) if pdga_number_p1 else None
-        pdga_page_link_p2 = "https://www.pdga.com/player/" + str(pdga_number_p2) if pdga_number_p2 else None
+        pdga_page_link_p1 = "https://www.pdga.com/player/" + str(pdga_numbers[0]) if pdga_numbers[0] else None
+        pdga_page_link_p2 = "https://www.pdga.com/player/" + str(pdga_numbers[1]) if pdga_numbers[1] else None
 
         pdga_page_links.append(pdga_page_link_p1)
         pdga_page_links.append(pdga_page_link_p2)
@@ -280,7 +271,8 @@ def parse_teams_tournament(soup_div, div):
             rating_during_tournament = rating_during_tournament_1 if rating_during_tournament_1 else rating_during_tournament_2
             
             pdga_number = player.find("td", {"class" : re.compile('^(even pdga-number|odd pdga-number).*$')})
-            pdga_number = int(pdga_number.text) if pdga_number else None
+            pdga_number = None if str(pdga_number) == '<td class="pdga-number"></td>' else pdga_number
+            pdga_number = int(pdga_number.text) if pdga_number and pdga_number != "" else None
             
             pdga_page_link = "https://www.pdga.com/player/" + str(pdga_number) if pdga_number else None
             
