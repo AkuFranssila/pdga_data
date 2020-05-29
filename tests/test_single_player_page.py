@@ -1,5 +1,4 @@
 # coding=utf-8
-from bs4 import BeautifulSoup
 import requests
 import json
 import logging
@@ -32,7 +31,6 @@ def test_player_parsers_on_single_link(link):
         raw_data = page["raw_data"]
         parsed_data = PlayerParseRawData(id, raw_data)
         all_parsed_data.append(parsed_data)
-
 
     print(json.dumps(all_parsed_data, indent=4))
 
