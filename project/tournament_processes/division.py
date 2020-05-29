@@ -19,9 +19,9 @@ def ParseDivisions(data):
         division.name = ParseDivisionFullName(div['division_name'])
         division.short_name = div['division_short_name']
         division.type = data["event_type"][0]
+        division.team_size = CheckTeamSize(div['division_players'])
         division.total_players = ParseDivisionTotalPlayers(div["division_total_players"])
         division.rounds = []
-        #import pdb; pdb.set_trace()
         all_players = div['division_players']
 
         for count, round in enumerate(div['division_course_details']):

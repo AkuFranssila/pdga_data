@@ -1458,4 +1458,11 @@ def CalculateTournamentStatistics(tournament):
     tournament.total_dns_count = fields["total_dns_count"]
     tournament.total_dnf_count = fields["total_dnf_count"]
     tournament.players_avg_rating_during_tournament = CalculateAverageFromTwoFields(fields["players_avg_rating_during_tournament"], len(tournament.divisions))
-    
+
+
+def CheckTeamSize(division_players):
+    team_size = None
+    if division_players:
+        team_size = len(division_players[0]["player_full_names"])
+
+    return team_size

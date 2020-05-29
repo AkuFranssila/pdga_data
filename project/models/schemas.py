@@ -158,6 +158,7 @@ class Division(EmbeddedDocument):
     name = StringField(help_text="Division full name Open and such")
     short_name = StringField(help_text="MPO/FPO/MP40/J18")
     type = StringField(help_text="Singles/doubles/team")
+    team_size = IntField(help="How many players are playing at the same group. This is important in team competitions as the size of the group varies.")
     total_players = IntField(help_text="Total number of players in division")
     total_throws = IntField(help_text="Total number of throws by all players in division (not counting 999 dnf)")
     avg_player_rating = FloatField(help_text="Avg player rating of all players in division during the tournament")
@@ -289,6 +290,7 @@ class Player(Document):
             {'fields': ['pdga_number'], 'unique': True},
        ]
     }
+
 
 class Tournament(Document):
     tournament_name = StringField(help_text="Tournament name displayed on PDGA page")
