@@ -1,136 +1,135 @@
 # coding=utf-8
 import json
 import logging
+import argparse
 from datetime import date
-from project.models.schemas import Player
-from project.helpers.helpers_data_parsing import *
+from project.models.schemas import Player, Tournament
+from project.utils.connect_mongodb import ConnectMongo
+from project.helpers.helpers_data_parsing import CalculateAverageFromTwoFields
+from collections import Counter
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
+def handle_arguments() -> (str):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--pdga_number',
+        type=int,
+        help="PDGA number of the player that needs statistics generated.",
+        required=True
+    )
+    parser.add_argument('--save',
+        action="store_true",
+        help="Save data to mongo, defaults to False",
+    )
+    args = parser.parse_args()
 
-def GeneratePlayerStatistics(player):
+    return args.pdga_number, args.save
 
-    womens_divisions = ['FPO', 'FP40', 'FP50', 'FP55', 'FP60', 'FP65', 'FP70', 'FA1', 'FA2', 'FA3', 'FA4', 'FA40', 'FA50', 'FA55', 'FA60', 'FA65', 'FA70', 'FJ18', 'FJ15', 'FJ12', 'FJ10', 'FJ08', 'FJ06']
-    junior_divisions = ['MJ18', 'MJ15', 'MJ12', 'MJ10', 'MJ08', 'MJ06']
-    players_same_tournament = {}
-    players_same_division = {}
-    played_tournament_ids = []
-    played_tournament_countries = []
-    played_tournament_states = []
-    played_tournament_cities = []
-    tournaments_as_td = []
-    tournaments_as_assistant_td = []
-    singles = 0
-    doubles = 0
-    teams = 0
-    dnf = 0
-    dns = 0
-    #Find all tournament Ids that the player has played in
+
+def find_player_for_pdga_number(pdga_number):
+    ConnectMongo()
+    player = Player.objects(pdga_number=pdga_number).first()
+
+    if not player:
+        raise ValueError("Player was not found with PDGA number of %s" % str(pdga_number))
+    else:
+        logging.info("Player %s found" % player.full_name)
+
+    return player
+
+
+def GeneratePlayerStatistics(player, save=False):
+    """
+    Generate player fields and statistics that can only be collected by going through all tournaments player has played in.
+    """
+
+    data = {
+        "played_tournaments": [], #done
+        "played_countries": [], #done
+        "played_cities": [], #done
+        "played_states": [], #done
+        "tournaments_td": [], #done
+        "tournaments_assistant_td": [], #done
+        "singles": [], #done
+        "doubles": [], #done
+        "teams": [], #done
+        "dnf": [], #done
+        "dns": [], #done
+        "total_throws": 0,
+        "total_points": 0,
+        "total_rounds": 0,
+        "won_tournaments": [], #done
+        "top_three_placements": [], #done
+        "top_five_placements": [], #done
+        "top_ten_placements": [], #done
+        "highest_round_rating": 0,
+        "lowest_round_rating": 0,
+        "biggest_positive_difference_round_rating_to_rating_during_tournament": 0,
+        "biggest_negative_difference_round_rating_to_rating_during_tournament": 0,
+        "most_money_won_single_tournament": 0,
+        "avg_par": 0,
+        "avg_final_placement": 0,
+        "avg_earnings_per_tournament": 0,
+        "avg_tournaments_yearly": 0,
+        "avg_tournaments_monthly": 0,
+        "player_country_ranking_by_rating": 0,
+        "player_country_ranking_by_money_won": 0,
+        "player_country_ranking_by_gender": 0,
+        "player_country_ranking_by_highest_round_rating": 0,
+        "player_country_ranking_by_lowest_round_rating": 0,
+        "player_world_ranking_by_rating": 0,
+        "player_world_ranking_by_money_won": 0,
+        "player_world_ranking_by_gender": 0,
+        "player_world_ranking_by_highest_round_rating": 0,
+        "player_world_ranking_by_lowest_round_rating": 0,
+        "years_without_tournaments": 0,
+        "tiers_played": {}, #done
+        "classifications_played": {}, #done
+        "tournaments_played_per_year": {},
+        "tournaments_played_per_division": {},
+        "avg_throw_length_feet": 0,
+        "avg_throw_length_meters": 0,
+        "latest_rating_from_tournaments": 0,
+        "players_played_with": [], #Even with few tournaments this is huge list. Not needed.
+    }
+
+    #gender
+    #year_of_birth
+    #age estimate
+
     all_tournaments = Tournament.objects(players=player.pdga_number)
 
-    logging.info('Player %s, with pdga number %s has played in %s tournaments' % (player.full_name, str(player.pdga_number), str(all_tournaments.count())))
-    for tournament in all_tournaments:
-        logging.info(json.dumps(json.loads(tournament.to_json()), indent=4))
-        #import pdb; pdb.set_trace()
-        if "tournament_director_id" in tournament:
-            if tournament.tournament_director_id == player.pdga_number and tournament.tournament_id not in tournaments_as_td:
-                tournaments_as_td.append(tournament.tournament_id)
-
-        if "assistant_director_id" in tournament:
-            if tournament.assistant_director_id == player.pdga_number and tournament.tournament_id not in tournaments_as_assistant_td:
-                tournaments_as_assistant_td.append(tournament.tournament_id)
-
-        if tournament.tournament_id not in played_tournament_ids:
-            played_tournament_ids.append(tournament.tournament_id)
-
-        if "location_country" in tournament:
-            if tournament.location_country not in played_tournament_countries:
-                played_tournament_countries.append(tournament.location_country)
-
-        if "location_state" in tournament:
-            if tournament.location_state not in played_tournament_states:
-                played_tournament_states.append(tournament.location_state)
-
-        if "location_city" in tournament:
-            if tournament.location_city not in played_tournament_cities:
-                played_tournament_cities.append(tournament.location_city)
-
-        if "tournament_type" in tournament:
-            if tournament.tournament_type == "singles":
-                singles += 1
-            elif tournament.tournament_type == "doubles":
-                doubles += 1
-            elif tournament.tournament_type == "team":
-                teams += 1
-
-        for player_id in tournament.players:
-            try:
-                players_same_tournament[player_id] += 1
-            except KeyError:
-                players_same_tournament[player_id] = 1
-
-        """
-        Data points that need to be collected from the division and rounds the player has played in the tournament
-        player.dns_count
-        player.dnf_count
-        player.players_played_with_in_same_divisions
-        player.total_throws
-        player.total_points
-        player.top_five_placements
-        player.top_ten_placements
-        player.total_rounds_played
-        player.tournaments_played_per_division
-        player.tournaments_played_per_tier
-        """
-
-        for division in tournament.divisions:
-            import pdb; pdb.set_trace()
-            if player.full_name in division.to_json():
-                import pdb; pdb.set_trace()
+    logging.info("Found %s tournaments for player %s" % (str(all_tournaments.count()), player.full_name))
 
 
+    data["played_tournaments"] = Tournament.objects(players=player.pdga_number).only("tournament_id").distinct("tournament_id")
+    data["played_countries"] = Tournament.objects(players=player.pdga_number, location_country__exists=True).only("location_country").distinct("location_country")
+    data["played_cities"] = Tournament.objects(players=player.pdga_number, location_city__exists=True).only("location_city").distinct("location_city")
+    data["played_states"] = Tournament.objects(players=player.pdga_number, location_state__exists=True).only("location_state").distinct("location_state")
+    data["tournaments_td"] = Tournament.objects(players=player.pdga_number, tournament_director_id=player.pdga_number).only("tournament_id").distinct("tournament_id")
+    data["tournaments_assistant_td"] = Tournament.objects(players=player.pdga_number, assistant_director_id=player.pdga_number).only("tournament_id").distinct("tournament_id")
+    data["singles"] = Tournament.objects(players=player.pdga_number, tournament_type="singles").only("tournament_id").distinct("tournament_id")
+    data["doubles"] = Tournament.objects(players=player.pdga_number, tournament_type="doubles").only("tournament_id").distinct("tournament_id")
+    data["teams"] = Tournament.objects(players=player.pdga_number, tournament_type="teams").only("tournament_id").distinct("tournament_id")
+    data["tiers_played"] = Counter(Tournament.objects(players=player.pdga_number).scalar("tournament_tier"))
+    data["classifications_played"] = Counter(Tournament.objects(players=player.pdga_number).scalar("tournament_classification"))
+    data["dnf"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "dnf": True}}}).only("tournament_id").distinct("tournament_id")
+    data["dns"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "dns": True}}}).only("tournament_id").distinct("tournament_id")
+    data["top_five_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": {"$lte": 5}}}}).only("tournament_id").distinct("tournament_id")
+    data["top_ten_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": {"$lte": 10}}}}).only("tournament_id").distinct("tournament_id")
+    data["top_three_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": {"$lte": 3}}}}).only("tournament_id").distinct("tournament_id")
+    data["won_tournaments"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": 1}}}).only("tournament_id").distinct("tournament_id")
 
 
-    ###############################
-    #Fields that can be updated only after checking every tournament
-    #player.current_rating = '' #if player is inactive we can get the current rating from the last tournament the player played
-    #player.gender = ''
-    #player.date_of_birth = ''
-    #player.year_of_birth = ''
-    #player.age_estimate = ''
-    #player.yearly_statistics = ''
-    #player.avg_position = ''
-    #player.avg_par = ''
-    #player.avg_throw_length_feet = ''
-    #player.avg_throw_length_meters = ''
-    #player.avg_earnings_per_tournament = ''
-    #player.highest_paid_event = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
-    #player.best_round_rating = '' #dynamicfield which includes course name, total_players, division name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
-    #player.best_round_rating_over_rating = '' #dynamicfield which includes course name, round number, number of throws, event id, event name, final event position, round par, round rating over event rating, money won
+    #import pdb; pdb.set_trace()
+    print(json.dumps(data, indent=4))
+        
 
-    ###############################
-    #Fields that need to be updated when checking each tournament
-    #DONE #player.events_as_td = ''
-    #DONE #player.events_as_assistant_td = ''
-    #DONE #player.played_event_ids = ''
-    #DONE #player.played_countries = ''
-    #DONE #player.played_states = ''
-    #DONE #player.played_cities = ''
-    #DONE #player.singles_played = ''
-    #DONE #player.doubles_played = ''
-    #DONE #player.teams_played = ''
-    #player.dns_count = ''
-    #player.dnf_count = ''
-    #DONE #player.players_played_with_in_same_tournament = '' #list of unique player ids that the player has played with in same tournaments
-    #player.players_played_with_in_same_divisions = '' #list of unique player ids that the player has played with in same tournaments and same divisions
-    #player.total_throws = ''
-    #player.total_points = ''
-    #player.top_five_placements = ''
-    #player.top_ten_placements = ''
-    #player.total_rounds_played = ''
-    #player.tournaments_played_per_division = '' #dynamicfield division name, number events played
-    #player.tournaments_played_per_tier = '' #dynamicfield tier code, number events played
-    logging.info(player.to_json())
-    #player.save()
 
-#ParsePlayer(data)
+    if save:
+        player.save()
+
+if __name__ == "__main__":
+    pdga_number, save = handle_arguments()
+    player = find_player_for_pdga_number(pdga_number)
+    GeneratePlayerStatistics(player, save)

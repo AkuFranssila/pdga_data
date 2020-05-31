@@ -19,12 +19,24 @@ def handle_arguments() -> (str):
         help="S3 folder name that is date in format YearMonthDay",
         required=False
     )
+    parser.add_argument('--send',
+        action="store_true",
+        help="Send data, defaults to False",
+    )
+    parser.add_argument('--statistics',
+        action="store_true",
+        help="Argument if statistics should be created. By default statistics are not created.",
+    )
+    parser.add_argument('--clear_updated_fields',
+        action="store_true",
+        help="Argument if updated_fields should be cleaned. By default fields are not cleared.",
+    )
     args = parser.parse_args()
 
-    return args.file_date
+    return args.file_date, args.send, args.statistics, args.clear_updated_fields
 
 
-def RunPlayerToMongo(file_date):
+def RunPlayerToMongo(file_date, send, statistics, clear_updated_fields):
     SendSlackMessageToChannel("%s Starting run_player_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
 
     all_file_keys = find_all_keys_from_s3_folder(f"player-parsed-data/{file_date}")
@@ -39,7 +51,7 @@ def RunPlayerToMongo(file_date):
         with open(file_path, "r") as data:
             all_players = json.load(data)
             for player in all_players:
-                ParsePlayer(player)
+                ParsePlayer(player, send, statistics, clear_updated_fields)
 
 
     total_players = Player.objects().count()
@@ -48,5 +60,5 @@ def RunPlayerToMongo(file_date):
 
 
 if __name__ == "__main__":
-    file_date = handle_arguments()
-    RunPlayerToMongo(file_date)
+    file_date, send, statistics, clear_updated_fields = handle_arguments()
+    RunPlayerToMongo(file_date, send, statistics, clear_updated_fields)
