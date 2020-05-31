@@ -38,12 +38,12 @@ def parse_singles_tournament(players, div):
 
         rating_during_tournament = player.find("td", {"class" : re.compile('^(player-rating).*$')})
         rating_during_tournament = rating_during_tournament.text if rating_during_tournament else None
-        rating_during_tournament = int(rating_during_tournament) if rating_during_tournament != "" and isinstance(type(rating_during_tournament), str) else None
+        rating_during_tournament = int(rating_during_tournament) if rating_during_tournament != "" and isinstance(rating_during_tournament, str) else None
 
         pdga_number = player.find(class_="pdga-number")
-        pdga_number = None if str(pdga_number) == '<td class="pdga-number"></td>' else pdga_number
-        pdga_number = int(pdga_number.text) if pdga_number else None
-        
+        pdga_number = pdga_number.text if pdga_number else None
+        pdga_number = int(pdga_number) if pdga_number != "" and isinstance(pdga_number, str) else None
+
         pdga_page_link = "https://www.pdga.com/player/" + str(pdga_number) if pdga_number else None
         
         player_final_placement = player.find(class_="place")
@@ -135,11 +135,11 @@ def parse_doubles_tournament(player1, player2, div):
 
         rating_during_tournament_p1 = player_1.find("td", {"class" : re.compile('^(even player-rating|odd player-rating).*$')})
         rating_during_tournament_p1 = rating_during_tournament_p1.text if rating_during_tournament_p1 else None
-        rating_during_tournament_p1 = int(rating_during_tournament_p1) if rating_during_tournament_p1 != "" and isinstance(type(rating_during_tournament_p1), str) else None
+        rating_during_tournament_p1 = int(rating_during_tournament_p1) if rating_during_tournament_p1 != "" and isinstance(rating_during_tournament_p1, str) else None
 
         rating_during_tournament_p2 = player_2.find("td", {"class" : re.compile('^(even player-rating|odd player-rating).*$')})
         rating_during_tournament_p2 = rating_during_tournament_p2.text if rating_during_tournament_p2 else None
-        rating_during_tournament_p2 = int(rating_during_tournament_p2) if rating_during_tournament_p2 != "" and isinstance(type(rating_during_tournament_p2), str) else None
+        rating_during_tournament_p2 = int(rating_during_tournament_p2) if rating_during_tournament_p2 != "" and isinstance(rating_during_tournament_p2, str) else None
 
         rating_during_tournaments.append(rating_during_tournament_p1)
         rating_during_tournaments.append(rating_during_tournament_p2)
@@ -272,7 +272,7 @@ def parse_teams_tournament(soup_div, div):
             
             pdga_number = player.find("td", {"class" : re.compile('^(even pdga-number|odd pdga-number).*$')})
             pdga_number = pdga_number.text if pdga_number else None
-            pdga_number = int(pdga_number) if pdga_number != "" else None
+            pdga_number = int(pdga_number) if pdga_number != "" and isinstance(pdga_number, str) else None
             
             pdga_page_link = "https://www.pdga.com/player/" + str(pdga_number) if pdga_number else None
             
@@ -292,7 +292,7 @@ def parse_teams_tournament(soup_div, div):
             player_event_points = player.find("td", {"class" : re.compile('^(even points|odd points).*$')}).text if player.find({"class" : re.compile('^(even points|odd points).*$')}) else "0.00"
 
             player_rounds = []
-            for round_number, round in enumerate(player.find_all("td", {"class" : re.compile('^(even round|odd round).*$')})):
+            for round_number, round in enumerate(player.find_all("td", {"class" : re.compile('^(even round|odd round)$')})):
                 round_data = {}
                 round_data['round_number'] = round_number + 1
 
@@ -301,7 +301,7 @@ def parse_teams_tournament(soup_div, div):
                     round_throws = None
                 round_data['round_throws'] = round_throws
                 try:
-                    round_rating = player.find_all("td", {"class" : re.compile('^(even round-rating|odd round-rating).*$')})[round_number].text
+                    round_rating = player.find_all("td", {"class" : re.compile('^(even round-rating|odd round-rating)$')})[round_number].text
                     if round_rating == "":
                         round_rating = None
                     round_data['round_rating'] = round_rating

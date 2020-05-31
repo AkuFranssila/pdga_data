@@ -142,7 +142,6 @@ def ParseDate(date):
     Accepts date in the format posted in PDGA. Returns the date in year-month-day format.
     """
     if date:
-        print(date)
         day,month,year = date.split(' ')[0].strip().split('-')
         date = year + '-' + MONTH_DICT[month] + '-' + day
     return date
@@ -471,12 +470,15 @@ def ParseCourseDetails(course, pdga_page):
     #"course_details": "\n\nMatt Keatts Memorial at Forest Hills 2019; 20 holes; Par 66; 7,390 ft.\n\
     # - B&amp;C; 18 holes; Par 58; 5,252 ft.
 
+    name, holes, par, length, layout = None, None, None, None, None
+
+    logging.info("Course details")
     logging.info(repr(course))
 
-    if pdga_page is not None:
+    if pdga_page:
         pdga_page = "https://www.pdga.com" + pdga_page
 
-    if course is not None:
+    if course:
         course = course.replace('\n', '').replace(u'&amp;', u'&')
         if len(course.split(' - ')) >= 2:
             name = course.split(' - ', 1)[0]
@@ -509,18 +511,18 @@ def ParseCourseDetails(course, pdga_page):
         else:
             name, holes, par, length, layout = None, None, None, None, None
 
-    if name is not None:
+    if name:
         name = name.strip()
-    if holes is not None:
+    if holes:
         holes = holes.strip().replace(' holes', '')
         try:
             holes = int(holes)
         except:
             holes = None
-    if par is not None:
+    if par:
         par = par.strip().replace('Par ', '')
         par = int(par)
-    if length is not None:
+    if length:
         if "ft." in length:
             length = length.strip().replace(' ft.', '').replace(',', '').replace(' ', '')
             length = int(length)
@@ -1003,6 +1005,7 @@ def PlayerRoundAvgThrowLength(all_rounds, throws, round_number, type):
     round_avg_throw_length = None
 
     if all_rounds and throws and round_number:
+        #import pdb; pdb.set_trace()
         if type == "meters":
             round_index = round_number - 1
             round_info = all_rounds[round_index]

@@ -137,3 +137,39 @@ HISTORY_FIELDS_TOURNAMENT = [
         "tournament_type",
         "players",
     ]
+
+
+FEMALE_DIVISIONS = [
+        'FPO', 
+        'FP40', 
+        'FP50', 
+        'FP55', 
+        'FP60', 
+        'FP65', 
+        'FP70', 
+        'FA1', 
+        'FA2', 
+        'FA3', 
+        'FA4', 
+        'FA40', 
+        'FA50', 
+        'FA55', 
+        'FA60', 
+        'FA65', 
+        'FA70', 
+        'FJ18', 
+        'FJ15', 
+        'FJ12', 
+        'FJ10', 
+        'FJ08', 
+        'FJ06'
+]
+
+JUNIOR_DIVISIONS = [
+        'MJ18', 
+        'MJ15', 
+        'MJ12', 
+        'MJ10', 
+        'MJ08', 
+        'MJ06'
+]

@@ -155,6 +155,9 @@ def TournamentParseRawData(id, raw_data):
                     division_course_details.append(course_details)
 
 
+            #import pdb; pdb.set_trace()
+
+
             if division_type == "singles":
                 all_players = division.find('tbody')
                 all_players = all_players.find_all('tr') if all_players else []
@@ -175,7 +178,6 @@ def TournamentParseRawData(id, raw_data):
             event['event_type'] = event_type
 
             event['event_divisions'].append(div)
-            #import pdb; pdb.set_trace()
 
 
         print(json.dumps(event, indent=4))
