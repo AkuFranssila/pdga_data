@@ -5,17 +5,14 @@ from datetime import date
 from project.models.schemas import Player
 from mongoengine import *
 from project.helpers.helpers_data_parsing import *
+from project.player_processes.player_statistics import GeneratePlayerStatistics
 import logging
+
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
-def ParsePlayer(data, send_data=True):
-
-    #first create the new player
-    #check if player exists.
-    #if player exists compare the fields and generate the new player
-    # save the new player and send to mongo
-
+def ParsePlayer(data, send_data=True, generate_statistics=False, clear_fields_updated=False):
     new_player = Player()
     new_player.pdga_number = str(data.get('player_pdga_number'))
     new_player.pdga_id_status = ParseIdStatus(data)
@@ -43,6 +40,10 @@ def ParsePlayer(data, send_data=True):
     new_player.certified_status = ParseCertifiedStatus(data)
     new_player.certified_status_expiration_date = ParseDate(data.get('player_certified_status_expiration'))
 
+
+    if generate_statistics:
+        GeneratePlayerStatistics(new_player)
+
     old_player = CheckifPlayerExists(new_player.pdga_number)
 
     if old_player:
@@ -62,12 +63,15 @@ def ParsePlayer(data, send_data=True):
         new_player.certified_status = CheckCertifiedStatus(new_player, old_player)
         new_player.certified_status_expiration_date = CheckCertifiedStatusExpirationDate(new_player, old_player)
 
-        new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
+        if clear_fields_updated:
+            new_player.fields_updated = []
+        else:
+            new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
     if send_data:
         new_player.save()
     else:
         print_data = json.loads(new_player.to_json())
         print(json.dumps(print_data, indent=4))
-    logging.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
+    logger.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 
