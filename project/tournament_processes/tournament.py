@@ -7,6 +7,7 @@ from mongoengine import *
 from project.utils.connect_mongodb import ConnectMongo
 from project.helpers.helpers_data_parsing import *
 from project.tournament_processes.division import ParseDivisions
+from project.utils.slack_message_sender import SendSlackMessageToChannel
 import logging
 
 
@@ -61,6 +62,9 @@ def ParseTournament(data, send_data=True, generate_statistics=False, clear_field
             tournament.fields_updated = []
         else:
             tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
+
+    if not tournament.players:
+        SendSlackMessageToChannel("Could not parse players for tournament %s with id %s" % (str(tournament.tournament_name), str(tournament.tournament_id)), "#data-reports")
     
     if send_data:
         logger.info("Tournament %s with id %s has been sent to mongo", tournament.tournament_name, tournament.tournament_id)
