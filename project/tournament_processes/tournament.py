@@ -8,13 +8,16 @@ from project.utils.connect_mongodb import ConnectMongo
 from project.helpers.helpers_data_parsing import *
 from project.tournament_processes.division import ParseDivisions
 import logging
+
+
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 def ParseTournament(data, send_data=True, generate_statistics=False, clear_fields_updated=False):
     ConnectMongo()
 
-    print(json.dumps(data, indent=4))
+    #print(json.dumps(data, indent=4))
 
     tournament = Tournament()
     tournament.tournament_id = parse_tournament_id(data)
@@ -60,6 +63,7 @@ def ParseTournament(data, send_data=True, generate_statistics=False, clear_field
             tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
     
     if send_data:
+        logger.info("Tournament %s with id %s has been sent to mongo", tournament.tournament_name, tournament.tournament_id)
         tournament.save()
     else:
         print_data = json.loads(tournament.to_json())
