@@ -11,7 +11,7 @@ import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
-def ParseTournament(data, send_data=True):
+def ParseTournament(data, send_data=True, generate_statistics=False, clear_fields_updated=False):
     ConnectMongo()
 
     print(json.dumps(data, indent=4))
@@ -41,7 +41,9 @@ def ParseTournament(data, send_data=True):
     tournament.first_crawl_date = data.get("event_crawl_date")
     tournament.latest_update = str(date.today())
     tournament.divisions, tournament.players = ParseDivisions(data)
-    CalculateTournamentStatistics(tournament)
+
+    if generate_statistics:
+        CalculateTournamentStatistics(tournament)
 
     old_tournament = TournamentExists(tournament.tournament_id)
 
@@ -52,7 +54,10 @@ def ParseTournament(data, send_data=True):
         tournament.tournament_director_id = check_tournament_director_id(tournament, old_tournament)
         tournament.assistant_director = check_assistant_tournament_director(tournament, old_tournament)
         tournament.assistant_director_id = check_assistant_tournament_director_id(tournament, old_tournament)
-        tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
+        if clear_fields_updated:
+            tournament.fields_updated = []
+        else:
+            tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
     
     if send_data:
         tournament.save()
