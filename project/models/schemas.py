@@ -317,6 +317,10 @@ class Tournament(Document):
     total_dns_count = IntField(help="Total DNS count of the tournament")
     total_dnf_count = IntField(help="Total DNF count of the tournament")
     players_avg_rating_during_tournament = FloatField("Average rating of all players during the tournament")
+    top_ten_placements = ListField(help="Pdga numbers of players from any division that have placed in the defined range in final results. Only used for easier db lookup")
+    top_five_placements = ListField(help="Pdga numbers of players from any division that have placed in the defined range in final results. Only used for easier db lookup")
+    top_three_placements = ListField(help="Pdga numbers of players from any division that have placed in the defined range in final results. Only used for easier db lookup")
+    top_one_placements = ListField(help="Pdga numbers of players from any division that have placed in the defined range in final results. Only used for easier db lookup")
     players = ListField(help_text="Just PDGA IDs from tournaments to easily check if player was in tournament")
     divisions = ListField(EmbeddedDocumentField(Division), help_text="More indepth data about individual divisions and rounds played in the tournament.")
     meta = {

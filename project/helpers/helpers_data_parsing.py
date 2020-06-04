@@ -1460,7 +1460,18 @@ def CalculateTournamentStatistics(tournament):
         "total_dns_count": 0,
         "total_dnf_count": 0,
         "players_avg_rating_during_tournament": 0,
+        "top_ten_placements": [],
+        "top_five_placements": [],
+        "top_three_placements": [],
+        "top_one_placements": [],
     }
+
+    def add_pdga_numbers_to_list(pdga_numbers, dict_list):
+        if pdga_numbers:
+            for number in pdga_numbers:
+                dict_list.append(number)
+
+    import pdb; pdb.set_trace()
 
     for div in tournament.divisions:
         fields["total_throws"] += ReturnValueOrZero(div.total_throws)
@@ -1468,14 +1479,30 @@ def CalculateTournamentStatistics(tournament):
         CheckHighestLowestRoundRating(div.players_lowest_round_rating, "lowest", dict=fields)
         fields["total_dns_count"] += ReturnValueOrZero(div.total_dns_count)
         fields["total_dnf_count"] += ReturnValueOrZero(div.total_dnf_count)
-        #fields["players_avg_rating_during_tournament"] += ReturnValueOrZero(div.players_avg_rating_during_tournament)
+        fields["players_avg_rating_during_tournament"] += ReturnValueOrZero(div.players_avg_rating_during_tournament)
+        for player in div.players:
+            if player.final_placement:
+                if player.final_placement <= 10:
+                    add_pdga_numbers_to_list(player.pdga_number, fields["top_ten_placements"])
+                if player.final_placement < 5:
+                    add_pdga_numbers_to_list(player.pdga_number, fields["top_five_placements"])
+                if player.final_placement < 3:
+                    add_pdga_numbers_to_list(player.pdga_number, fields["top_three_placements"])
+                if player.final_placement == 1:
+                    add_pdga_numbers_to_list(player.pdga_number, fields["top_one_placements"])
+
 
     tournament.total_throws = fields["total_throws"] if fields["total_throws"] > 0 else None
     tournament.players_highest_round_rating = fields["players_highest_round_rating"] if fields["players_highest_round_rating"] > 0 else None
     tournament.players_lowest_round_rating = fields["players_lowest_round_rating"] if fields["players_lowest_round_rating"] > 0 else None
     tournament.total_dns_count = fields["total_dns_count"]
     tournament.total_dnf_count = fields["total_dnf_count"]
+    tournament.top_ten_placements = fields["top_ten_placements"]
+    tournament.top_five_placements = fields["top_five_placements"]
+    tournament.top_three_placements = fields["top_three_placements"]
+    tournament.top_one_placements = fields["top_one_placements"]
     tournament.players_avg_rating_during_tournament = CalculateAverageFromTwoFields(fields["players_avg_rating_during_tournament"], len(tournament.divisions))
+
 
 
 def CheckTeamSize(division_players):
