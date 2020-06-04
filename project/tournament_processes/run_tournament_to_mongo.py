@@ -3,6 +3,7 @@ import json
 import logging
 import datetime
 import argparse
+import subprocess
 from project.tournament_processes.tournament import ParseTournament
 from project.utils.connect_mongodb import ConnectMongo
 from project.utils.s3_tools import find_all_keys_from_s3_folder, download_file_from_s3_return_file_path
@@ -47,18 +48,11 @@ def RunTournamentToMongo(file_date, send, statistics, clear_updated_fields, star
     all_file_keys = find_all_keys_from_s3_folder(f"tournament-parsed-data/{file_date}")
 
     for file_key in all_file_keys[starting_index:]:
-        file_counter = file_key.split('.json')[0].split('data_')[1]
-        download_name = f"data_{file_counter}"
-
-        file_path = download_file_from_s3_return_file_path(file_key, download_name)
-
-        ConnectMongo()
-        with open(file_path, "r") as data:
-            all_tournaments = json.load(data)
-            for tournament in all_tournaments:
-                if tournament:
-                    ParseTournament(tournament, send, statistics, clear_updated_fields)
-
+        SendSlackMessageToChannel(("Starting to parse file %s" % (file_key)), "#data-reports")
+        try:
+            output_msg = subprocess.check_output(['python', '-m', 'project.tournament_processes.tournament', '--s3_key', file_key, '--send', '--statistics', '--clear_updated_fields'])
+        except subprocess.CalledProcessError:
+            SendSlackMessageToChannel("File %s failed with error %s" % (file_key, str(output_msg)), "#data-reports")
 
     total = Tournament.objects().count()
     logging.info("Finished run_tournament_to_mongo.py")
