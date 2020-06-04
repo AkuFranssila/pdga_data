@@ -114,22 +114,6 @@ class DivisionRound(EmbeddedDocument):
     players_avg_round_rating_difference_to_avg_rating_during_tournament = FloatField(help="Difference between the avg round ratings to avg rating during tournament.")
 
 class DivisionPlayer(EmbeddedDocument):
-
-    ######
-    #Old player fields
-    full_name_1 = StringField(help_text="Full player name")
-    pdga_number_1 = IntField(help_text="Player PDGA number")
-    pdga_page_1 = URLField(help_text="Player PDGA page link")
-    propagator_1 = BooleanField(help_text="Was player propagator during tournament True/False")
-    rating_during_tournament_1 = IntField(help_text="Player rating during tournament")
-    full_name_2 = StringField(help_text="Full player name if doubles")
-    pdga_number_2 = IntField(help_text="Player PDGA number if doubles")
-    pdga_page_2 = URLField(help_text="Player PDGA page link if doubles")
-    propagator_2 = BooleanField(help_text="Was player propagator during tournament True/False if doubles")
-    rating_during_tournament_2 = IntField(help_text="Player rating during tournament if doubles")
-
-    ######
-    #New player fields, having own fields for both players if the tournament was doubles was confusing
     full_name = ListField(help_text="Full player name, if doubles then field will contain more than one name")
     pdga_number = ListField(help_text="PDGA Number, if doubles then field will contain more than one number")
     pdga_page = ListField(help_text="PDGA page link, if doubles then field will contain more than one link")

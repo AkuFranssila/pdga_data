@@ -2,7 +2,7 @@
 import json
 import logging
 import argparse
-from datetime import date
+import datetime
 from project.models.schemas import Player, Tournament
 from project.utils.connect_mongodb import ConnectMongo
 from project.helpers.helpers_data_parsing import CalculateAverageFromTwoFields
@@ -91,6 +91,7 @@ def GeneratePlayerStatistics(player, save=False):
         "avg_throw_length_meters": 0,
         "latest_rating_from_tournaments": 0,
         "players_played_with": [], #Even with few tournaments this is huge list. Not needed.
+        "upcoming_tournaments": [] #done
     }
 
     #gender
@@ -102,27 +103,30 @@ def GeneratePlayerStatistics(player, save=False):
     logging.info("Found %s tournaments for player %s" % (str(all_tournaments.count()), player.full_name))
 
 
-    data["played_tournaments"] = Tournament.objects(players=player.pdga_number).only("tournament_id").distinct("tournament_id")
-    data["played_countries"] = Tournament.objects(players=player.pdga_number, location_country__exists=True).only("location_country").distinct("location_country")
-    data["played_cities"] = Tournament.objects(players=player.pdga_number, location_city__exists=True).only("location_city").distinct("location_city")
-    data["played_states"] = Tournament.objects(players=player.pdga_number, location_state__exists=True).only("location_state").distinct("location_state")
-    data["tournaments_td"] = Tournament.objects(players=player.pdga_number, tournament_director_id=player.pdga_number).only("tournament_id").distinct("tournament_id")
-    data["tournaments_assistant_td"] = Tournament.objects(players=player.pdga_number, assistant_director_id=player.pdga_number).only("tournament_id").distinct("tournament_id")
-    data["singles"] = Tournament.objects(players=player.pdga_number, tournament_type="singles").only("tournament_id").distinct("tournament_id")
-    data["doubles"] = Tournament.objects(players=player.pdga_number, tournament_type="doubles").only("tournament_id").distinct("tournament_id")
-    data["teams"] = Tournament.objects(players=player.pdga_number, tournament_type="teams").only("tournament_id").distinct("tournament_id")
-    data["tiers_played"] = Counter(Tournament.objects(players=player.pdga_number).scalar("tournament_tier"))
-    data["classifications_played"] = Counter(Tournament.objects(players=player.pdga_number).scalar("tournament_classification"))
-    data["dnf"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "dnf": True}}}).only("tournament_id").distinct("tournament_id")
-    data["dns"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "dns": True}}}).only("tournament_id").distinct("tournament_id")
-    data["top_five_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": {"$lte": 5}}}}).only("tournament_id").distinct("tournament_id")
-    data["top_ten_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": {"$lte": 10}}}}).only("tournament_id").distinct("tournament_id")
-    data["top_three_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": {"$lte": 3}}}}).only("tournament_id").distinct("tournament_id")
-    data["won_tournaments"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number_1": player.pdga_number, "final_placement": 1}}}).only("tournament_id").distinct("tournament_id")
+    data["played_tournaments"] = Tournament.objects(players=player.pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["played_countries"] = Tournament.objects(players=player.pdga_number, location_country__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_country").distinct("location_country")
+    data["played_cities"] = Tournament.objects(players=player.pdga_number, location_city__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_city").distinct("location_city")
+    data["played_states"] = Tournament.objects(players=player.pdga_number, location_state__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_state").distinct("location_state")
+    data["tournaments_td"] = Tournament.objects(players=player.pdga_number, tournament_director_id=player.pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["tournaments_assistant_td"] = Tournament.objects(players=player.pdga_number, assistant_director_id=player.pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["singles"] = Tournament.objects(players=player.pdga_number, tournament_type="singles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["doubles"] = Tournament.objects(players=player.pdga_number, tournament_type="doubles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["teams"] = Tournament.objects(players=player.pdga_number, tournament_type="teams", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["tiers_played"] = Counter(Tournament.objects(players=player.pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_tier"))
+    data["classifications_played"] = Counter(Tournament.objects(players=player.pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_classification"))
+    data["dnf"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "dnf": True}}}).only("tournament_id").distinct("tournament_id")
+    data["dns"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "dns": True}}}).only("tournament_id").distinct("tournament_id")
+    data["top_five_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": {"$lte": 5}}}, "tournament_end": {"$lt": datetime.datetime.now()}}).only("tournament_id").distinct("tournament_id")
+    data["top_ten_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": {"$lte": 10}}}, "tournament_end": {"$lt": datetime.datetime.now()}}).only("tournament_id").distinct("tournament_id")
+    data["top_three_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": {"$lte": 3}}}, "tournament_end": {"$lt": datetime.datetime.now()}}).only("tournament_id").distinct("tournament_id")
+    data["won_tournaments"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": 1}, "tournament_end": {"$lt": datetime.datetime.now()}}}).only("tournament_id").distinct("tournament_id")
+    data["upcoming_tournaments"] = data["played_tournaments"] = Tournament.objects(players=player.pdga_number, tournament_end__gt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+
+    #for event in all_tournaments:
 
 
-    #import pdb; pdb.set_trace()
     print(json.dumps(data, indent=4))
+    import pdb; pdb.set_trace()
         
 
 
