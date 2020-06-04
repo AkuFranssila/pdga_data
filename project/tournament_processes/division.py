@@ -75,6 +75,11 @@ def ParseDivisions(data):
             divisionplayer.total_holes_played = CalculateTotalHolesPlayed(divisionplayer.rounds, division.rounds)
             divisionplayer.avg_throws_per_hole = CalculateAverageFromTwoFields(divisionplayer.total_throws, divisionplayer.total_holes_played)
             divisionplayer.players_avg_round_rating_difference_to_rating_during_tournament = CalculateDifferenceFromTwoFields(divisionplayer.avg_round_rating, divisionplayer.rating_during_tournament[0])
+            
+            if divisionplayer.pdga_number:
+                for number in divisionplayer.pdga_number:
+                    all_pdga_numbers.append(number)
+
             parsed_players.append(divisionplayer)
 
         division.players = parsed_players

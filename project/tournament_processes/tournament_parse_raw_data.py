@@ -7,8 +7,10 @@ import re
 from datetime import date
 from project.helpers.helpers_crawler import TournamentDate, TournamentLastPage
 from project.helpers.helpers_raw_tournament_parsing import *
+from project.utils.slack_message_sender import SendSlackMessageToChannel
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
+logger = logging.getLogger(__name__)
 
 def TournamentParseRawData(id, raw_data):
     logging.info("Starting TournamentParseRawData for pdga ")
@@ -154,9 +156,25 @@ def TournamentParseRawData(id, raw_data):
                     course_details[round_number] = {"course_details" : None, "course_pdga_link": None}
                     division_course_details.append(course_details)
 
+            
+            #### Double check that there is enough number of rounds
+            validate_round_number = division.find("tbody")
+            validate_round_number = validate_round_number.find("tr") if validate_round_number else None
+            validate_round_number = validate_round_number.find_all("td", {"class" : re.compile('^(round-rating).*$')}) if validate_round_number else None
+
+            if validate_round_number and len(division_course_details) != len(validate_round_number):
+                division_course_details = []
+                try:
+                    SendSlackMessageToChannel("Course validation check failed for id %s" % (str(id)), "#debugging")
+                except:
+                    logger.info("Course validation check failed for id %s" % (str(id)))
+                for i, _ in enumerate(validate_round_number):
+                    course_details = {}
+                    round_number = f"round_{i+1}"
+                    course_details[round_number] = {"course_details" : None, "course_pdga_link": None}
+                    division_course_details.append(course_details)
 
             #import pdb; pdb.set_trace()
-
 
             if division_type == "singles":
                 all_players = division.find('tbody')

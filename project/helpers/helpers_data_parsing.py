@@ -8,6 +8,7 @@ import pycountry
 import time
 import copy
 from project.models.schemas import Player, Tournament
+from project.utils.slack_message_sender import SendSlackMessageToChannel
 from project.helpers.helper_data import ACCEPTED_STATUSES, US_STATES, MONTH_DICT, HISTORY_FIELDS, US_STATES_LIST, HISTORY_FIELDS_TOURNAMENT
 from mongoengine import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
@@ -368,24 +369,27 @@ def ParseTournamentDates(data):
     #Date: 02-Nov to 03-Nov-2019
     #Date: 17-May to 19-May-2019
     event_dates = data.get("event_date")
-    event_dates = event_dates.replace('Date: ', '')
-    if " to " in event_dates:
-        start = event_dates.split(' to ')[0]
-        end = event_dates.split(' to ')[1]
-        end = ParseDate(end)
-        start= end.split('-')[0] + '-' + MONTH_DICT[start.split('-')[1]] + '-' + start.split('-')[0]
-    else:
-        date = ParseDate(event_dates)
-        start = date
-        end = date
 
-    if start == end:
-        length = 1
-    else:
-        d1 = datetime.date(int(start.split('-')[0]), int(start.split('-')[1]), int(start.split('-')[2]))
-        d2 = datetime.date(int(end.split('-')[0]), int(end.split('-')[1]), int(end.split('-')[2]))
-        length = d2 - d1
-        length = length.days + 1
+    start, end, length = None, None, None
+    if event_dates:
+        event_dates = event_dates.replace('Date: ', '')
+        if " to " in event_dates:
+            start = event_dates.split(' to ')[0]
+            end = event_dates.split(' to ')[1]
+            end = ParseDate(end)
+            start= end.split('-')[0] + '-' + MONTH_DICT[start.split('-')[1]] + '-' + start.split('-')[0]
+        else:
+            date = ParseDate(event_dates)
+            start = date
+            end = date
+
+        if start == end:
+            length = 1
+        else:
+            d1 = datetime.date(int(start.split('-')[0]), int(start.split('-')[1]), int(start.split('-')[2]))
+            d2 = datetime.date(int(end.split('-')[0]), int(end.split('-')[1]), int(end.split('-')[2]))
+            length = d2 - d1
+            length = length.days + 1
 
 
     return start, end, length
@@ -457,9 +461,12 @@ def ParseDivisionFullName(name):
 
 
 def ParseDivisionTotalPlayers(division_players):
-    if division_players is not None:
+    if division_players:
         division_players = division_players.strip().replace('(', '').replace(')', '')
-        division_players = int(division_players)
+        if division_players != "":
+            division_players = int(division_players)
+        else:
+            division_players = None
     return division_players
 
 
@@ -471,9 +478,6 @@ def ParseCourseDetails(course, pdga_page):
     # - B&amp;C; 18 holes; Par 58; 5,252 ft.
 
     name, holes, par, length, layout = None, None, None, None, None
-
-    logging.info("Course details")
-    logging.info(repr(course))
 
     if pdga_page:
         pdga_page = "https://www.pdga.com" + pdga_page
@@ -494,6 +498,7 @@ def ParseCourseDetails(course, pdga_page):
                 else:
                     length = None
             else:
+                #SendSlackMessageToChannel("Unable to parse course details %s" % (str(course)), "#debugging")
                 layout, holes, par, length = None, None, None, None
         elif len(course.split(';')) == 4:
             name, holes, par, length = course.split(';')
@@ -537,6 +542,8 @@ def ParseCourseDetails(course, pdga_page):
             length_meters, length_feet = None, None
     else:
         length_meters, length_feet = None, None
+
+    #import pdb; pdb.set_trace()
 
     return name, layout, holes, par, pdga_page, length_meters, length_feet
 
@@ -895,10 +902,16 @@ def CheckFieldsUpdated(new_player, old_player, reset_history=False):
     return updated_fields
 
 def parse_tournament_id(data):
-    event_link = data.get("event_link")
+    tournament_id = None
 
-    tournament_id = event_link.strip().split('/')[-1]
-    tournament_id = int(tournament_id)
+    if data:
+        event_link = data.get("event_link")
+
+        tournament_id = event_link.strip().split('/')[-1]
+        if tournament_id != "pdga_system_404":
+            tournament_id = int(tournament_id)
+        else:
+            tournament_id = None
 
     return tournament_id
 
@@ -1072,13 +1085,15 @@ def CalculatePlayerTournamentAvgThrowLenght(rounds, type):
 
 
 def CalculateAverageFromTwoFields(first_field, second_field):
-
     avg_to_return = None
 
     if first_field and second_field:
-        if first_field > 0 and second_field > 0:
-            avg_to_return = first_field / second_field
-        elif first_field == 0 and second_field > 0:
+        field_1 = float(first_field)
+        field_2 = float(second_field)
+
+        if field_1 > 0 and field_2 > 0:
+            avg_to_return = float(field_1 / field_2)
+        elif field_1 == 0 and field_2 > 0:
             avg_to_return = 0
 
     return avg_to_return
@@ -1333,21 +1348,22 @@ def UpdateDivisionRoundDetails(division_rounds, division_players):
         for round in division_rounds:
             data_for_round = collected_data.get(round.round_number)
 
-            round.players_avg_throws = data_for_round["players_avg_throws"]
-            round.players_avg_par = data_for_round["players_avg_par"]
-            round.players_avg_throw_length_meters = data_for_round["players_avg_throw_length_meters"]
-            round.players_avg_throw_length_feet = data_for_round["players_avg_throw_length_feet"]
-            round.players_round_total_throws = data_for_round["players_round_total_throws"]
-            round.round_total_players = data_for_round["round_total_players"]
-            round.players_dnf_count = data_for_round["players_dnf_count"]
-            round.players_dns_count = data_for_round["players_dns_count"]
-            round.players_avg_round_rating = data_for_round["players_avg_round_rating"]
-            round.players_avg_throws_per_hole = CalculateAverageFromTwoFields(round.players_avg_throws, round.course_holes)
-            round.players_highest_round_rating = data_for_round["players_highest_round_rating"] if data_for_round["players_highest_round_rating"] > 0 else None
-            round.players_lowest_round_rating = data_for_round["players_lowest_round_rating"] if data_for_round["players_lowest_round_rating"] > 0 else None
-            round.propagator_count = data_for_round["propagator_count"]
-            round.players_avg_rating_during_tournament = data_for_round["players_avg_rating_during_tournament"]
-            round.players_avg_round_rating_difference_to_avg_rating_during_tournament = CalculateDifferenceFromTwoFields(round.players_avg_round_rating, round.players_avg_rating_during_tournament)
+            if data_for_round:
+                round.players_avg_throws = data_for_round["players_avg_throws"] if data_for_round.get("players_avg_throws") else None
+                round.players_avg_par = data_for_round["players_avg_par"] if data_for_round["players_avg_par"] else None
+                round.players_avg_throw_length_meters = data_for_round["players_avg_throw_length_meters"] if data_for_round["players_avg_throw_length_meters"] else None
+                round.players_avg_throw_length_feet = data_for_round["players_avg_throw_length_feet"] if data_for_round["players_avg_throw_length_feet"] else None
+                round.players_round_total_throws = data_for_round["players_round_total_throws"] if data_for_round["players_round_total_throws"] else None
+                round.round_total_players = data_for_round["round_total_players"] if data_for_round["round_total_players"] else None
+                round.players_dnf_count = data_for_round["players_dnf_count"] if data_for_round["players_dnf_count"] else None
+                round.players_dns_count = data_for_round["players_dns_count"] if data_for_round["players_dns_count"] else None
+                round.players_avg_round_rating = data_for_round["players_avg_round_rating"] if data_for_round["players_avg_round_rating"] else None
+                round.players_avg_throws_per_hole = CalculateAverageFromTwoFields(round.players_avg_throws, round.course_holes)
+                round.players_highest_round_rating = data_for_round["players_highest_round_rating"] if data_for_round["players_highest_round_rating"] > 0 else None
+                round.players_lowest_round_rating = data_for_round["players_lowest_round_rating"] if data_for_round["players_lowest_round_rating"] > 0 else None
+                round.propagator_count = data_for_round["propagator_count"] if data_for_round["propagator_count"] else None
+                round.players_avg_rating_during_tournament = data_for_round["players_avg_rating_during_tournament"] if data_for_round["players_avg_rating_during_tournament"] else None
+                round.players_avg_round_rating_difference_to_avg_rating_during_tournament = CalculateDifferenceFromTwoFields(round.players_avg_round_rating, round.players_avg_rating_during_tournament)
 
 
 def UpdateDivisionDetails(division):
@@ -1418,7 +1434,6 @@ def UpdateDivisionDetails(division):
         #division_data["players_avg_round_rating_difference_to_avg_rating_during_tournament"] += ReturnValueOrZero(player.money_won)
 
     
-
     division.total_holes = division_data["total_holes"] if division_data["total_holes"] > 0 else None
     division.total_holes_played_by_players = division_data["total_holes_played_by_players"] if division_data["total_holes_played_by_players"] > 0 else None
     division.total_course_length_meters = division_data["total_course_length_meters"] if division_data["total_course_length_meters"] > 0 else None
@@ -1430,7 +1445,7 @@ def UpdateDivisionDetails(division):
     division.players_avg_round_rating = CalculateAverageFromTwoFields(division_data["players_avg_round_rating"], division.total_players)
     division.players_highest_round_rating = division_data["players_highest_round_rating"] if division_data["players_highest_round_rating"] > 0 else None
     division.players_lowest_round_rating = division_data["players_lowest_round_rating"] if division_data["players_lowest_round_rating"] > 0 else None
-    division.players_avg_rating_during_tournament = CalculateAverageFromTwoFields(division_data["players_avg_rating_during_tournament"], division.total_players)
+    division.players_avg_rating_during_tournament = CalculateAverageFromTwoFields(division_data.get("players_avg_rating_during_tournament"), division.total_players)
     division.players_avg_round_rating_difference_to_avg_rating_during_tournament = CalculateDifferenceFromTwoFields(division.players_avg_round_rating, division.players_avg_rating_during_tournament)
     division.total_dns_count = division_data["total_dns_count"]
     division.total_dnf_count = division_data["total_dnf_count"]
@@ -1453,7 +1468,7 @@ def CalculateTournamentStatistics(tournament):
         CheckHighestLowestRoundRating(div.players_lowest_round_rating, "lowest", dict=fields)
         fields["total_dns_count"] += ReturnValueOrZero(div.total_dns_count)
         fields["total_dnf_count"] += ReturnValueOrZero(div.total_dnf_count)
-        fields["players_avg_rating_during_tournament"] += ReturnValueOrZero(div.players_avg_rating_during_tournament)
+        #fields["players_avg_rating_during_tournament"] += ReturnValueOrZero(div.players_avg_rating_during_tournament)
 
     tournament.total_throws = fields["total_throws"] if fields["total_throws"] > 0 else None
     tournament.players_highest_round_rating = fields["players_highest_round_rating"] if fields["players_highest_round_rating"] > 0 else None

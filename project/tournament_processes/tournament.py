@@ -23,7 +23,10 @@ def ParseTournament(data, send_data=True, generate_statistics=False, clear_field
     tournament = Tournament()
     tournament.tournament_id = parse_tournament_id(data)
     tournament.pdga_page_link = data.get("event_link")
-    tournament.tournament_name = data.get("event_title")
+    tournament.tournament_name = data.get("event_title") if data.get("event_title") != "Page not found" else None
+
+    logger.info("Started parsing tournament %s with id %s.", tournament.tournament_name, tournament.tournament_id)
+
     tournament.location_full = CleanFullLocation(data, type="tournament")
     tournament.location_city, tournament.location_state, tournament.location_country = ParseFullLocation(data, type="tournament")
     tournament.tournament_start, tournament.tournament_end, tournament.tournament_length_days = ParseTournamentDates(data)
@@ -58,15 +61,15 @@ def ParseTournament(data, send_data=True, generate_statistics=False, clear_field
         tournament.tournament_director_id = check_tournament_director_id(tournament, old_tournament)
         tournament.assistant_director = check_assistant_tournament_director(tournament, old_tournament)
         tournament.assistant_director_id = check_assistant_tournament_director_id(tournament, old_tournament)
-        if clear_fields_updated:
-            tournament.fields_updated = []
-        else:
-            tournament.fields_updated = CheckFieldsUpdatedTournament(tournament, old_tournament)
+        #if clear_fields_updated:
+        tournament.fields_updated = []
+        #else:
+        #    tournament.fields_updated.append(CheckFieldsUpdatedTournament(tournament, old_tournament))
 
-    if not tournament.players:
-        SendSlackMessageToChannel("Could not parse players for tournament %s with id %s" % (str(tournament.tournament_name), str(tournament.tournament_id)), "#data-reports")
+    #if not tournament.players:
+    #    SendSlackMessageToChannel("Could not parse players for tournament %s with id %s" % (str(tournament.tournament_name), str(tournament.tournament_id)), "#data-reports")
     
-    if send_data:
+    if send_data and tournament.tournament_name:
         logger.info("Tournament %s with id %s has been sent to mongo", tournament.tournament_name, tournament.tournament_id)
         tournament.save()
     else:

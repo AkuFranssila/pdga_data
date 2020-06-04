@@ -31,18 +31,22 @@ def handle_arguments() -> (str):
         action="store_true",
         help="Argument if updated_fields should be cleaned. By default fields are not cleared.",
     )
+    parser.add_argument('--index',
+        type=int,
+        help="Index key if you want to start parsing from different key. Files in order the keys are downloaded from S3.",
+    )
     args = parser.parse_args()
 
-    return args.file_date, args.send, args.statistics, args.clear_updated_fields
+    return args.file_date, args.send, args.statistics, args.clear_updated_fields, args.index
 
 
-def RunTournamentToMongo(file_date):
+def RunTournamentToMongo(file_date, send, statistics, clear_updated_fields, starting_index=0):
 
     SendSlackMessageToChannel("%s Starting run_tournament_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
 
     all_file_keys = find_all_keys_from_s3_folder(f"tournament-parsed-data/{file_date}")
 
-    for file_key in all_file_keys:
+    for file_key in all_file_keys[starting_index:]:
         file_counter = file_key.split('.json')[0].split('data_')[1]
         download_name = f"data_{file_counter}"
 
@@ -52,7 +56,8 @@ def RunTournamentToMongo(file_date):
         with open(file_path, "r") as data:
             all_tournaments = json.load(data)
             for tournament in all_tournaments:
-                ParseTournament(tournament)
+                if tournament:
+                    ParseTournament(tournament, send, statistics, clear_updated_fields)
 
 
     total = Tournament.objects().count()
@@ -61,5 +66,5 @@ def RunTournamentToMongo(file_date):
 
 
 if __name__ == "__main__":
-    file_date, send, statistics, clear_updated_fields = handle_arguments()
-    RunTournamentToMongo(file_date, send, statistics, clear_updated_fields)
+    file_date, send, statistics, clear_updated_fields, start_index = handle_arguments()
+    RunTournamentToMongo(file_date, send, statistics, clear_updated_fields, start_index)

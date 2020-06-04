@@ -17,12 +17,25 @@ def handle_arguments() -> (str):
         help="Link to a tournament page to test individual pages.",
         required=True
     )
+    parser.add_argument('--send',
+        action="store_true",
+        help="Send data, defaults to False",
+    )
+    parser.add_argument('--statistics',
+        action="store_true",
+        help="Argument if statistics should be created. By default statistics are not created.",
+    )
+    parser.add_argument('--clear_updated_fields',
+        action="store_true",
+        help="Argument if updated_fields should be cleaned. By default fields are not cleared.",
+    )
     args = parser.parse_args()
 
-    return args.link
+    return args.link, args.send, args.statistics, args.clear_updated_fields
 
 
-def test_tournament_to_mongo_on_single_link(link):
+
+def test_tournament_to_mongo_on_single_link(link, send, statistics, clear_updated_fields):
     all_data = []
     all_parsed_data = []
     response = requests.get(link)
@@ -37,12 +50,11 @@ def test_tournament_to_mongo_on_single_link(link):
 
 
     print(json.dumps(all_parsed_data, indent=4))
-
     ConnectMongo()
     for tournament in all_parsed_data:
-        ParseTournament(tournament, send_data=False)
+        ParseTournament(tournament, send, statistics, clear_updated_fields)
 
 
 if __name__ == "__main__":
-    link = handle_arguments()
-    test_tournament_to_mongo_on_single_link(link)
+    link, send, statistics, clear_updated_fields = handle_arguments()
+    test_tournament_to_mongo_on_single_link(link, send, statistics, clear_updated_fields)
