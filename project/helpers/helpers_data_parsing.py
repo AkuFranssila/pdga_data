@@ -61,16 +61,16 @@ def ParseFullLocation(data, allow_google_api=True, recheck=False, type=None):
     state = None
     country = None
 
-    def GoogleMapsAPILocationCheck(data, allow_google_api):
-        new_location = None
-        if allow_google_api:
-            google_geolocation_query = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + data + '&key=' + os.environ['google_geolocation_apikey'])
-            json_data = json.loads(google_geolocation_query.text)
-            #logging.info(json_data)
-            new_location = json_data['results'][0]['formatted_address'].lower()
-            logging.info(new_location)
-
-        return new_location
+    #def GoogleMapsAPILocationCheck(data, allow_google_api):
+    #    new_location = None
+    #    if allow_google_api:
+    #        google_geolocation_query = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + data + '&key=' + os.environ['google_geolocation_apikey'])
+    #        json_data = json.loads(google_geolocation_query.text)
+    #        #logging.info(json_data)
+    #        new_location = json_data['results'][0]['formatted_address'].lower()
+    #        logging.info(new_location)
+    #
+    #    return new_location
 
 
     def TurnLocationToList(full_location):
@@ -129,10 +129,10 @@ def ParseFullLocation(data, allow_google_api=True, recheck=False, type=None):
                     state = US_STATES.get(full_location_list[0])
                 elif pycountry.countries.get(name=full_location_list[0].title()):
                     country = full_location_list[0]
-                elif len(full_location_list[0]) > 2:
-                    new_location = GoogleMapsAPILocationCheck(full_location_list[0], allow_google_api)
-                    if full_location_list[0] in new_location:
-                        city, state, country = ParseFullLocation(new_location, allow_google_api=False, recheck=True)
+                #elif len(full_location_list[0]) > 2:
+                #    new_location = GoogleMapsAPILocationCheck(full_location_list[0], allow_google_api)
+                #    if full_location_list[0] in new_location:
+                #        city, state, country = ParseFullLocation(new_location, allow_google_api=False, recheck=True)
 
 
     return city, state, country
