@@ -98,52 +98,55 @@ def GeneratePlayerStatistics(player, save=False):
     #year_of_birth
     #age estimate
 
-    all_tournaments = Tournament.objects(players=player.pdga_number)
+    player_pdga_number = player.pdga_number
+
+
+    all_tournaments = Tournament.objects(players=player_pdga_number)
 
     logging.info("Found %s tournaments for player %s" % (str(all_tournaments.count()), player.full_name))
 
     logging.info("Collecting played_tournaments")
-    data["played_tournaments"] = Tournament.objects(players=player.pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["played_tournaments"] = Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting played_countries")
-    data["played_countries"] = Tournament.objects(players=player.pdga_number, location_country__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_country").distinct("location_country")
+    data["played_countries"] = Tournament.objects(players=player_pdga_number, location_country__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_country").distinct("location_country")
     logging.info("Collecting played_cities")
-    data["played_cities"] = Tournament.objects(players=player.pdga_number, location_city__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_city").distinct("location_city")
+    data["played_cities"] = Tournament.objects(players=player_pdga_number, location_city__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_city").distinct("location_city")
     logging.info("Collecting played_states")
-    data["played_states"] = Tournament.objects(players=player.pdga_number, location_state__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_state").distinct("location_state")
+    data["played_states"] = Tournament.objects(players=player_pdga_number, location_state__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_state").distinct("location_state")
     logging.info("Collecting tournaments_td")
-    data["tournaments_td"] = Tournament.objects(players=player.pdga_number, tournament_director_id=player.pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["tournaments_td"] = Tournament.objects(tournament_director_id=player_pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting tournaments_assistant_td")
-    data["tournaments_assistant_td"] = Tournament.objects(players=player.pdga_number, assistant_director_id=player.pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["tournaments_assistant_td"] = Tournament.objects(assistant_director_id=player_pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting singles")
-    data["singles"] = Tournament.objects(players=player.pdga_number, tournament_type="singles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["singles"] = Tournament.objects(players=player_pdga_number, tournament_type="singles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting doubles")
-    data["doubles"] = Tournament.objects(players=player.pdga_number, tournament_type="doubles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["doubles"] = Tournament.objects(players=player_pdga_number, tournament_type="doubles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting teams")
-    data["teams"] = Tournament.objects(players=player.pdga_number, tournament_type="teams", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["teams"] = Tournament.objects(players=player_pdga_number, tournament_type="teams", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting tiers_played")
-    data["tiers_played"] = Counter(Tournament.objects(players=player.pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_tier"))
+    data["tiers_played"] = Counter(Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_tier"))
     logging.info("Collecting classifications_played")
-    data["classifications_played"] = Counter(Tournament.objects(players=player.pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_classification"))
+    data["classifications_played"] = Counter(Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_classification"))
     logging.info("Collecting dnf")
-    data["dnf"] = Tournament.objects(__raw__={"total_dnf_count": {"$gte": 1}, "divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "dnf": True}}}).only("tournament_id").distinct("tournament_id")
+    data["dnf"] = Tournament.objects(__raw__={"total_dnf_count": {"$gte": 1}, "divisions.players": {"$elemMatch": {"pdga_number": player_pdga_number, "dnf": True}}}).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting dns")
-    data["dns"] = Tournament.objects(__raw__={"total_dns_count": {"$gte": 1}, "divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "dns": True}}}).only("tournament_id").distinct("tournament_id")
+    data["dns"] = Tournament.objects(__raw__={"total_dns_count": {"$gte": 1}, "divisions.players": {"$elemMatch": {"pdga_number": player_pdga_number, "dns": True}}}).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting top_five_placements")
-    data["top_five_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": {"$lte": 5}}}}).only("tournament_id").distinct("tournament_id")
+    data["top_five_placements"] = Tournament.objects(top_five_placements=player_pdga_number).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting top_ten_placements")
-    data["top_ten_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": {"$lte": 10}}}}).only("tournament_id").distinct("tournament_id")
+    data["top_ten_placements"] = Tournament.objects(top_ten_placements=player_pdga_number).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting top_three_placements")
-    data["top_three_placements"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": {"$lte": 3}}}}).only("tournament_id").distinct("tournament_id")
+    data["top_three_placements"] = Tournament.objects(top_three_placements=player_pdga_number).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting won_tournaments")
-    data["won_tournaments"] = Tournament.objects(__raw__={"divisions.players": {"$elemMatch": {"pdga_number": player.pdga_number, "final_placement": 1}}}).only("tournament_id").distinct("tournament_id")
+    data["top_one_placements"] = Tournament.objects(top_one_placements=player_pdga_number).only("tournament_id").distinct("tournament_id")
     logging.info("Collecting upcoming_tournaments")
-    data["upcoming_tournaments"] = data["played_tournaments"] = Tournament.objects(players=player.pdga_number, tournament_end__gt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    data["upcoming_tournaments"] = data["played_tournaments"] = Tournament.objects(players=player_pdga_number, tournament_end__gt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
 
     #for event in all_tournaments:
 
 
     print(json.dumps(data, indent=4))
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
         
 
 
