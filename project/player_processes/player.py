@@ -3,16 +3,50 @@ import json
 import logging
 from datetime import date
 from project.models.schemas import Player
-from mongoengine import *
 from project.helpers.helpers_data_parsing import *
 from project.player_processes.player_statistics import GeneratePlayerStatistics
+from project.utils.s3_tools import download_file_from_s3_return_file_path
 import logging
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
+def handle_arguments() -> (str):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--s3_key',
+        type=str,
+        help="S3 folder name that is date in format YearMonthDay",
+        required=False
+    )
+    parser.add_argument('--send',
+        action="store_true",
+        help="Send data, defaults to False",
+    )
+    parser.add_argument('--statistics',
+        action="store_true",
+        help="Argument if statistics should be created. By default statistics are not created.",
+    )
+    parser.add_argument('--clear_updated_fields',
+        action="store_true",
+        help="Argument if updated_fields should be cleaned. By default fields are not cleared.",
+    )
+    parser.add_argument('--index',
+        type=int,
+        help="Index key if you want to start parsing from different key. Files in order the keys are downloaded from S3.",
+    )
+    args = parser.parse_args()
+
+    return args.s3_key, args.send, args.statistics, args.clear_updated_fields, args.index
+
+
 def ParsePlayer(data, send_data=True, generate_statistics=False, clear_fields_updated=False):
+
+    data_pdga_number = data.get('player_pdga_number')
+
+    if not data_pdga_number:
+        return
+
     new_player = Player()
     new_player.pdga_number = str(data.get('player_pdga_number'))
     new_player.pdga_id_status = ParseIdStatus(data)
@@ -75,3 +109,19 @@ def ParsePlayer(data, send_data=True, generate_statistics=False, clear_fields_up
         print(json.dumps(print_data, indent=4))
     logger.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 
+
+def loop_through_data(s3_key, send, statistics, clear_updated_fields, start_index):
+    file_counter = s3_key.split('.json')[0].split('data_')[1]
+    download_name = f"data_{file_counter}"
+    file_path = download_file_from_s3_return_file_path(s3_key, download_name)
+
+    with open(file_path, "r") as data:
+        all_data = json.load(data)
+        for d in all_data:
+            if d:
+                ParsePlayer(d, send, statistics, clear_updated_fields)
+
+
+if __name__ == "__main__":
+    s3_key, send, statistics, clear_updated_fields, start_index = handle_arguments()
+    loop_through_data(s3_key, send, statistics, clear_updated_fields, start_index)

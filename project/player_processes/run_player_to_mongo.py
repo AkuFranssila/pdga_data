@@ -3,6 +3,7 @@ import json
 import logging
 import datetime
 import argparse
+import subprocess
 from project.player_processes.player import ParsePlayer
 from project.utils.connect_mongodb import ConnectMongo
 from project.utils.slack_message_sender import SendSlackMessageToChannel
@@ -36,27 +37,23 @@ def handle_arguments() -> (str):
     return args.file_date, args.send, args.statistics, args.clear_updated_fields
 
 
-def RunPlayerToMongo(file_date, send, statistics, clear_updated_fields):
-    SendSlackMessageToChannel("%s Starting run_player_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
+def run_player_to_mongo(file_date, send, statistics, clear_updated_fields, starting_index=0):
 
-    all_file_keys = find_all_keys_from_s3_folder(f"player-parsed-data/{file_date}")
+    SendSlackMessageToChannel("%s Starting run_tournament_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
 
-    for file_key in all_file_keys:
-        file_counter = file_key.split('.json')[0].split('data_')[1]
-        download_name = f"data_{file_counter}"
+    all_file_keys = find_all_keys_from_s3_folder(f"tournament-parsed-data/{file_date}")
 
-        file_path = download_file_from_s3_return_file_path(file_key, download_name)
+    for file_key in all_file_keys[starting_index:]:
+        SendSlackMessageToChannel(("Starting to parse file %s" % (file_key)), "#data-reports")
+        try:
+            subprocess.check_output(['python', '-m', 'project.player_processes.player', '--s3_key', file_key, '--send', '--statistics', '--clear_updated_fields'])
+        except subprocess.CalledProcessError as e:
+            SendSlackMessageToChannel("File %s failed with error %s" % (file_key, str(e.output)), "#data-reports")
 
-        ConnectMongo()
-        with open(file_path, "r") as data:
-            all_players = json.load(data)
-            for player in all_players:
-                ParsePlayer(player, send, statistics, clear_updated_fields)
-
-
-    total_players = Player.objects().count()
+    ConnectMongo()
+    total = Player.objects().count()
     logging.info("Finished run_player_to_mongo.py")
-    SendSlackMessageToChannel("%s Finished run_player_to_mongo.py. Currently %s players in MongoDB." % (str(datetime.datetime.today()), str(total_players)), "#data-reports")
+    SendSlackMessageToChannel("%s Finished run_player_to_mongo.py. Currently %s players in MongoDB." % (str(datetime.datetime.today()), str(total)), "#data-reports")
 
 
 if __name__ == "__main__":
