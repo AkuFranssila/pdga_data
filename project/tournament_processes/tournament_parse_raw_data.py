@@ -33,7 +33,7 @@ def TournamentParseRawData(id, raw_data):
 
         event_date = soup.find(class_="tournament-date")
         event['event_date'] = event_date.text if event_date else None
-        print(event['event_link'], event['event_title'], event['event_date'])
+        #print(event['event_link'], event['event_title'], event['event_date'])
 
         event_location = soup.find(class_="tournament-location")
         event['event_location'] = event_location.text if event_location else None
@@ -199,6 +199,6 @@ def TournamentParseRawData(id, raw_data):
             event['event_divisions'].append(div)
 
 
-        print(json.dumps(event, indent=4))
+        #print(json.dumps(event, indent=4))
         return event
 
