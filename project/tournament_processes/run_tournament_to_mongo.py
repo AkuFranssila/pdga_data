@@ -54,6 +54,7 @@ def RunTournamentToMongo(file_date, send, statistics, clear_updated_fields, star
         except subprocess.CalledProcessError:
             SendSlackMessageToChannel("File %s failed with error %s" % (file_key, str(output_msg)), "#data-reports")
 
+    ConnectMongo()
     total = Tournament.objects().count()
     logging.info("Finished run_tournament_to_mongo.py")
     SendSlackMessageToChannel("%s Finished run_tournament_to_mongo.py. Currently %s players in MongoDB." % (str(datetime.datetime.today()), str(total)), "#data-reports")

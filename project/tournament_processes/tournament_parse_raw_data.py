@@ -71,11 +71,12 @@ def TournamentParseRawData(id, raw_data):
             live_score_link_list.append(link["href"])
         event['event_livescoring'] = live_score_link_list if live_score_link_list else None
 
-        event_tier = soup.find_all(class_="tier")
-        event['event_tier'] = event_tier[1].text if len(event_tier) > 1 else None
+        event_tier_classification = soup.find(class_="panel-pane pane-tournament-event-info")
+        event_tier_classification = event_tier_classification.find("h4").text if event_tier_classification else None
 
-        event_classification = soup.find_all(class_="classification")
-        event['event_classification'] = event_classification[1].text if len(event_classification) > 1 else None
+        event["event_tier"] = event_tier_classification.split(' ')[1] if event_tier_classification else None
+        event["event_classification"] = event_tier_classification.split(' ')[0] if event_tier_classification else None
+        #import pdb; pdb.set_trace()
 
         event_total_players = soup.find("td", class_="players")
         event_total_players = event_total_players.text if event_total_players else None

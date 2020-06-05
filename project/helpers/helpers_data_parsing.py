@@ -1469,9 +1469,10 @@ def CalculateTournamentStatistics(tournament):
     def add_pdga_numbers_to_list(pdga_numbers, dict_list):
         if pdga_numbers:
             for number in pdga_numbers:
-                dict_list.append(number)
+                if number:
+                    dict_list.append(number)
 
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
 
     for div in tournament.divisions:
         fields["total_throws"] += ReturnValueOrZero(div.total_throws)
@@ -1479,7 +1480,7 @@ def CalculateTournamentStatistics(tournament):
         CheckHighestLowestRoundRating(div.players_lowest_round_rating, "lowest", dict=fields)
         fields["total_dns_count"] += ReturnValueOrZero(div.total_dns_count)
         fields["total_dnf_count"] += ReturnValueOrZero(div.total_dnf_count)
-        fields["players_avg_rating_during_tournament"] += ReturnValueOrZero(div.players_avg_rating_during_tournament)
+        #fields["players_avg_rating_during_tournament"] += ReturnValueOrZero(div.players_avg_rating_during_tournament)
         for player in div.players:
             if player.final_placement:
                 if player.final_placement <= 10:
