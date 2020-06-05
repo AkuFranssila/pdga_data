@@ -17,12 +17,20 @@ def handle_arguments() -> (str):
         help="Link to player PDGA profile.",
         required=True
     )
+    parser.add_argument('--send',
+        action="store_true",
+        help="Send data, defaults to False",
+    )
+    parser.add_argument('--statistics',
+        action="store_true",
+        help="Send data, defaults to False",
+    )
     args = parser.parse_args()
 
-    return args.link
+    return args.link, args.send, args.statistics
 
 
-def test_player_to_mongo_on_single_link(link):
+def test_player_to_mongo_on_single_link(link, send, statistics):
     all_data = []
     all_parsed_data = []
     response = requests.get(link)
@@ -39,10 +47,10 @@ def test_player_to_mongo_on_single_link(link):
 
     ConnectMongo()
     for player in all_parsed_data:
-        ParsePlayer(player, send_data=False)
+        ParsePlayer(player, send_data=send, generate_statistics=statistics)
 
 
 
 if __name__ == "__main__":
-    link = handle_arguments()
-    test_player_to_mongo_on_single_link(link)
+    link, send, statistics = handle_arguments()
+    test_player_to_mongo_on_single_link(link, send, statistics)
