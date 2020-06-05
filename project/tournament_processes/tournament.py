@@ -107,7 +107,7 @@ def ParseTournament(data, send_data=True, generate_statistics=False, clear_field
         tournament.save()
     else:
         print_data = json.loads(tournament.to_json())
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         print(json.dumps(print_data, indent=4))
 
 
