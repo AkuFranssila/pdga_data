@@ -49,8 +49,12 @@ def ParseTournament(data, send_data=True, generate_statistics=False, clear_field
 
     #print(json.dumps(data, indent=4))
 
+    tournament_id = parse_tournament_id(data)
+    if not tournament_id:
+        return
+        
     tournament = Tournament()
-    tournament.tournament_id = parse_tournament_id(data)
+    tournament.tournament_id = tournament_id
     tournament.pdga_page_link = data.get("event_link")
     tournament.tournament_name = data.get("event_title") if data.get("event_title") != "Page not found" else None
 
@@ -103,6 +107,7 @@ def ParseTournament(data, send_data=True, generate_statistics=False, clear_field
         tournament.save()
     else:
         print_data = json.loads(tournament.to_json())
+        import pdb; pdb.set_trace()
         print(json.dumps(print_data, indent=4))
 
 
