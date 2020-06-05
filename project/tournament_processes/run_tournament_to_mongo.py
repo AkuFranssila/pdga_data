@@ -50,9 +50,9 @@ def RunTournamentToMongo(file_date, send, statistics, clear_updated_fields, star
     for file_key in all_file_keys[starting_index:]:
         SendSlackMessageToChannel(("Starting to parse file %s" % (file_key)), "#data-reports")
         try:
-            output_msg = subprocess.check_output(['python', '-m', 'project.tournament_processes.tournament', '--s3_key', file_key, '--send', '--statistics', '--clear_updated_fields'])
-        except subprocess.CalledProcessError:
-            SendSlackMessageToChannel("File %s failed with error %s" % (file_key, str(output_msg)), "#data-reports")
+            subprocess.check_output(['python', '-m', 'project.tournament_processes.tournament', '--s3_key', file_key, '--send', '--statistics', '--clear_updated_fields'])
+        except subprocess.CalledProcessError as e:
+            SendSlackMessageToChannel("File %s failed with error %s" % (file_key, str(e.output)), "#data-reports")
 
     ConnectMongo()
     total = Tournament.objects().count()
