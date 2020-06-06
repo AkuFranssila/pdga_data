@@ -142,7 +142,6 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(player1.yearly_statistics, [])
         self.assertEqual(player1.individual_tournament_years, [2001, 2000, 1999, 1998, 1997, 1996, 1995, 1994, 1993, 1992, 1991, 1990, 1989, 1988, 1987, 1986, 1985, 1984, 1983, 1981])
         self.assertEqual(player1.pdga_page_link, 'https://www.pdga.com/player/1')
-        self.assertEqual(player1.played_event_ids, [])
         self.assertEqual(player1.played_countries, [])
         self.assertEqual(player1.first_crawl_date, first_crawl)
         #self.assertEqual(player1.latest_update, '')
