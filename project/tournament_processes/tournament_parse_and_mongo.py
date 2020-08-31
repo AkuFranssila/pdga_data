@@ -39,6 +39,8 @@ def handle_arguments() -> (str):
 def parse_raw_data_and_send_to_mongo(s3_key, send, statistics, clear_updated_fields, file_date):
     file_counter = s3_key.split('.json')[0].split('data_')[1]
     download_name = f"data_{file_counter}"
+    if not file_date:
+        file_date = s3_key.split('/')[1].split('/')[0]
     file_path = download_file_from_s3_return_file_path(s3_key, download_name)
 
     all_parsed_data = []

@@ -39,9 +39,9 @@ def handle_arguments() -> (str):
 
 def run_player_to_mongo(file_date, send, statistics, clear_updated_fields, starting_index=0):
 
-    SendSlackMessageToChannel("%s Starting run_tournament_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
+    SendSlackMessageToChannel("%s Starting run_player_to_mongo.py" % str(datetime.datetime.today()), "#data-reports")
 
-    all_file_keys = find_all_keys_from_s3_folder(f"tournament-parsed-data/{file_date}")
+    all_file_keys = find_all_keys_from_s3_folder(f"player-parsed-data/{file_date}")
 
     for file_key in all_file_keys[starting_index:]:
         SendSlackMessageToChannel(("Starting to parse file %s" % (file_key)), "#data-reports")
@@ -58,4 +58,4 @@ def run_player_to_mongo(file_date, send, statistics, clear_updated_fields, start
 
 if __name__ == "__main__":
     file_date, send, statistics, clear_updated_fields = handle_arguments()
-    RunPlayerToMongo(file_date, send, statistics, clear_updated_fields)
+    run_player_to_mongo(file_date, send, statistics, clear_updated_fields)

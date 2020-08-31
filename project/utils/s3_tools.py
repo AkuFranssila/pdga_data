@@ -6,7 +6,7 @@ from project.utils.aws_s3_client import AWS_S3CLIENT
 from project.utils.send_file_to_s3 import upload_data_to_s3
 
 logging.getLogger().setLevel("INFO")
-s3_client = AWS_S3CLIENT()
+s3_client = AWS_S3CLIENT("s3")
 TEMP_DIRECTORY = tempfile.mkdtemp()
 
 def find_all_keys_from_s3_folder(key, bucket="pdga-project-data"):

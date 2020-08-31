@@ -36,19 +36,25 @@ def find_player_for_pdga_number(pdga_number):
     if not player:
         raise ValueError("Player was not found with PDGA number of %s" % str(pdga_number))
     else:
-        logging.info("Player %s found" % player.full_name)
+        logger.info("Player %s found" % player.full_name)
 
     return player
 
 
 def calculate_non_mongo_statistics(player):
     def diff_month(d1, d2):
-        d2 = datetime.datetime(d2, 1, 1)
-        return (d1.year - d2.year) * 12 + d1.month - d2.month
+        if d2:
+            d2 = datetime.datetime(d2, 1, 1)
+            return (d1.year - d2.year) * 12 + d1.month - d2.month
+        else:
+            return None
 
     def diff_year(d1, d2):
-        d2 = datetime.datetime(d2, 1, 1)
-        return (d1.year - d2.year)# * 12 + d1.month - d2.month
+        if d2:
+            d2 = datetime.datetime(d2, 1, 1)
+            return (d1.year - d2.year)# * 12 + d1.month - d2.month
+        else:
+            return None
 
     player.tournaments_played_year_avg = CalculateAverageFromTwoFields(player.total_events, diff_year(datetime.datetime.today(), player.member_since))
     player.tournaments_played_month_avg = CalculateAverageFromTwoFields(player.total_events, diff_month(datetime.datetime.today(), player.member_since))
@@ -57,26 +63,26 @@ def calculate_non_mongo_statistics(player):
     player.statistics_updated = datetime.datetime.today()
 
 def compare_value_to_previous_value_in_dict(field, dict_name, field_name, type, accept_zero=False):
-    logger.info("Starting compare_value_to_previous_value_in_dict")
+    #logger.info("Starting compare_value_to_previous_value_in_dict")
     dict_data = dict_name.get(field_name)
-    logger.info("Dict data was %s", dict_data)
+    #logger.info("Dict data was %s", dict_data)
     if type == "higher":
         if not dict_data:
             dict_name[field_name] = field
         elif field > dict_data:
-            logger.info("Updated %s with %s", field_name, field)
+            #logger.info("Updated %s with %s", field_name, field)
             dict_name[field_name] = field
     elif type == "lower" and accept_zero:
         if not dict_data:
             dict_name[field_name] = field
         elif field < dict_data:
-            logger.info("Updated %s with %s", field_name, field)
+            #logger.info("Updated %s with %s", field_name, field)
             dict_name[field_name] = field
     elif type == "lower" and not accept_zero:
         if not dict_data:
             dict_name[field_name] = field
         elif field < dict_data or dict_data == 0:
-            logger.info("Updated %s with %s", field_name, field)
+            #logger.info("Updated %s with %s", field_name, field)
             dict_name[field_name] = field
 
     #import pdb; pdb.set_trace()
@@ -89,10 +95,85 @@ def calculate_averages_from_collected_data(player_object, dict_name):
     dict_name["avg_par"] = CalculateAverageFromTwoFields(dict_name["avg_par"], player_object.total_events)
     dict_name["avg_final_placement"] = CalculateAverageFromTwoFields(dict_name["avg_final_placement"], player_object.total_events)
 
+
+def convert_dict_keys_to_strings(dict_name):
+    for k, v in dict_name.items():
+        newly_made_dict = {}
+        if isinstance(v, dict):
+            for key, value in v.items():
+                newly_made_dict[str(key)] = value
+
+            dict_name[k] = newly_made_dict
+
+
+def update_fields_to_player_document(player_object, dict_name):
+
+    player_object.played_tournaments = dict_name["played_tournaments"]
+    player_object.played_countries = dict_name["played_countries"]
+    player_object.played_cities = dict_name["played_cities"]
+    player_object.played_states = dict_name["played_states"]
+    player_object.tournaments_td = dict_name["tournaments_td"]
+    player_object.tournaments_assistant_td = dict_name["tournaments_assistant_td"]
+    player_object.singles = dict_name["singles"]
+    player_object.doubles = dict_name["doubles"]
+    player_object.teams = dict_name["teams"]
+    player_object.dnf = dict_name["dnf"]
+    player_object.dns = dict_name["dns"]
+    player_object.total_throws = dict_name["total_throws"]
+    player_object.total_points = dict_name["total_points"]
+    player_object.total_rounds = dict_name["total_rounds"]
+    player_object.top_one_placements = dict_name["top_one_placements"]
+    player_object.top_three_placements = dict_name["top_three_placements"]
+    player_object.top_five_placements = dict_name["top_five_placements"]
+    player_object.top_ten_placements = dict_name["top_ten_placements"]
+    player_object.highest_round_rating = dict_name["highest_round_rating"]
+    player_object.lowest_round_rating = dict_name["lowest_round_rating"]
+    player_object.biggest_positive_difference_round_rating_to_rating_during_tournament = dict_name["biggest_positive_difference_round_rating_to_rating_during_tournament"]
+    player_object.biggest_negative_difference_round_rating_to_rating_during_tournament = dict_name["biggest_negative_difference_round_rating_to_rating_during_tournament"]
+    player_object.most_money_won_single_tournament = dict_name["most_money_won_single_tournament"]
+    player_object.avg_par = dict_name["avg_par"]
+    player_object.avg_final_placement = dict_name["avg_final_placement"]
+    player_object.player_country_ranking_by_rating = dict_name["player_country_ranking_by_rating"]
+    player_object.player_country_ranking_by_money_won = dict_name["player_country_ranking_by_money_won"]
+    player_object.player_country_ranking_by_gender = dict_name["player_country_ranking_by_gender"]
+    player_object.player_country_ranking_by_highest_round_rating = dict_name["player_country_ranking_by_highest_round_rating"]
+    player_object.player_country_ranking_by_lowest_round_rating = dict_name["player_country_ranking_by_lowest_round_rating"]
+    player_object.player_world_ranking_by_rating = dict_name["player_world_ranking_by_rating"]
+    player_object.player_world_ranking_by_money_won = dict_name["player_world_ranking_by_money_won"]
+    player_object.player_world_ranking_by_gender = dict_name["player_world_ranking_by_gender"]
+    player_object.player_world_ranking_by_highest_round_rating = dict_name["player_world_ranking_by_highest_round_rating"]
+    player_object.player_world_ranking_by_lowest_round_rating = dict_name["player_world_ranking_by_lowest_round_rating"]
+    player_object.years_without_tournaments = dict_name["years_without_tournaments"]
+    player_object.tiers_played = dict_name["tiers_played"]
+    player_object.classifications_played = dict_name["classifications_played"]
+    player_object.tournaments_played_per_year = dict_name["tournaments_played_per_year"]
+    player_object.tournaments_played_per_division = dict_name["tournaments_played_per_division"]
+    player_object.avg_throw_length_feet = dict_name["avg_throw_length_feet"]
+    player_object.avg_throw_length_meters = dict_name["avg_throw_length_meters"]
+    player_object.latest_rating_from_tournaments = dict_name["latest_rating_from_tournaments"]
+    player_object.players_played_with_tournament = dict_name["players_played_with_tournament"]
+    player_object.upcoming_tournaments = dict_name["upcoming_tournaments"]
+    player_object.top_ten_tournaments_by_highest_round_rating = dict_name["top_ten_tournaments_by_highest_round_rating"]
+    player_object.top_ten_tournaments_by_lowest_round_rating = dict_name["top_ten_tournaments_by_lowest_round_rating"]
+    player_object.top_ten_tournaments_by_placement = dict_name["top_ten_tournaments_by_placement"]
+    player_object.top_ten_tournaments_by_par = dict_name["top_ten_tournaments_by_par"]
+    player_object.tournament_highest_par = dict_name["tournament_highest_par"]
+    player_object.tournament_lowest_par = dict_name["tournament_lowest_par"]
+    player_object.round_highest_par = dict_name["round_highest_par"]
+    player_object.round_lowest_par = dict_name["round_lowest_par"]
+    player_object.gender = dict_name["gender"]
+    player_object.avg_rounds_per_tournament = dict_name["avg_rounds_per_tournament"]
+
+    if not player_object.current_rating and player_object.latest_rating_from_tournaments:
+        player_object.current_rating = player_object.latest_rating_from_tournaments
+
+
 def GeneratePlayerStatistics(player, save=False):
     """
     Generate player fields and statistics that can only be collected by going through all tournaments player has played in.
     """
+
+    ConnectMongo()
 
     data = {
         "played_tournaments": [], #done
@@ -105,7 +186,7 @@ def GeneratePlayerStatistics(player, save=False):
         "doubles": [], #done
         "teams": [], #done
         "dnf": [], #done
-        "dnf": [], #done
+        "dns": [], #done
         "total_throws": 0, #done
         "total_points": 0, #done
         "total_rounds": 0, #done
@@ -153,31 +234,34 @@ def GeneratePlayerStatistics(player, save=False):
     }
 
     player_pdga_number = player.pdga_number
-    all_events = Tournament.objects(players=player_pdga_number).order_by("tournament_id")
-    logging.info("Found %s tournaments for player %s" % (str(all_events.count()), player.full_name))
 
-    logging.info("Collecting played_tournaments")
+    #logger.info("Collecting played_tournaments")
     data["played_tournaments"] = Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
-    logging.info("Collecting played_countries")
+    #logger.info("Collecting played_countries")
     data["played_countries"] = Tournament.objects(players=player_pdga_number, location_country__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_country").distinct("location_country")
-    logging.info("Collecting played_cities")
+    #logger.info("Collecting played_cities")
     data["played_cities"] = Tournament.objects(players=player_pdga_number, location_city__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_city").distinct("location_city")
-    logging.info("Collecting played_states")
+    #logger.info("Collecting played_states")
     data["played_states"] = Tournament.objects(players=player_pdga_number, location_state__exists=True, tournament_end__lt=datetime.datetime.now()).only("location_state").distinct("location_state")
-    logging.info("Collecting singles")
+    #logger.info("Collecting singles")
     data["singles"] = Tournament.objects(players=player_pdga_number, tournament_type="singles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
-    logging.info("Collecting doubles")
+    #logger.info("Collecting doubles")
     data["doubles"] = Tournament.objects(players=player_pdga_number, tournament_type="doubles", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
-    logging.info("Collecting teams")
+    #logger.info("Collecting teams")
     data["teams"] = Tournament.objects(players=player_pdga_number, tournament_type="teams", tournament_end__lt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
-    logging.info("Collecting tiers_played")
-    data["tiers_played"] = Counter(Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_tier"))
-    logging.info("Collecting classifications_played")
-    data["classifications_played"] = Counter(Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_classification"))
-    logging.info("Collecting upcoming_tournaments")
-    data["upcoming_tournaments"] = Tournament.objects(players=player_pdga_number, tournament_end__gt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
+    #logger.info("Collecting tiers_played")
+    data["tiers_played"] = dict(Counter(Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_tier")))
+    #logger.info("Collecting classifications_played")
+    data["classifications_played"] = dict(Counter(Tournament.objects(players=player_pdga_number, tournament_end__lt=datetime.datetime.now()).scalar("tournament_classification")))
+    #logger.info("Collecting upcoming_tournaments")
+    #data["upcoming_tournaments"] = Tournament.objects(players=player_pdga_number, tournament_end__gt=datetime.datetime.now()).only("tournament_id").distinct("tournament_id")
 
-    for event in all_events:
+
+    #logger.info("Parsing all found events for player")
+    all_events = Tournament.objects(players=player_pdga_number)
+    logger.info("Found %s tournaments for player %s" % (len(data["played_tournaments"]), player.full_name))
+    for event in data["played_tournaments"]:
+        event = Tournament.objects(tournament_id=event).first()
         if event.tournament_start:
             try:
                 data["tournaments_played_per_year"][event.tournament_start.year] += 1
@@ -279,13 +363,14 @@ def GeneratePlayerStatistics(player, save=False):
                     break
 
 
-    
+    convert_dict_keys_to_strings(data)
     calculate_non_mongo_statistics(player)
     calculate_averages_from_collected_data(player, data)
+    update_fields_to_player_document(player, data)
 
-
-    print(json.dumps(data, indent=4))
-    import pdb; pdb.set_trace()
+    #print(json.dumps(data, indent=4))
+    #print(json.dumps(player.to_json(), indent=4))
+    #import pdb; pdb.set_trace()
         
 
 

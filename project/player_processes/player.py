@@ -1,8 +1,10 @@
 # coding=utf-8
 import json
 import logging
+import argparse
 from datetime import date
 from project.models.schemas import Player
+from project.utils.connect_mongodb import ConnectMongo
 from project.helpers.helpers_data_parsing import *
 from project.player_processes.player_statistics import GeneratePlayerStatistics
 from project.utils.s3_tools import download_file_from_s3_return_file_path
@@ -46,9 +48,9 @@ def ParsePlayer(data, send_data=True, generate_statistics=False, clear_fields_up
 
     if not data_pdga_number:
         return
-
+    ConnectMongo()
     new_player = Player()
-    new_player.pdga_number = str(data.get('player_pdga_number'))
+    new_player.pdga_number = int(data.get('player_pdga_number'))
     new_player.pdga_id_status = ParseIdStatus(data)
     new_player.membership_status = CheckMembership(data) 
     new_player.membership = CheckAndNormalizeMembershipStatus(data)
@@ -74,10 +76,6 @@ def ParsePlayer(data, send_data=True, generate_statistics=False, clear_fields_up
     new_player.certified_status = ParseCertifiedStatus(data)
     new_player.certified_status_expiration_date = ParseDate(data.get('player_certified_status_expiration'))
 
-
-    if generate_statistics:
-        GeneratePlayerStatistics(new_player)
-
     old_player = CheckifPlayerExists(new_player.pdga_number)
 
     if old_player:
@@ -102,11 +100,15 @@ def ParsePlayer(data, send_data=True, generate_statistics=False, clear_fields_up
         else:
             new_player.fields_updated = CheckFieldsUpdated(new_player, old_player)
 
+    if generate_statistics:
+            GeneratePlayerStatistics(new_player)
+
     if send_data:
         new_player.save()
     else:
         print_data = json.loads(new_player.to_json())
         print(json.dumps(print_data, indent=4))
+
     logger.info("Player with PDGA number %s has been added to Mongo", str(new_player.pdga_number))
 
 

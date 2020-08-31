@@ -906,12 +906,12 @@ def parse_tournament_id(data):
 
     if data:
         event_link = data.get("event_link")
-
-        tournament_id = event_link.strip().split('/')[-1]
-        if tournament_id != "pdga_system_404":
-            tournament_id = int(tournament_id)
-        else:
-            tournament_id = None
+        if event_link:
+            tournament_id = event_link.strip().split('/')[-1]
+            if tournament_id != "pdga_system_404":
+                tournament_id = int(tournament_id)
+            else:
+                tournament_id = None
 
     return tournament_id
 
