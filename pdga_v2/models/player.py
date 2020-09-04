@@ -1,6 +1,9 @@
 # coding=utf-8
 import datetime
 import json
+import asyncio
+
+from pdga_v2.helpers.general_helpers import calculate_player_membership_age
 
 from mongoengine import *
 
@@ -10,6 +13,9 @@ class Player(DynamicDocument):
     pdga_profile_status_code = IntField(help_text="HTTP Status code from the pdga profile page")
     pdga_profile_link = StringField(help_text="PDGA Profile link")
     profile_picture_link = StringField(help_text="PDGA Profile page profile picture link if available")
+
+    gender = StringField()
+    year_of_birth_estimate = IntField()
 
     full_name = StringField(max_lenght=75, help_text="Full non parsed name")
     first_name = StringField(max_lenght=25, help_text="Parsed first name")
@@ -23,8 +29,123 @@ class Player(DynamicDocument):
     country = StringField()
     country_short = StringField()
 
+    classification = StringField()
+    classification_short = StringField()
+
+    member_since = IntField()
+    membership_status = StringField()
+    membership_expiration_date = DateTimeField()
+
+    official_status = StringField()
+    official_status_bool = BooleanField()
+    official_status_expiration_date = DateTimeField()
+
+    rating = IntField()
     rating_difference = IntField()
     rating_updated = DateTimeField()
+    rating_highest = IntField()
+    rating_highest_date = DateTimeField()
+    rating_lowest = IntField()
+    rating_lowest_date = DateTimeField()
+
+    total_tournaments_all = IntField()
+    total_tournaments_singles = IntField()
+    total_tournaments_doubles = IntField()
+    total_tournaments_team = IntField()
+    total_tournaments_singles_yearly_avg = FloatField()
+    total_tournaments_singles_monthly_avg = FloatField()
+
+    total_wins_all = IntField()
+    total_wins_singles = IntField()
+    total_wins_doubles = IntField()
+    total_wins_team = IntField()
+    total_wins_singles_yearly_avg = FloatField()
+    total_wins_singles_monthly_avg = FloatField()
+
+    tournaments_win_percentage_all = FloatField()
+    tournaments_win_percentage_singles = FloatField()
+    tournaments_win_percentage_doubles = FloatField()
+    tournaments_win_percentage_team = FloatField()
+
+    total_money_won = FloatField()
+    total_money_won_singles = FloatField()
+    total_money_won_doubles = FloatField()
+    total_money_won_team = FloatField()
+    total_money_won_year_avg = FloatField()
+    total_money_won_month_avg = FloatField()
+
+    tournament_years = ListField(IntField())
+
+    upcoming_tournaments = ListField(IntField())
+
+    raw_data_datetime = DateTimeField()
+    parsed_data_datetime = DateTimeField()
+    mongo_data_datetime = DateTimeField()
+
+    def _calculate_analytics(self):
+        def _calculate_total_money_won_year_avg():
+            if self.total_money_won and self.member_since:
+                years_as_member = calculate_player_membership_age(self.member_since, age_type="year")
+                if years_as_member:
+                    self.total_money_won_year_avg = float(self.total_money_won/years_as_member)
+
+
+        def _calculate_total_money_won_month_avg():
+            if self.total_money_won and self.member_since:
+                years_as_member = calculate_player_membership_age(self.member_since, age_type="month")
+                if years_as_member:
+                    self.total_money_won_month_avg = float(self.total_money_won/years_as_member)
+
+
+        def _calculate_total_tournaments_singles_yearly_avg():
+            if self.total_tournaments_singles and self.member_since:
+                years_as_member = calculate_player_membership_age(self.member_since, age_type="year")
+                if years_as_member:
+                    self.total_tournaments_singles_yearly_avg = float(self.total_tournaments_singles/years_as_member)
+
+
+        def _calculate_total_tournaments_singles_monthly_avg():
+            if self.total_tournaments_singles and self.member_since:
+                years_as_member = calculate_player_membership_age(self.member_since, age_type="month")
+                if years_as_member:
+                    self.total_tournaments_singles_monthly_avg = float(self.total_tournaments_singles/years_as_member)
+
+
+        def _calculate_tournaments_win_percentage_singles():
+            if self.total_tournaments_singles and self.total_wins_singles:
+                self.tournaments_win_percentage_singles = float(self.total_tournaments_singles/self.total_wins_singles)
+
+
+        def _calculate_rating_highest():
+            if self.rating and self.rating_updated:
+                if self.rating_highest and self.rating >= self.rating_highest:
+                    self.rating_highest = self.rating
+                    self.rating_highest_date = self.rating_updated
+                
+                if not self.rating_highest:
+                    self.rating_highest = self.rating
+                    self.rating_highest_date = self.rating_updated
+
+
+        def _calculate_rating_lowest():
+            if self.rating and self.rating_updated:
+                if self.rating_lowest and self.rating <= self.rating_lowest:
+                    self.rating_lowest = self.rating
+                    self.rating_lowest_date = self.rating_updated
+                    
+                if not self.rating_lowest:
+                    self.rating_lowest = self.rating
+                    self.rating_lowest_date = self.rating_updated
+
+
+        _calculate_total_money_won_year_avg()
+        _calculate_total_money_won_month_avg()
+        _calculate_total_tournaments_singles_yearly_avg()
+        _calculate_total_tournaments_singles_monthly_avg()
+        _calculate_tournaments_win_percentage_singles()
+        _calculate_rating_highest()
+        _calculate_rating_lowest()
+
 
 
     # pdga_id_status = BooleanField(help_text="Field that tells if the PDGA number is in use or not. There are PDGA numbers between the players that not in use.")
@@ -125,8 +246,8 @@ class Player(DynamicDocument):
     # fields_updated = ListField(DynamicField(), help_text="If player exists and is recrawled, what data was changed. Dict that contains dynamic data about the fields that were changed and also datetime when it was updated")
     # statistics_updated = DateTimeField(default=datetime.datetime.now)
 
-    def pretty_print_json(Player):
-        print(json.dumps(Player.to_mongo().to_dict(), indent=4))
+    def pprint():
+        print(json.dumps(json.loads(Player.to_json()), indent=4))
 
 
     meta = {

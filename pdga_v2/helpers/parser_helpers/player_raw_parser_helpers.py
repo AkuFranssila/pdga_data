@@ -202,6 +202,8 @@ async def player_raw_data_field_parser(raw_data):
     parsed_data["pdga_profile_link"] = raw_data.get("url")
     parsed_data["pdga_number"] = raw_data.get("pdga_number")
     parsed_data["pdga_profile_status_code"] = raw_data.get("status_code")
+    parsed_data["raw_data_datetime"] = raw_data.get("crawled-datetime")
+    parsed_data["parsed_data_datetime"] = str(datetime.datetime.now())
 
     soup = BeautifulSoup(raw_data["html"], "html.parser")
 
